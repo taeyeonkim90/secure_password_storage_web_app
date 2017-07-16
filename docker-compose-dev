@@ -1,0 +1,15 @@
+version: "3"
+services:
+  web:
+    build:
+      context: "./app"
+      dockerfile: Dockerfile-dev
+    restart: always
+    ports:
+      - "8080:5000"
+    links:
+      - db
+  db:
+    image: postgres
+    environment:
+        POSTGRES_PASSWORD: "rnVzx2Ru9zz6h2s2"
