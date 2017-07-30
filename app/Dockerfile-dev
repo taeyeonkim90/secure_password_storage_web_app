@@ -1,13 +1,10 @@
 FROM microsoft/aspnetcore-build:1.1.2
 
-COPY ./start.sh /start/
-WORKDIR /start
+WORKDIR /app
 
 EXPOSE 5000/tcp
 ENV ASPNETCORE_URLS http://*:5000
 ENV ASPNETCORE_ENVIRONMENT="Development"
 ENV DOTNET_USE_POLLING_FILE_WATCHER="1"
 
-# ENTRYPOINT ["dotnet", "watch", "run"]
-RUN ["chmod", "+x", "/start/start.sh"]
-ENTRYPOINT ["./start.sh"]
+ENTRYPOINT ["sh","./start.sh"]

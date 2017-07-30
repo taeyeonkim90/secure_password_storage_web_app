@@ -1,4 +1,5 @@
 build:
+	cd ./app && dotnet restore
 	cd ./app && npm install
 	docker-compose -f docker-compose-dev.yml build
 

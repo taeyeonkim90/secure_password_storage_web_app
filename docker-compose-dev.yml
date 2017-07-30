@@ -11,6 +11,8 @@ services:
       - db
     volumes:
       - "./app:/app"
+      - /app/obj
+    entrypoint: ["sh", "./start.sh"] 
   db:
     image: postgres
     environment:
