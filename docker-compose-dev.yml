@@ -16,4 +16,6 @@ services:
   db:
     image: postgres
     environment:
-        POSTGRES_PASSWORD: "rnVzx2Ru9zz6h2s2"
+      POSTGRES_DB: "ApplicationDB"
+      POSTGRES_USER: "db_user"
+      POSTGRES_PASSWORD: "rnVzx2Ru9zz6h2s2"
