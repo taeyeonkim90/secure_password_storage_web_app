@@ -8,6 +8,10 @@ using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
+using Npgsql.EntityFrameworkCore.PostgreSQL;
+
+using app.DataLayer.Models; //to import dbcontext from this namespace
 
 namespace app
 {
@@ -30,6 +34,9 @@ namespace app
         {
             // Add framework services.
             services.AddMvc();
+            services.AddDbContext<ApplicationContext>(options =>
+                options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+ 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
