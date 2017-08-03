@@ -1,6 +1,15 @@
 build:
+	@echo "************ Restoring Dotnet Dependencies ************"
 	cd ./app && dotnet restore
+
+	@echo "************ Creating Migrations Scripts ************"
+	rm -rf ./app/Migrations
+	cd ./app && dotnet ef migrations add DBMigration
+
+	@echo "************ Restoring NPM Dependencies ************"
 	cd ./app && npm install
+
+	@echo "************ Building Docker images ************"
 	docker-compose -f docker-compose-dev.yml build
 
 run:
