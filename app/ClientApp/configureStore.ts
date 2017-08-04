@@ -1,5 +1,6 @@
 import { createStore, applyMiddleware, compose, combineReducers, GenericStoreEnhancer, Store } from 'redux';
 import thunk from 'redux-thunk';
+import logger from 'redux-logger'
 import { routerReducer, routerMiddleware } from 'react-router-redux';
 import * as StoreModule from './store';
 import { ApplicationState, reducers } from './store';
@@ -11,7 +12,7 @@ export default function configureStore(history: History, initialState?: Applicat
     // If devTools is installed, connect to it
     const devToolsExtension = windowIfDefined && windowIfDefined.devToolsExtension as () => GenericStoreEnhancer;
     const createStoreWithMiddleware = compose(
-        applyMiddleware(thunk, routerMiddleware(history)),
+        applyMiddleware(thunk, logger, routerMiddleware(history)),
         devToolsExtension ? devToolsExtension() : f => f
     )(createStore);
 
