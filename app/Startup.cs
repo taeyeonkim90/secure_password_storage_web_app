@@ -12,7 +12,6 @@ using Microsoft.EntityFrameworkCore;
 using Npgsql.EntityFrameworkCore.PostgreSQL;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
-
 using app.DataLayer.Models; //to import dbcontext from this namespace
 
 namespace app

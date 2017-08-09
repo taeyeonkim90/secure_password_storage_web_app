@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
+using app.DataLayer.Models; //to import dbcontext from this namespace
+
 
 namespace app.Controllers
 {
@@ -16,36 +21,55 @@ TODO:
     [Route("api/[controller]")]
     public class AccountController : Controller
     {
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ILogger _logger;
         private static string[] Summaries = new[]
         {
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
         };
 
-        [HttpGet("[action]")]
-        public IEnumerable<WeatherForecast> WeatherForecasts(int startDateIndex)
+        public AccountController(
+            UserManager<ApplicationUser> userManager,
+            ILoggerFactory loggerFactory)
         {
-            var rng = new Random();
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                DateFormatted = DateTime.Now.AddDays(index + startDateIndex).ToString("d"),
-                TemperatureC = rng.Next(-20, 55),
-                Summary = Summaries[rng.Next(Summaries.Length)]
-            });
+            _userManager = userManager;
+            _logger = loggerFactory.CreateLogger<AccountController>();
         }
 
-        public class WeatherForecast
+        [HttpGet("[action]")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Get()
         {
-            public string DateFormatted { get; set; }
-            public int TemperatureC { get; set; }
-            public string Summary { get; set; }
+            var user = new ApplicationUser { UserName = "TestUser"};
+            var result = await _userManager.CreateAsync(user, "TestPassword@1234");
 
-            public int TemperatureF
+            // If we got this far, something failed, redisplay form
+            return Json(result);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> Register([FromBody] ApplicationUserDTO model)
+        {
+            if (ModelState.IsValid)
             {
-                get
+                var user = new ApplicationUser { UserName = model.UserName};
+                var result = await _userManager.CreateAsync(user, model.Password);
+                if (result.Succeeded)
                 {
-                    return 32 + (int)(TemperatureC / 0.5556);
+                    // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=532713
+                    // Send an email with this link
+                    //var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    //var callbackUrl = Url.Action(nameof(ConfirmEmail), "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
+                    //await _emailSender.SendEmailAsync(model.Email, "Confirm your account",
+                    //    $"Please confirm your account by clicking this link: <a href='{callbackUrl}'>link</a>");
+                    _logger.LogInformation(3, "User created a new account with password.");
+                    return Ok(result);
                 }
             }
+
+            // If we got this far, something failed, redisplay form
+            return Ok();
         }
     }
 }
