@@ -116,14 +116,33 @@ namespace app.Controllers
 
         [Authorize]
         [HttpPost("[action]")]
-        public IActionResult Test()
+        public async Task<IActionResult> Validate()
         {   
-            _logger.LogInformation($"UserId: {this.User.FindFirst(ClaimTypes.NameIdentifier).Value}");
+            // parse token information
+            var authenticateInfo = await HttpContext.Authentication.GetAuthenticateInfoAsync("Bearer");
+            string accessToken = authenticateInfo.Properties.Items[".Token.access_token"];
+            string userId = this.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            string jti = this.User.FindFirstValue("jit");
+            string tokenExp = this.User.FindFirstValue("exp");
 
-            int one = 1;
+            _logger.LogInformation($"JWT : {accessToken}");
+            _logger.LogInformation($"UserId: {userId}");
+            _logger.LogInformation($"JTI: {jti}");
+            _logger.LogInformation($"Expiration: {tokenExp}");
 
-            return Ok(new{
-                result = one
+            // convert Unix Timestamp to DateTime object
+            int tokenExpInt = Int32.Parse(tokenExp);
+            DateTime tokenExpDate = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
+            tokenExpDate = tokenExpDate.AddSeconds(tokenExpInt);
+
+            // TODO:
+            // if the token is about to expire, send back a new signed token
+            // else, return back the old JWT
+            // in the later stage, we need to blacklist old jti before sending a new one.
+            return Ok(new
+            {
+                token = accessToken,
+                expiration = tokenExpDate
             });
         }
     }

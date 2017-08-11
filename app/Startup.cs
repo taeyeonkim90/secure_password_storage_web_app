@@ -98,7 +98,8 @@ namespace app
                         
                         return Task.FromResult(0);
                     }
-                }
+                },
+                SaveToken = true
             });
 
             app.UseIdentity();
