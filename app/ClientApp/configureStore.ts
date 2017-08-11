@@ -12,7 +12,8 @@ export default function configureStore(history: History, initialState?: Applicat
     // If devTools is installed, connect to it
     const devToolsExtension = windowIfDefined && windowIfDefined.devToolsExtension as () => GenericStoreEnhancer;
     const createStoreWithMiddleware = compose(
-        applyMiddleware(thunk, logger, routerMiddleware(history)),
+        // applyMiddleware(thunk, logger, routerMiddleware(history)),
+        applyMiddleware(thunk, routerMiddleware(history)), // temporary removal of logger
         devToolsExtension ? devToolsExtension() : f => f
     )(createStore);
 

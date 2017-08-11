@@ -1,75 +1,130 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using System.Security.Claims;
+using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
-using app.DataLayer.Models; //to import dbcontext from this namespace
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+
+using app.DataLayer.Models;
 
 
 namespace app.Controllers
 {
-
-/*
-TODO:
-    - need to create register, login, logout, renew(token) endpoints
-    - need to open up Register, and Login for annonymous users
-
- */
     [Route("api/[controller]")]
     public class AccountController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IPasswordHasher<ApplicationUser> _passwordHasher;
         private readonly ILogger _logger;
-        private static string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
+        private readonly IOptions<AppConfiguration> _appConfiguration;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
-            ILoggerFactory loggerFactory)
+            IPasswordHasher<ApplicationUser> passwordHasher,
+            ILoggerFactory loggerFactory,
+            IOptions<AppConfiguration> appConfiguration)
         {
             _userManager = userManager;
+            _passwordHasher = passwordHasher;
             _logger = loggerFactory.CreateLogger<AccountController>();
+            _appConfiguration = appConfiguration;
         }
 
-        [HttpGet("[action]")]
-        [AllowAnonymous]
-        public async Task<IActionResult> Get()
+        [HttpPost("[action]")]
+        public async Task<IActionResult> Create(ApplicationUserDTO model)
         {
-            var user = new ApplicationUser { UserName = "TestUser"};
-            var result = await _userManager.CreateAsync(user, "TestPassword@1234");
+            // if (!ModelState.IsValid)
+            // {
+            //     return
+            //         BadRequest(
+            //             ModelState.Values.SelectMany(v => v.Errors)
+            //                 .Select(modelError => modelError.ErrorMessage)
+            //                 .ToList());
+            // }
 
-            // If we got this far, something failed, redisplay form
-            return Json(result);
-        }
+            var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+            var result = await _userManager.CreateAsync(user, model.Password);
 
-        [HttpPost]
-        [AllowAnonymous]
-        public async Task<IActionResult> Register([FromBody] ApplicationUserDTO model)
-        {
-            if (ModelState.IsValid)
+            if (!result.Succeeded)
             {
-                var user = new ApplicationUser { UserName = model.UserName};
-                var result = await _userManager.CreateAsync(user, model.Password);
-                if (result.Succeeded)
-                {
-                    // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=532713
-                    // Send an email with this link
-                    //var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    //var callbackUrl = Url.Action(nameof(ConfirmEmail), "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-                    //await _emailSender.SendEmailAsync(model.Email, "Confirm your account",
-                    //    $"Please confirm your account by clicking this link: <a href='{callbackUrl}'>link</a>");
-                    _logger.LogInformation(3, "User created a new account with password.");
-                    return Ok(result);
-                }
+                return BadRequest(result.Errors.Select(x => x.Description).ToList());
             }
 
-            // If we got this far, something failed, redisplay form
-            return Ok();
+            return Ok(user);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> Token(ApplicationUserDTO model)
+        {
+            // if (!ModelState.IsValid)
+            // {
+            //     return BadRequest();
+            // }
+
+            var user = await _userManager.FindByNameAsync(model.Email);
+
+            if (user == null || _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, model.Password) != PasswordVerificationResult.Success)
+            {
+                return BadRequest();
+            }
+
+            var token = await GetJwtSecurityToken(user);
+
+            return Ok(new
+            {
+                token = new JwtSecurityTokenHandler().WriteToken(token),
+                expiration = token.ValidTo
+            });
+        }
+
+        /// <summary>
+        /// Generate JWT Token based on valid User
+        /// </summary>
+        private async Task<JwtSecurityToken> GetJwtSecurityToken(ApplicationUser user)
+        {
+            var userClaims = await _userManager.GetClaimsAsync(user);
+
+            return new JwtSecurityToken(
+                issuer: _appConfiguration.Value.SiteUrl,
+                audience: _appConfiguration.Value.SiteUrl,
+                claims: GetTokenClaims(user).Union(userClaims),
+                expires: DateTime.UtcNow.AddMinutes(10),
+                signingCredentials: new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_appConfiguration.Value.Key)), SecurityAlgorithms.HmacSha256)
+            );
+        }
+
+        /// <summary>
+        /// Generate additional JWT Token Claims.
+        /// Use to any additional claims you might need.
+        /// https://self-issued.info/docs/draft-ietf-oauth-json-web-token.html#rfc.section.4
+        /// </summary>
+        private static IEnumerable<Claim> GetTokenClaims(ApplicationUser user)
+        {
+            return new List<Claim>
+            {
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.Sub, user.UserName)
+            };
+        }
+
+        [Authorize]
+        [HttpPost("[action]")]
+        public IActionResult Test()
+        {   
+            _logger.LogInformation($"UserId: {this.User.FindFirst(ClaimTypes.NameIdentifier).Value}");
+
+            int one = 1;
+
+            return Ok(new{
+                result = one
+            });
         }
     }
 }

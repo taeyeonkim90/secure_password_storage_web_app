@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,6 +12,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using Npgsql.EntityFrameworkCore.PostgreSQL;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 using app.DataLayer.Models; //to import dbcontext from this namespace
 
@@ -42,6 +45,9 @@ namespace app
                 .AddDefaultTokenProviders();
 
             services.AddMvc();
+
+            // Add application services
+            services.Configure<AppConfiguration>(Configuration.GetSection("AppConfiguration"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -65,8 +71,41 @@ namespace app
 
             app.UseStaticFiles();
 
-            app.UseIdentity();
+            ConfigureSecurity(app);
+            ConfigureMvc(app);
+        }
 
+        private  void ConfigureSecurity(IApplicationBuilder app)
+        {
+            app.UseJwtBearerAuthentication(new JwtBearerOptions
+            {
+                AutomaticAuthenticate = true,
+                AutomaticChallenge = true,
+                TokenValidationParameters = new TokenValidationParameters
+                {
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration.GetSection("AppConfiguration:Key").Value)),
+                    ValidAudience = Configuration.GetSection("AppConfiguration:SiteUrl").Value,
+                    ValidateIssuerSigningKey = true,
+                    ValidateLifetime = true,
+                    ValidIssuer = Configuration.GetSection("AppConfiguration:SiteUrl").Value
+                },
+                Events = new JwtBearerEvents()
+                {
+                    OnAuthenticationFailed = (context) =>
+                    {
+                        context.State = Microsoft.AspNetCore.Authentication.EventResultState.HandledResponse;
+                        context.Response.StatusCode = 401;
+                        
+                        return Task.FromResult(0);
+                    }
+                }
+            });
+
+            app.UseIdentity();
+        }
+
+        private  void ConfigureMvc(IApplicationBuilder app)
+        {
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
