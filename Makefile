@@ -7,6 +7,7 @@ build:
 	cd ./app && dotnet ef migrations add DBMigration
 
 	@echo "************ Restoring NPM Dependencies ************"
+	cd ./app && rm -f npm-shrinkwrap.json
 	cd ./app && npm install
 
 	@echo "************ Building Docker images ************"
