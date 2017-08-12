@@ -19,8 +19,7 @@ namespace app.ServiceLayer
         Task<IdentityResult> CreateUser(ApplicationUserDTO userDTO);
         Task<bool> VerifyUser(ApplicationUserDTO userDTO);
         Task<string> GetToken(ApplicationUserDTO userDTO);
-        // TODO
-        // JwtSecurityToken RefreshToken(string token); 
+        Task<string> RefreshToken(string token); 
     }
 
 	public class AuthService : IAuthService
@@ -66,10 +65,37 @@ namespace app.ServiceLayer
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        // TODO
-        // public JwtSecurityToken RefreshToken(string token)
-        // {
-        // }
+        public async Task<string> RefreshToken(string encodedToken)
+        {
+            JwtSecurityToken token = (JwtSecurityToken) new JwtSecurityTokenHandler().ReadToken(encodedToken);
+
+            // blacklist the old JTI
+            Claim jtiClaim = (from Claim claim in token.Claims
+                              where claim.Type == "jti"
+                              select claim).First();
+            Claim expClaim = (from Claim claim in token.Claims
+                              where claim.Type == "exp"
+                              select claim).First();
+            int tokenExpInt = Int32.Parse(expClaim.Value);
+            DateTime tokenExpDate = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
+            tokenExpDate = tokenExpDate.AddSeconds(tokenExpInt);
+            Jti jtiModel = new Jti()
+                                {
+                                    Uuid = jtiClaim.Value,
+                                    ExpiryTime = tokenExpDate
+                                };
+            await _dbContext.Jtis.AddAsync(jtiModel);
+            await _dbContext.SaveChangesAsync();
+
+            // generate new JWT
+            Claim subClaim = (from Claim claim in token.Claims
+                              where claim.Type == "sub"
+                              select claim).First();
+            var user = await _userManager.FindByNameAsync(subClaim.Value);
+            JwtSecurityToken newToken = await GetJwtSecurityToken(user);
+
+            return new JwtSecurityTokenHandler().WriteToken(newToken);;
+        }
 
 
         // generates a JWT for an user

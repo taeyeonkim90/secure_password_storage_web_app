@@ -79,6 +79,20 @@ namespace app.Controllers
             });
         }
 
+        [Authorize]
+        [HttpPost("[action]")]
+        public async Task<IActionResult> Refresh()
+        {   
+            var authenticateInfo = await HttpContext.Authentication.GetAuthenticateInfoAsync("Bearer");
+            string accessToken = authenticateInfo.Properties.Items[".Token.access_token"];
+            string encodedToken = await _authService.RefreshToken(accessToken);
+
+            return Ok(new
+            {
+                token = encodedToken
+            });
+        }
+
         // ******TODO: LEAVE THIS PART FOR A REFERENCE FOR NOW********
         // [Authorize]
         // [HttpPost("[action]")]
