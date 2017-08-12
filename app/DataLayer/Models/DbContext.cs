@@ -11,5 +11,6 @@ namespace app.DataLayer.Models
         { }
 
         public DbSet<PwInfo> PwInfos { get; set; }
+        public DbSet<Jti> Jtis {get; set;}
     }
 }
