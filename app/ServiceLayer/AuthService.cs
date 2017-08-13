@@ -19,7 +19,8 @@ namespace app.ServiceLayer
         Task<IdentityResult> CreateUser(ApplicationUserDTO userDTO);
         Task<bool> VerifyUser(ApplicationUserDTO userDTO);
         Task<string> GetToken(ApplicationUserDTO userDTO);
-        Task<string> RefreshToken(string token); 
+        Task<string> RefreshToken(string token);
+        bool IsTokenBlacklisted(string token);
     }
 
 	public class AuthService : IAuthService
@@ -67,34 +68,24 @@ namespace app.ServiceLayer
 
         public async Task<string> RefreshToken(string encodedToken)
         {
-            JwtSecurityToken token = (JwtSecurityToken) new JwtSecurityTokenHandler().ReadToken(encodedToken);
-
-            // blacklist the old JTI
-            Claim jtiClaim = (from Claim claim in token.Claims
-                              where claim.Type == "jti"
-                              select claim).First();
-            Claim expClaim = (from Claim claim in token.Claims
-                              where claim.Type == "exp"
-                              select claim).First();
-            int tokenExpInt = Int32.Parse(expClaim.Value);
-            DateTime tokenExpDate = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
-            tokenExpDate = tokenExpDate.AddSeconds(tokenExpInt);
-            Jti jtiModel = new Jti()
-                                {
-                                    Uuid = jtiClaim.Value,
-                                    ExpiryTime = tokenExpDate
-                                };
-            await _dbContext.Jtis.AddAsync(jtiModel);
-            await _dbContext.SaveChangesAsync();
+            // blacklist old JTI
+            await BlacklistJTI(encodedToken);
 
             // generate new JWT
-            Claim subClaim = (from Claim claim in token.Claims
-                              where claim.Type == "sub"
-                              select claim).First();
-            var user = await _userManager.FindByNameAsync(subClaim.Value);
+            string sub = GetClaimValueFromToken(encodedToken, "sub");
+            ApplicationUser user = await _userManager.FindByNameAsync(sub);
             JwtSecurityToken newToken = await GetJwtSecurityToken(user);
 
             return new JwtSecurityTokenHandler().WriteToken(newToken);;
+        }
+
+        // returns true, if the token is blacklisted
+        public bool IsTokenBlacklisted(string encodedToken)
+        {
+            string jti = GetClaimValueFromToken(encodedToken, "jti");
+            var jtiEntity = _dbContext.Jtis.FirstOrDefault(x => x.Uuid == jti);
+
+            return jtiEntity != null;
         }
 
 
@@ -120,6 +111,35 @@ namespace app.ServiceLayer
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Sub, user.UserName)
             };
+        }
+
+        private async Task BlacklistJTI(string encodedToken)
+        {
+            // blacklist old JTI
+            string jti = GetClaimValueFromToken(encodedToken, "jti");
+            string exp = GetClaimValueFromToken(encodedToken, "exp");
+            int tokenExpInt = Int32.Parse(exp);
+            DateTime tokenExpDate = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
+            tokenExpDate = tokenExpDate.AddSeconds(tokenExpInt);
+            Jti jtiModel = new Jti()
+                                {
+                                    Uuid = jti,
+                                    ExpiryTime = tokenExpDate
+                                };
+            await _dbContext.Jtis.AddAsync(jtiModel);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        private string GetClaimValueFromToken(string encodedToken, string type)
+        {
+            JwtSecurityToken token = (JwtSecurityToken) new JwtSecurityTokenHandler().ReadToken(encodedToken);
+
+            // blacklist the old JTI
+            Claim targetClaim = (from Claim claim in token.Claims
+                              where claim.Type == type
+                              select claim).First();
+
+            return targetClaim.Value;
         }
     }
 }

@@ -61,6 +61,7 @@ namespace app.Controllers
                 var encodedToken = await _authService.GetToken(userDTO);
                 return Ok(new
                 {
+                    status = true,
                     token = encodedToken
                 });
             }
@@ -84,12 +85,22 @@ namespace app.Controllers
         public async Task<IActionResult> Refresh()
         {   
             var authenticateInfo = await HttpContext.Authentication.GetAuthenticateInfoAsync("Bearer");
-            string accessToken = authenticateInfo.Properties.Items[".Token.access_token"];
-            string encodedToken = await _authService.RefreshToken(accessToken);
+            string encodedToken = authenticateInfo.Properties.Items[".Token.access_token"];
 
+            if (_authService.IsTokenBlacklisted(encodedToken))
+            {
+                return BadRequest(new
+                {
+                    status = false,
+                    token = encodedToken
+                });
+            }
+
+            string newToken = await _authService.RefreshToken(encodedToken);
             return Ok(new
             {
-                token = encodedToken
+                status = true,
+                token = newToken
             });
         }
 
