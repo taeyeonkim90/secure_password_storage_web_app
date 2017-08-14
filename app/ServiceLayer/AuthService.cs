@@ -8,6 +8,7 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Logging;
 
 using app.DataLayer.Models;
 
@@ -26,6 +27,7 @@ namespace app.ServiceLayer
 	public class AuthService : IAuthService
     {
         private readonly ApplicationContext _dbContext;
+        private readonly ILogger _logger;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IPasswordHasher<ApplicationUser> _passwordHasher;
         private readonly IOptions<AppConfiguration> _appConfiguration;
@@ -33,14 +35,17 @@ namespace app.ServiceLayer
 
         public AuthService(
             ApplicationContext dbContext,
+            ILoggerFactory loggerFactory,
             UserManager<ApplicationUser> userManager,
             IPasswordHasher<ApplicationUser> passwordHasher,
-            IOptions<AppConfiguration> appConfiguration)
+            IOptions<AppConfiguration> appConfiguration
+            )
         {
             _dbContext = dbContext;
             _userManager = userManager;
             _passwordHasher = passwordHasher;
             _appConfiguration = appConfiguration;
+            _logger = loggerFactory.CreateLogger<AuthService>();
         }
 
         public async Task<IdentityResult> CreateUser(ApplicationUserDTO userDTO)

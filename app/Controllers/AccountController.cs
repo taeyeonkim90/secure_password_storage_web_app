@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Logging;
 
 using app.DataLayer.Models;
 using app.ServiceLayer;
@@ -15,14 +14,11 @@ namespace app.Controllers
     [Route("api/[controller]")]
     public class AccountController : Controller
     {
-        private readonly ILogger _logger;
         private readonly IAuthService _authService;
 
         public AccountController(
-            ILoggerFactory loggerFactory,
             IAuthService authService)
         {
-            _logger = loggerFactory.CreateLogger<AccountController>();
             _authService = authService;
         }
 

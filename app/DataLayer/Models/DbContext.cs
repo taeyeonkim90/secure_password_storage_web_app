@@ -10,7 +10,7 @@ namespace app.DataLayer.Models
             : base(options)
         { }
 
-        public DbSet<PwInfo> PwInfos { get; set; }
+        public DbSet<SInfo> SInfos { get; set; }
         public DbSet<Jti> Jtis {get; set;}
     }
 }
