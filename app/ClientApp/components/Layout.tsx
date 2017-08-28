@@ -15,3 +15,11 @@ export class Layout extends React.Component<{}, {}> {
         </div>;
     }
 }
+
+export class LoginLayout extends React.Component<{}, {}> {
+    public render() {
+        return <div className='container-fluid'>
+            { this.props.children }
+        </div>;
+    }
+}
