@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { Link, NavLink, RouteComponentProps } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { ApplicationState }  from '../store';
 import * as CounterStore from '../store/Counter';
@@ -14,7 +14,12 @@ AuthStore.AuthState
 export default class Login extends React.Component<AuthProps, {}> {
     public render() {
         return <div>
-            <h1>Counter</h1>
+            <h1>Login</h1>
+            <li>
+                <NavLink exact to={ '/' } activeClassName='active'>
+                    <span className='glyphicon glyphicon-home'></span> Home
+                </NavLink>
+            </li>
         </div>;
     }
 }

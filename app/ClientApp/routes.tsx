@@ -9,10 +9,10 @@ import isAuthenticated from './components/Auth';
 
 export const routes = 
 <Switch>
-    <Route path='/login' component={ isAuthenticated(Login) } />
+    <Route path='/login' component={ Login } />
     <Layout>
-        <Route exact path='/' component={ Home } />
-        <Route path='/counter' component={ Counter } />
-        <Route path='/fetchdata/:startDateIndex?' component={ FetchData } />
+        <Route exact path='/' component={ isAuthenticated(Home) } />
+        <Route path='/counter' component={ isAuthenticated(Counter) } />
+        <Route path='/fetchdata/:startDateIndex?' component={ isAuthenticated(FetchData) } />
     </Layout>
 </Switch>;

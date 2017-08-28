@@ -5,6 +5,7 @@ import { ApplicationState }  from '../store';
 import * as CounterStore from '../store/Counter';
 import * as WeatherForecasts from '../store/WeatherForecasts';
 import * as AuthStore from '../store/Authenticate';
+import axios from 'axios';
 
 type AuthProps =
 AuthStore.AuthState
@@ -13,6 +14,14 @@ AuthStore.AuthState
 
 export default function(ComposedClass){
     class Auth extends React.Component<AuthProps, {}> {
+        componentWillMount() {
+            // this.props.history.push("/login");
+        }
+        
+        componentWillReceiveProps(nextProps: AuthProps) {
+            // this.props.history.push("/login");
+        }
+
         public render() {
             return <ComposedClass {...this.props}/>
         }
