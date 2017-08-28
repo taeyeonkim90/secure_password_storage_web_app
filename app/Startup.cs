@@ -50,6 +50,7 @@ namespace app
             // Add application services
             services.Configure<AppConfiguration>(Configuration.GetSection("AppConfiguration"));
             services.AddTransient<IAuthService,AuthService>();
+            services.AddTransient<IJtiDAO,JtiDAO>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

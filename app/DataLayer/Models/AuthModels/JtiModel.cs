@@ -8,6 +8,7 @@ namespace app.DataLayer.Models
     {
         public int Id { get; set; }
         public string Uuid { get; set; }
+        public string Sub { get; set; }
         public DateTime ExpiryTime {get; set; }
     }
 }

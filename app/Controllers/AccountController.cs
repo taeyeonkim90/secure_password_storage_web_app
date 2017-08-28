@@ -27,28 +27,50 @@ namespace app.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return
-                    BadRequest(
-                        ModelState.Values.SelectMany(v => v.Errors)
+                var message = ModelState.Values.SelectMany(v => v.Errors)
                             .Select(modelError => modelError.ErrorMessage)
-                            .ToList());
+                            .ToList();
+                return
+                    BadRequest(new
+                        {
+                            status = false,
+                            message = message
+                        });
             }
 
             IdentityResult result = await _authService.CreateUser(userDTO);
 
-            if (!result.Succeeded) return BadRequest(result.Errors.Select(x => x.Description).ToList());
-            return Ok();
+            if (!result.Succeeded)
+            {
+                var message = result.Errors.Select(x => x.Description).ToList();
+                return
+                    BadRequest(new
+                        {
+                            status = false,
+                            message = message
+                        });
+            }
+
+            return Ok(new
+                    {
+                        status = true,
+                        message = "User has been created"
+                    });
         }
 
         [HttpPost("[action]")]
         public async Task<IActionResult> Token(ApplicationUserDTO userDTO)
         {
             if (!ModelState.IsValid){
-                return
-                    BadRequest(
-                        ModelState.Values.SelectMany(v => v.Errors)
+                var message = ModelState.Values.SelectMany(v => v.Errors)
                             .Select(modelError => modelError.ErrorMessage)
-                            .ToList());
+                            .ToList();
+                return
+                    BadRequest(new
+                        {
+                            status = false,
+                            message = message
+                        });
             }
 
             bool result = await _authService.VerifyUser(userDTO);
@@ -88,7 +110,8 @@ namespace app.Controllers
                 return BadRequest(new
                 {
                     status = false,
-                    token = encodedToken
+                    token = encodedToken,
+                    message = "This token cannot be used to obtain a new JWT"
                 });
             }
 

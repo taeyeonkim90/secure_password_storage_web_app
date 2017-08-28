@@ -31,6 +31,7 @@ namespace app.ServiceLayer
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IPasswordHasher<ApplicationUser> _passwordHasher;
         private readonly IOptions<AppConfiguration> _appConfiguration;
+        private readonly IJtiDAO _jtiDAO;
 
 
         public AuthService(
@@ -38,7 +39,8 @@ namespace app.ServiceLayer
             ILoggerFactory loggerFactory,
             UserManager<ApplicationUser> userManager,
             IPasswordHasher<ApplicationUser> passwordHasher,
-            IOptions<AppConfiguration> appConfiguration
+            IOptions<AppConfiguration> appConfiguration,
+            IJtiDAO jtiDAO
             )
         {
             _dbContext = dbContext;
@@ -46,6 +48,7 @@ namespace app.ServiceLayer
             _passwordHasher = passwordHasher;
             _appConfiguration = appConfiguration;
             _logger = loggerFactory.CreateLogger<AuthService>();
+            _jtiDAO = jtiDAO;
         }
 
         public async Task<IdentityResult> CreateUser(ApplicationUserDTO userDTO)
@@ -87,10 +90,8 @@ namespace app.ServiceLayer
         // returns true, if the token is blacklisted
         public bool IsTokenBlacklisted(string encodedToken)
         {
-            string jti = GetClaimValueFromToken(encodedToken, "jti");
-            var jtiEntity = _dbContext.Jtis.FirstOrDefault(x => x.Uuid == jti);
-
-            return jtiEntity != null;
+            string uuid = GetClaimValueFromToken(encodedToken, "jti");
+            return _jtiDAO.IsTokenBlacklisted(uuid);
         }
 
 
@@ -121,18 +122,14 @@ namespace app.ServiceLayer
         private async Task BlacklistJTI(string encodedToken)
         {
             // blacklist old JTI
-            string jti = GetClaimValueFromToken(encodedToken, "jti");
+            string uuid = GetClaimValueFromToken(encodedToken, "jti");
             string exp = GetClaimValueFromToken(encodedToken, "exp");
+            string sub = GetClaimValueFromToken(encodedToken, "sub");
             int tokenExpInt = Int32.Parse(exp);
             DateTime tokenExpDate = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
             tokenExpDate = tokenExpDate.AddSeconds(tokenExpInt);
-            Jti jtiModel = new Jti()
-                                {
-                                    Uuid = jti,
-                                    ExpiryTime = tokenExpDate
-                                };
-            await _dbContext.Jtis.AddAsync(jtiModel);
-            await _dbContext.SaveChangesAsync();
+
+            await _jtiDAO.Create(uuid, sub, tokenExpDate);
         }
 
         private string GetClaimValueFromToken(string encodedToken, string type)
