@@ -20,31 +20,27 @@ class Login extends React.Component<AuthProps, AuthState> {
     constructor(props){
         super(props)
         this.state = {email:'', password:''}
-        this.handleEmailChange = this.handleEmailChange.bind(this);
-        this.handlePasswordChange = this.handlePasswordChange.bind(this);        
-        this.handleRegisterSubmit = this.handleRegisterSubmit.bind(this);
-        this.handleLoginSubmit = this.handleLoginSubmit.bind(this);
     }
 
-    handleEmailChange(event){
+    handleEmailChange = (event) => {
         this.setState({email: event.target.value})
     }
 
-    handlePasswordChange(event){
+    handlePasswordChange = (event) => {
         this.setState({password: event.target.value})
     }
 
-    handleRegisterSubmit(event){
+    handleRegisterSubmit = (event) => {
         event.preventDefault()
         this.props.registerUser(this.state.email, this.state.password)
     }
 
-    handleLoginSubmit(event){
+    handleLoginSubmit = (event) => {
         event.preventDefault()
         this.props.loginUser(this.state.email, this.state.password)
     }
 
-    displayError(){
+    displayError = () => {
         var messages = this.props.message
         const listItems = messages.map((message) =>
         <li>{message}</li>
