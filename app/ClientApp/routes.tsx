@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Route, Switch} from 'react-router-dom';
-import { LoginLayout,Layout } from './components/Layout';
+import { Layout } from './components/Layout';
 import Home from './components/Home';
 import FetchData from './components/FetchData';
 import Counter from './components/Counter';

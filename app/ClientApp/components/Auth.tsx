@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { ApplicationState }  from '../store';
+import { Redirect } from 'react-router-dom';
 import * as CounterStore from '../store/Counter';
 import * as WeatherForecasts from '../store/WeatherForecasts';
 import * as AuthStore from '../store/Authenticate';
@@ -23,7 +24,11 @@ export default function(ComposedClass){
         }
 
         public render() {
-            return <ComposedClass {...this.props}/>
+            if (this.props.authenticated){
+                return <ComposedClass {...this.props}/>;
+            } else {
+                return <Redirect to="/login" push/>;
+            }
         }
     }
 

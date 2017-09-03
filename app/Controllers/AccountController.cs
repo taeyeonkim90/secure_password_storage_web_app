@@ -23,7 +23,7 @@ namespace app.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> Create(ApplicationUserDTO userDTO)
+        public async Task<IActionResult> Create([FromBody] ApplicationUserDTO userDTO)
         {
             if (!ModelState.IsValid)
             {
@@ -59,7 +59,7 @@ namespace app.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> Token(ApplicationUserDTO userDTO)
+        public async Task<IActionResult> Token([FromBody] ApplicationUserDTO userDTO)
         {
             if (!ModelState.IsValid){
                 var message = ModelState.Values.SelectMany(v => v.Errors)
@@ -80,6 +80,7 @@ namespace app.Controllers
                 return Ok(new
                 {
                     status = true,
+                    message = "Token has been generated",
                     token = encodedToken
                 });
             }
@@ -110,8 +111,8 @@ namespace app.Controllers
                 return BadRequest(new
                 {
                     status = false,
-                    token = encodedToken,
-                    message = "This token cannot be used to obtain a new JWT"
+                    message = "This token cannot be used to obtain a new JWT",
+                    token = encodedToken
                 });
             }
 
@@ -119,41 +120,9 @@ namespace app.Controllers
             return Ok(new
             {
                 status = true,
+                message = "New token has been generated",
                 token = newToken
             });
         }
-
-        // ******TODO: LEAVE THIS PART FOR A REFERENCE FOR NOW********
-        // [Authorize]
-        // [HttpPost("[action]")]
-        // public async Task<IActionResult> Refresh()
-        // {   
-        //     // parse token information
-        //     var authenticateInfo = await HttpContext.Authentication.GetAuthenticateInfoAsync("Bearer");
-        //     string accessToken = authenticateInfo.Properties.Items[".Token.access_token"];
-        //     string userId = this.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-        //     string jti = this.User.FindFirstValue("jit");
-        //     string tokenExp = this.User.FindFirstValue("exp");
-
-        //     _logger.LogInformation($"JWT : {accessToken}");
-        //     _logger.LogInformation($"UserId: {userId}");
-        //     _logger.LogInformation($"JTI: {jti}");
-        //     _logger.LogInformation($"Expiration: {tokenExp}");
-
-        //     // convert Unix Timestamp to DateTime object
-        //     int tokenExpInt = Int32.Parse(tokenExp);
-        //     DateTime tokenExpDate = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
-        //     tokenExpDate = tokenExpDate.AddSeconds(tokenExpInt);
-
-        //     // TODO:
-        //     // if the token is about to expire, send back a new signed token
-        //     // else, return back the old JWT
-        //     // in the later stage, we need to blacklist old jti before sending a new one.
-        //     return Ok(new
-        //     {
-        //         token = accessToken,
-        //         expiration = tokenExpDate
-        //     });
-        // }
     }
 }
