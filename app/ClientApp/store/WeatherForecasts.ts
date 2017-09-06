@@ -43,10 +43,11 @@ type KnownAction = RequestWeatherForecastsAction | ReceiveWeatherForecastsAction
 // They don't directly mutate state, but they can have external side-effects (such as loading data).
 
 export const actionCreators = {
-    requestWeatherForecasts: (startDateIndex: number): AppThunkAction<KnownAction> => (dispatch, getState) => {
+    requestWeatherForecasts: (startDateIndex: number, token: string): AppThunkAction<KnownAction> => (dispatch, getState) => {
         // Only load data if it's something we don't already have (and are not already loading)
         if (startDateIndex !== getState().weatherForecasts.startDateIndex) {
-            let fetchTask = axios.get(`/api/SampleData/WeatherForecasts?startDateIndex=${ startDateIndex }`)
+            let config = { headers: {'Authorization':`Bearer ${ token }`}}
+            let fetchTask = axios.get(`/api/SampleData/WeatherForecasts?startDateIndex=${ startDateIndex }`, config)
                 .then(response => {
                     dispatch({ type: 'RECEIVE_WEATHER_FORECASTS', startDateIndex: startDateIndex, forecasts: response.data });
                 });

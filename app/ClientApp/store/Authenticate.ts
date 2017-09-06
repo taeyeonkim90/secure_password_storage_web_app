@@ -43,9 +43,17 @@ interface ReceiveJWTAction {
     key: string
 }
 
+interface LogoutAction {
+    type: 'LOGOUT'
+    authenticated: boolean
+    message: string[]
+    token: string
+    key: string
+}
+
 // Declare a 'discriminated union' type. This guarantees that all references to 'type' properties contain one of the
 // declared type strings (and not any other arbitrary string).
-type KnownAction = RequestRegistrationAction | ReceiveRegistrationAction | RequestJWTAction | ReceiveJWTAction
+type KnownAction = RequestRegistrationAction | ReceiveRegistrationAction | RequestJWTAction | ReceiveJWTAction | LogoutAction
 
 // ----------------
 // ACTION CREATORS - These are functions exposed to UI components that will trigger a state transition.
@@ -56,7 +64,7 @@ export const actionCreators = {
         if (!getState().auth.fetching) {
             let fetchTask = axios.post('/api/Account/Create', {Email: email, Password: password})
                 .then(response => {
-                    dispatch({ type: 'RECEIVE_REGISTRATION', authenticated: response.data.status, message: response.data.message, fetching: false })
+                    dispatch({ type: 'RECEIVE_REGISTRATION', authenticated: false, message: response.data.message, fetching: false })
                 })
                 .catch(error => {
                     dispatch({ type: 'RECEIVE_REGISTRATION', authenticated: false, message: error.response.data.message, fetching: false })
@@ -79,8 +87,11 @@ export const actionCreators = {
             addTask(fetchTask) // Ensure server-side prerendering waits for this to complete
             dispatch({type: 'REQUEST_JWT', fetching: true})
         }
-    }
+    },
     // logout
+    logoutUser: (): AppThunkAction<KnownAction> => (dispatch, getState) => {
+        dispatch({ type: 'LOGOUT', authenticated: false, message: ['User has been logged out'], token: '', key: ''})
+    }
 }
 
 // ----------------
@@ -99,6 +110,8 @@ export const reducer: Reducer<AuthState> = (state: AuthState, incomingAction: Ac
             return {... state, fetching: action.fetching}
         case 'RECEIVE_JWT':
             return {... state, fetching: action.fetching, authenticated: action.authenticated, message: action.message, token: action.token, key: action.key}
+        case 'LOGOUT':
+            return {... state, authenticated: action.authenticated, message: action.message, token: action.token, key: action.key}
     }
 
     return state || unloadedState

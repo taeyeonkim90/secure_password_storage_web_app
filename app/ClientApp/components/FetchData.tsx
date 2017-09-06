@@ -3,10 +3,12 @@ import { Link, RouteComponentProps } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { ApplicationState }  from '../store';
 import * as WeatherForecastsState from '../store/WeatherForecasts';
+import * as AuthState from '../store/Authenticate';
 
 // At runtime, Redux will merge together...
 type WeatherForecastProps =
     WeatherForecastsState.WeatherForecastsState        // ... state we've requested from the Redux store
+    & AuthState.AuthState
     & typeof WeatherForecastsState.actionCreators      // ... plus action creators we've requested
     & RouteComponentProps<{ startDateIndex: string }>; // ... plus incoming routing parameters   
 
@@ -14,13 +16,13 @@ class FetchData extends React.Component<WeatherForecastProps, {}> {
     componentWillMount() {
         // This method runs when the component is first added to the page
         let startDateIndex = parseInt(this.props.match.params.startDateIndex) || 0;
-        this.props.requestWeatherForecasts(startDateIndex);
+        this.props.requestWeatherForecasts(startDateIndex, this.props.token);
     }
 
     componentWillReceiveProps(nextProps: WeatherForecastProps) {
         // This method runs when incoming props (e.g., route params) change
         let startDateIndex = parseInt(nextProps.match.params.startDateIndex) || 0;
-        this.props.requestWeatherForecasts(startDateIndex);
+        this.props.requestWeatherForecasts(startDateIndex, this.props.token);
     }
 
     public render() {
@@ -68,6 +70,9 @@ class FetchData extends React.Component<WeatherForecastProps, {}> {
 }
 
 export default connect(
-    (state: ApplicationState) => state.weatherForecasts, // Selects which state properties are merged into the component's props
+    (state: ApplicationState) => {
+        const {auth, weatherForecasts} = state
+        return { ...auth, ...weatherForecasts }
+    }, // Selects which state properties are merged into the component's props
     WeatherForecastsState.actionCreators                 // Selects which action creators are merged into the component's props
 )(FetchData) as typeof FetchData;
