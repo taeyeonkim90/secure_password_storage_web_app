@@ -45,10 +45,6 @@ interface ReceiveJWTAction {
 
 interface LogoutAction {
     type: 'LOGOUT'
-    authenticated: boolean
-    message: string[]
-    token: string
-    key: string
 }
 
 // Declare a 'discriminated union' type. This guarantees that all references to 'type' properties contain one of the
@@ -90,7 +86,7 @@ export const actionCreators = {
     },
     // logout
     logoutUser: (): AppThunkAction<KnownAction> => (dispatch, getState) => {
-        dispatch({ type: 'LOGOUT', authenticated: false, message: ['User has been logged out'], token: '', key: ''})
+        dispatch({ type: 'LOGOUT'})
     }
 }
 
@@ -111,7 +107,7 @@ export const reducer: Reducer<AuthState> = (state: AuthState, incomingAction: Ac
         case 'RECEIVE_JWT':
             return {... state, fetching: action.fetching, authenticated: action.authenticated, message: action.message, token: action.token, key: action.key}
         case 'LOGOUT':
-            return {... state, authenticated: action.authenticated, message: action.message, token: action.token, key: action.key}
+            return {... state, authenticated: false, message: [], token: '', key: ''}
     }
 
     return state || unloadedState
