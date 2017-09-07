@@ -8,6 +8,7 @@ import * as WeatherForecasts from '../store/WeatherForecasts';
 import * as AuthStore from '../store/Authenticate';
 import axios from 'axios';
 import { fetch, addTask } from 'domain-task';
+import * as JWT from 'jwt-decode';
 
 type AuthProps =
 AuthStore.AuthState
@@ -17,18 +18,22 @@ AuthStore.AuthState
 export default function(ComposedClass){
     class Auth extends React.Component<AuthProps, {}> {
         componentWillMount() {
-            // get token from props
-            let token = this.props.token
-            // send a request to verify token validity
-            let config = { headers: {'Authorization':`Bearer ${ token }`}}
-            let fetchTask = axios.post(`/api/Account/Validate`, {}, config)
-                .then(response => {
-                    // check expiry, dispatch renewal if it is about to expire
+            if (!this.props.fetching){
+                // get token from props
+                let token = this.props.token
+                // send a request to verify token validity
+                let config = { headers: {'Authorization':`Bearer ${ token }`}}
+                let fetchTask = axios.post(`/api/Account/Validate`, {}, config)
+                    .then(response => {
+                        // check expiry, dispatch renewal if it is about to expire
+                        var decoded = JWT(token)
+                        console.log(decoded)
+                    })
+                    .catch(error => {
+                        this.props.logoutUser()
                 })
-                .catch(error => {
-                    this.props.logoutUser()
-            })
-            addTask(fetchTask)
+                addTask(fetchTask)
+            }
         }
         
         componentWillReceiveProps(nextProps: AuthProps) {

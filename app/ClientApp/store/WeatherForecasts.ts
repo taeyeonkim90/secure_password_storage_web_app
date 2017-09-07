@@ -34,9 +34,13 @@ interface ReceiveWeatherForecastsAction {
     forecasts: WeatherForecast[];
 }
 
+interface CleanupAction {
+    type: 'CLEAN_UP';
+}
+
 // Declare a 'discriminated union' type. This guarantees that all references to 'type' properties contain one of the
 // declared type strings (and not any other arbitrary string).
-type KnownAction = RequestWeatherForecastsAction | ReceiveWeatherForecastsAction;
+type KnownAction = RequestWeatherForecastsAction | ReceiveWeatherForecastsAction | CleanupAction;
 
 // ----------------
 // ACTION CREATORS - These are functions exposed to UI components that will trigger a state transition.
@@ -50,6 +54,9 @@ export const actionCreators = {
             let fetchTask = axios.get(`/api/SampleData/WeatherForecasts?startDateIndex=${ startDateIndex }`, config)
                 .then(response => {
                     dispatch({ type: 'RECEIVE_WEATHER_FORECASTS', startDateIndex: startDateIndex, forecasts: response.data });
+                })
+                .catch(error => {
+                    dispatch({ type: "CLEAN_UP"})
                 });
 
             addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
@@ -83,6 +90,12 @@ export const reducer: Reducer<WeatherForecastsState> = (state: WeatherForecastsS
                 };
             }
             break;
+        case 'CLEAN_UP':
+            return {
+                startDateIndex: null,
+                forecasts: [],
+                isLoading: false
+            }
         default:
             // The following line guarantees that every action in the KnownAction union has been covered by a case above
             const exhaustiveCheck: never = action;
