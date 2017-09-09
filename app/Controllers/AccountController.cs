@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -51,10 +52,11 @@ namespace app.Controllers
                         });
             }
 
+
             return Ok(new
                     {
                         status = true,
-                        message = "User has been created"
+                        message = new List<string>() { "User has been created" }
                     });
         }
 
@@ -80,12 +82,16 @@ namespace app.Controllers
                 return Ok(new
                 {
                     status = true,
-                    message = "Token has been generated",
+                    message = new List<string>() { "Token has been generated" },
                     token = encodedToken
                 });
             }
 
-            return BadRequest();
+            return BadRequest(new
+                {
+                    status = false,
+                    message = new List<string>() { "Log in failed" }
+                });
         }
 
         [Authorize]
@@ -95,7 +101,7 @@ namespace app.Controllers
             return Ok(new
             {
                 status = true,
-                message = "Token validated"
+                message = new List<string>() { "Token validated" }
             });
         }
 
@@ -111,7 +117,7 @@ namespace app.Controllers
                 return BadRequest(new
                 {
                     status = false,
-                    message = "This token cannot be used to obtain a new JWT",
+                    message = new List<string>() { "This token cannot be used to obtain a new JWT" },
                     token = encodedToken
                 });
             }
@@ -120,8 +126,7 @@ namespace app.Controllers
             return Ok(new
             {
                 status = true,
-                message = "New token has been generated",
-                token = newToken
+                message = new List<string>() { "New token has been generated" },
             });
         }
     }
