@@ -1,0 +1,7 @@
+.card{
+    height: 40px;
+}
+
+.expanded{
+    height: auto !important;
+}
