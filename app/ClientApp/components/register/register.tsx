@@ -1,10 +1,9 @@
 import * as React from 'react';
 import { Link, NavLink, RouteComponentProps, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { ApplicationState }  from '../store';
-import * as CounterStore from '../store/Counter';
-import * as WeatherForecasts from '../store/WeatherForecasts';
-import * as AuthStore from '../store/Authenticate';
+import { ApplicationState }  from '../../store';
+import * as AuthStore from '../../store/Authenticate';
+import * as s from './register.css';
 
 type AuthProps =
 AuthStore.AuthState
@@ -16,7 +15,7 @@ interface AuthState {
     password: string
 }
 
-class Login extends React.Component<AuthProps, AuthState> {
+class Register extends React.Component<AuthProps, AuthState> {
     constructor(props){
         super(props)
         this.state = {email:'', password:''}
@@ -52,7 +51,7 @@ class Login extends React.Component<AuthProps, AuthState> {
 
     public render() {
         if (!this.props.authenticated){
-            return  <div>
+            return  <div className={s.test}>
                         {this.displayError()}
                         <h1>Register</h1>
                         <form onSubmit={this.handleRegisterSubmit}>
@@ -66,19 +65,7 @@ class Login extends React.Component<AuthProps, AuthState> {
                             </label>
                             <input type="submit" value="Submit" />
                         </form>
-                        <h1>Login</h1>
-                        <form onSubmit={this.handleLoginSubmit}>
-                            <label>
-                                email:
-                                <input type="text" value={this.state.email} onChange={this.handleEmailChange} />
-                            </label>
-                            <label>
-                                password:
-                                <input type="password" value={this.state.password} onChange={this.handlePasswordChange} />
-                            </label>
-                            <input type="submit" value="Submit" />
-                        </form>
-                    </div>;;
+                    </div>
         } else {
             return <Redirect to="/" push/>;
         }
@@ -88,4 +75,4 @@ class Login extends React.Component<AuthProps, AuthState> {
 export default connect(
     (state: ApplicationState) => state.auth, // Selects which state properties are merged into the component's props
     AuthStore.actionCreators                 // Selects which action creators are merged into the component's props
-)(Login) as typeof Login;
+)(Register) as typeof Register;

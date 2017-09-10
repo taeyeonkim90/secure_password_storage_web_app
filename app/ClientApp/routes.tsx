@@ -4,12 +4,14 @@ import { Layout } from './components/Layout';
 import Home from './components/Home';
 import FetchData from './components/FetchData';
 import Counter from './components/Counter';
-import Login from './components/Login';
+import Login from './components/login/login';
+import Register from './components/register/register';
 import isAuthenticated from './components/Auth';
 
 export const routes = 
 <Switch>
     <Route path='/login' component={ Login } />
+    <Route path='/register' component={ Register } />
     <Layout>
         <Route exact path='/' component={ isAuthenticated(Home) } />
         <Route path='/counter' component={ isAuthenticated(Counter) } />
