@@ -17,10 +17,14 @@ module.exports = (env) => {
         },
         module: {
             rules: [
+                { 
+                    test: /\.css$/, 
+                    use: ['css-hot-loader'].concat(ExtractTextPlugin.extract({fallback: 'style-loader', use: 'css-loader?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]'}))
+                },
                 { test: /\.tsx?$/, include: /ClientApp/, use: 'awesome-typescript-loader?silent=true' }
             ]
         },
-        plugins: [new CheckerPlugin()]
+        plugins: [new ExtractTextPlugin('site.css'), new CheckerPlugin()]
     });
 
     // Configuration for client-side bundle suitable for running in browsers
@@ -29,7 +33,6 @@ module.exports = (env) => {
         entry: { 'main-client': './ClientApp/boot-client.tsx' },
         module: {
             rules: [
-                { test: /\.css$/, use: ExtractTextPlugin.extract({ use: isDevBuild ? 'css-loader' : 'css-loader?minimize' }) },
                 { test: /\.(png|jpg|jpeg|gif|svg)$/, use: 'url-loader?limit=25000' }
             ]
         },
@@ -57,6 +60,9 @@ module.exports = (env) => {
         resolve: { mainFields: ['main'] },
         entry: { 'main-server': './ClientApp/boot-server.tsx' },
         plugins: [
+            new webpack.WatchIgnorePlugin([
+                /css\.d\.ts$/
+            ]),
             new webpack.DllReferencePlugin({
                 context: __dirname,
                 manifest: require('./ClientApp/dist/vendor-manifest.json'),
