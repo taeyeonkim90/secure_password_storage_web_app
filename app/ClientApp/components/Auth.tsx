@@ -17,7 +17,7 @@ AuthStore.AuthState
 
 export default function(ComposedClass){
     class Auth extends React.Component<AuthProps, {}> {
-        componentWillMount() {
+        verifyToken = () => {
             if (!this.props.fetching){
                 // get token from props
                 let token = this.props.token
@@ -27,7 +27,11 @@ export default function(ComposedClass){
                     .then(response => {
                         // check expiry, dispatch renewal if it is about to expire
                         var decoded = JWT(token)
-                        console.log(decoded)
+                        var exp = decoded.exp
+                        var current = new Date().getTime()/1000
+                        if ((exp - current) < 300){
+                            this.props.refreshToken(token)
+                        }
                     })
                     .catch(error => {
                         this.props.logoutUser()
@@ -35,9 +39,13 @@ export default function(ComposedClass){
                 addTask(fetchTask)
             }
         }
+
+        componentWillMount() {
+            this.verifyToken()
+        }
         
         componentWillReceiveProps(nextProps: AuthProps) {
-            // this.props.history.push("/login");
+            this.verifyToken()
         }
 
         public render() {

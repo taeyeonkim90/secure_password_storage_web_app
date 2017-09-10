@@ -127,6 +127,7 @@ namespace app.Controllers
             {
                 status = true,
                 message = new List<string>() { "New token has been generated" },
+                token = newToken
             });
         }
     }

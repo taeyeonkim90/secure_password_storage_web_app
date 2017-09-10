@@ -84,7 +84,7 @@ namespace app.ServiceLayer
             ApplicationUser user = await _userManager.FindByNameAsync(sub);
             JwtSecurityToken newToken = await GetJwtSecurityToken(user);
 
-            return new JwtSecurityTokenHandler().WriteToken(newToken);;
+            return new JwtSecurityTokenHandler().WriteToken(newToken);
         }
 
         // returns true, if the token is blacklisted

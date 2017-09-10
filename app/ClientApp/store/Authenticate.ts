@@ -43,13 +43,27 @@ interface ReceiveJWTAction {
     key: string
 }
 
+interface RequestRefreshJWTAction {
+    type: 'REQUEST_REFRESH'
+    fetching: boolean
+}
+
+interface ReceiveRefreshJWTAction {
+    type: 'RECEIVE_REFRESH'
+    fetching: boolean
+    token: string
+}
+
 interface LogoutAction {
     type: 'LOGOUT'
 }
 
 // Declare a 'discriminated union' type. This guarantees that all references to 'type' properties contain one of the
 // declared type strings (and not any other arbitrary string).
-type KnownAction = RequestRegistrationAction | ReceiveRegistrationAction | RequestJWTAction | ReceiveJWTAction | LogoutAction
+type KnownAction = RequestRegistrationAction | ReceiveRegistrationAction | 
+                    RequestJWTAction | ReceiveJWTAction | 
+                    RequestRefreshJWTAction | ReceiveRefreshJWTAction|
+                    LogoutAction
 
 // ----------------
 // ACTION CREATORS - These are functions exposed to UI components that will trigger a state transition.
@@ -87,7 +101,23 @@ export const actionCreators = {
     // logout
     logoutUser: (): AppThunkAction<KnownAction> => (dispatch, getState) => {
         dispatch({ type: 'LOGOUT'})
-    }
+    },
+
+    // refresh token
+    refreshToken: (token:string): AppThunkAction<KnownAction> => (dispatch, getState) => {
+        if (!getState().auth.fetching) {
+            let config = { headers: {'Authorization':`Bearer ${ token }`}}
+            let fetchTask = axios.post('/api/Account/Refresh', {}, config)
+                .then(response => {
+                    dispatch({ type: 'RECEIVE_REFRESH', fetching: false, token: response.data.token})
+                })
+                .catch(error => {
+                    dispatch({ type: 'RECEIVE_REFRESH', fetching: false, token: error.response.data.token})
+                })
+            addTask(fetchTask) // Ensure server-side prerendering waits for this to complete
+            dispatch({type: 'REQUEST_REFRESH', fetching: true})
+        }
+    } 
 }
 
 // ----------------
@@ -106,6 +136,10 @@ export const reducer: Reducer<AuthState> = (state: AuthState, incomingAction: Ac
             return {... state, fetching: action.fetching}
         case 'RECEIVE_JWT':
             return {... state, fetching: action.fetching, authenticated: action.authenticated, message: action.message, token: action.token, key: action.key}
+        case 'REQUEST_REFRESH':
+            return {... state, fetching: action.fetching}
+        case 'RECEIVE_REFRESH':
+            return {... state, fetching: action.fetching, token: action.token}
         case 'LOGOUT':
             return {... state, authenticated: false, message: [], token: '', key: ''}
     }
