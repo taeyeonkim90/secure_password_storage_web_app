@@ -60,6 +60,7 @@ interface UpdateCardAction {
     accountName: string
     userName: string
     pw: string
+    description: string
 }
 
 // Declare a 'discriminated union' type. This guarantees that all references to 'type' properties contain one of the
@@ -97,8 +98,8 @@ export const actionCreators = {
     //         dispatch({ type: 'REQUEST_WEATHER_FORECASTS', startDateIndex: startDateIndex });
     //     }
     // }
-    updateCardAction: (accountName, index, userName, pw): AppThunkAction<KnownAction> => (dispatch, getState) => {
-        dispatch({type:'UPDATE_CARD', accountName: accountName, index: index, userName: userName, pw: pw})
+    updateCardAction: (accountName, index, userName, pw, description): AppThunkAction<KnownAction> => (dispatch, getState) => {
+        dispatch({type:'UPDATE_CARD', accountName: accountName, index: index, userName: userName, pw: pw, description:description})
     }
 };
 
@@ -154,12 +155,16 @@ export const reducer: Reducer<CardsState> = (state: CardsState, incomingAction: 
                 cards: [],
             };
         case 'UPDATE_CARD':
-            let new_state = {... state}
-            let index = action.index
-            new_state.cards[index].accountName = action.accountName
-            new_state.cards[index].userName = action.userName
-            new_state.cards[index].pw = action.pw
-            return new_state
+            return {
+                ... state,
+                cards: state.cards.map((card, index) => index === action.index ? {
+                    ... card,
+                    accountName: action.accountName,
+                    userName: action.userName,
+                    pw: action.pw,
+                    description: action.description
+                } : card)
+            };
         
         default:
             // The following line guarantees that every action in the KnownAction union has been covered by a case above

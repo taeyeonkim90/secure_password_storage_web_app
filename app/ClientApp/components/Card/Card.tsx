@@ -7,7 +7,7 @@ import { AppThunkAction } from '../../store';
 
 // At runtime, Redux will merge together...
 interface CardAction {
-    updateCardAction: (accountName, index, userName, pw) => AppThunkAction<CardsState.KnownAction>
+    updateCardAction: (accountName, index, userName, pw, description) => AppThunkAction<CardsState.KnownAction>
 } 
 
 type CardProps = CardsState.CardData
@@ -28,13 +28,13 @@ export default class Card extends React.Component<CardProps, CardState> {
     constructor(props) {
         super(props);
         this.state = {
-            index: this.props.index, 
+            index: props.index, 
             isExpand: false, 
             isEdit: false, 
-            accountName: this.props.accountName, 
-            userName: this.props.userName, 
-            pw: this.props.pw, 
-            description: this.props.description
+            accountName: props.accountName, 
+            userName: props.userName, 
+            pw: props.pw, 
+            description: props.description
         };
     }
 
@@ -42,12 +42,23 @@ export default class Card extends React.Component<CardProps, CardState> {
         // This method runs when the component is first added to the page
         // let startDateIndex = parseInt(this.props.match.params.startDateIndex) || 0;
         // this.props.requestWeatherForecasts(startDateIndex, this.props.token);
+        console.log("updating props")
     }
 
     componentWillReceiveProps(nextProps: CardProps) {
         // This method runs when incoming props (e.g., route params) change
         // let startDateIndex = parseInt(nextProps.match.params.startDateIndex) || 0;
         // this.props.requestWeatherForecasts(startDateIndex, this.props.token);
+        console.log("updating props")
+        this.setState((prevState, props) => ({
+            index: nextProps.index, 
+            isExpand: false, 
+            isEdit: false, 
+            accountName: nextProps.accountName, 
+            userName: nextProps.userName, 
+            pw: nextProps.pw, 
+            description: nextProps.description
+        }))
     }
 
     /*
@@ -148,10 +159,9 @@ export default class Card extends React.Component<CardProps, CardState> {
     }
 
     save = () => {
-        this.setState((prevState, props) => ({
-            isEdit: false
-        }));   
-        this.props.updateCardAction(this.state.accountName, this.state.index, this.state.userName, this.state.pw);
+        this.setState((prevState, props) => ({isEdit: false}))
+        this.props.updateCardAction(this.state.accountName, this.state.index, this.state.userName, this.state.pw, this.state.description);
+        this.forceUpdate();
     }
 
     cancel = () => {
