@@ -19,7 +19,7 @@ module.exports = (env) => {
             rules: [
                 { 
                     test: /\.css$/, 
-                    use: ['css-hot-loader'].concat(ExtractTextPlugin.extract({fallback: 'style-loader', use: 'css-loader?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]'}))
+                    use: ['css-hot-loader'].concat(ExtractTextPlugin.extract({fallback: 'style-loader', use: 'css-loader?modules&importLoaders=1'}))
                 },
                 { test: /\.tsx?$/, include: /ClientApp/, use: 'awesome-typescript-loader?silent=true' }
             ]
