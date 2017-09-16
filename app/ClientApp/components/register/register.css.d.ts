@@ -1,1 +1,2 @@
-export const test: string;
+export const purple: string;
+export const red: string;

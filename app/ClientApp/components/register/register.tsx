@@ -51,7 +51,7 @@ class Register extends React.Component<AuthProps, AuthState> {
 
     public render() {
         if (!this.props.authenticated){
-            return  <div className={s.test}>
+            return  <div className={s.red}>
                         {this.displayError()}
                         <h1>Register</h1>
                         <form onSubmit={this.handleRegisterSubmit}>
