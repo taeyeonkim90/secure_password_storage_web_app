@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Route, Switch} from 'react-router-dom';
 import { Layout } from './components/Layout';
+import CardsContainer from './components/CardsContainer/CardsContainer'
 import Home from './components/Home';
 import FetchData from './components/FetchData';
 import Counter from './components/Counter';
@@ -13,7 +14,7 @@ export const routes =
     <Route path='/login' component={ Login } />
     <Route path='/register' component={ Register } />
     <Layout>
-        <Route exact path='/' component={ isAuthenticated(Home) } />
+        <Route exact path='/' component={ isAuthenticated(CardsContainer) } />
         <Route path='/counter' component={ isAuthenticated(Counter) } />
         <Route path='/fetchdata/:startDateIndex?' component={ isAuthenticated(FetchData) } />
     </Layout>
