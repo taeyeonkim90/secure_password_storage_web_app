@@ -1,7 +1,12 @@
-/*
-TODO:
-    - create a POCO PwInfoModelDTO class
+using System;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
-This DTO class represents client-facing model representation.
-This allows us to control what is visible to the clients.
- */
+namespace app.DataLayer.Models
+{
+    public class DataDTO
+    {
+        public int Id { get; set; }
+        public string UserData { get; set; }
+    }
+}
