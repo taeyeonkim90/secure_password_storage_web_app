@@ -1,11 +1,99 @@
-.test {
-    background-color: black;
+::-webkit-input-placeholder { /* Chrome */
+    color: #86c98a;
 }
 
-.test2 {
-    background-color: red;
+:-ms-input-placeholder { /* IE 10+ */
+    color: #86c98a;
 }
 
-.test3 {
-    background-color: brown;
+::-moz-placeholder { /* Firefox 19+ */
+    color: #86c98a;
+    opacity: 1;
+}
+
+:-moz-placeholder { /* Firefox 4 - 18 */
+    color: #86c98a;
+    opacity: 1;
+}
+
+.loginContainer {
+    height: 100vh;
+    background: no-repeat center center fixed; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    color: #004304;
+}
+
+@media (max-width: 767px) {
+    /* revert body padding top of 50 px */
+    .loginContainer {
+        margin-top: -50px !important;
+    }
+}
+
+.loginForm {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+.loginForm input[type="text"], .loginForm input[type="password"] {
+    font-size: 1.3em;
+    font-weight: 500;
+    max-width: 400px;
+    width: 100vw;
+    margin: 0.3em;
+}
+
+@media (max-width: 480px) {
+    .loginForm input[type="text"], .loginForm input[type="password"] {
+        max-width: 70%;
+        width: 100%;
+        margin: 0.3em;
+    }
+}
+
+.loginElement {
+    padding: 0.7em;
+    border: solid 2px #86c98a;
+    border-radius: 0.4em;
+    transition: box-shadow 0.3s;
+    outline: none;
+}
+
+.loginElement:focus, .loginElement.focus {
+    border: solid 2px #54a759;
+    box-shadow: 0 0 5px 1px #2d8632;
+}
+
+.loginButton {
+    margin: 0.3em;
+    font-size: 1.3em;
+    font-weight: 500;
+    color: #818181;
+    width: 70px;
+    border: solid 2px #EBEBEB;
+    border-radius: 0.2em;
+    background-color: #EBEBEB;
+    transition: box-shadow 0.3s;
+}
+
+.loginButton:hover, .loginButton.hover {
+    color: black;
+    border: solid 2px #818181;
+}
+
+.errorMessageContainer {
+    margin: 0.3em;
+    padding: 0.3em;
+    list-style-type: none;
+    font-size: 1.2em;
+    border-radius: 0.2em;
+    background-color: rgba(134, 201, 138, 0.2);
+    color: black;
 }

@@ -45,27 +45,37 @@ class Login extends React.Component<AuthProps, AuthState> {
             <li>{message}</li>
         );
         return (
-            <ul>{listItems}</ul>
+            <ul className={s.errorMessageContainer}>{listItems}</ul>
         );
     }
 
     public render() {
         if (!this.props.authenticated) {
-            return <div className="">
-                {this.displayError()}
-                <h1>Login</h1>
-                <form onSubmit={this.handleLoginSubmit}>
-                    <label>
-                        email:
-                                <input type="text" value={this.state.email} onChange={this.handleEmailChange} />
-                    </label>
-                    <label>
-                        password:
-                                <input type="password" value={this.state.password} onChange={this.handlePasswordChange} />
-                    </label>
-                    <input type="submit" value="Submit" />
-                </form>
-            </div>;;
+            // following image is from https://unsplash.com/photos/PjABCLdM6DY
+            // TODO: make sure to include this link on LICENSE
+            const imageStyle = {
+                backgroundImage: 'url("./img/login.jpg")',
+            }
+
+            const loginBox =
+                <div className={s.loginContainer} style={imageStyle}>
+                    <form className={s.loginForm} onSubmit={this.handleLoginSubmit}>
+                        <input className={s.loginElement}
+                            type="text"
+                            value={this.state.email}
+                            onChange={this.handleEmailChange}
+                            placeholder="E-mail" />
+                        <input className={s.loginElement}
+                            type="password"
+                            value={this.state.password}
+                            onChange={this.handlePasswordChange}
+                            placeholder="Password" />
+                        <input className={s.loginButton}
+                            type="submit" value="Login"/>
+                        {this.displayError()}
+                    </form>
+                </div>;
+            return loginBox;
         } else {
             return <Redirect to="/" push />;
         }
