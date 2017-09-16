@@ -33,7 +33,7 @@ class CardContainer extends React.Component<CardContainerProps, {}> {
     public render() {
         console.log(this.props.cards)
         let listItems = this.props.cards.map((card, key) => 
-                        <Card key={key} {...card} />
+                        <Card key={key} index={key} {...card} updateCardAction={this.props.updateCardAction}/>
                     )
         return  <div> p
                     {listItems}

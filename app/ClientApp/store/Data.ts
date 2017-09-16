@@ -12,6 +12,7 @@ export interface CardsState {
 }
 
 export interface CardData {
+    index: number;
     accountName: string;
     userName: string;
     pw: string;
@@ -30,18 +31,18 @@ interface ReceiveCardsAction {
     cards: CardData[];
 }
 
-interface CreateCardAction {
-    type: 'CREATE_CARD';
+interface CreateCardsAction {
+    type: 'CREATE_CARDS';
     cards: CardData[];
 }
 
-interface UpdateCardAction {
-    type: 'UPDATE_CARD';
+interface UpdateCardsAction {
+    type: 'UPDATE_CARDS';
     cards: CardData[];
 }
 
-interface DeleteCardAction {
-    type: 'DELETE_CARD';
+interface DeleteCardsAction {
+    type: 'DELETE_CARDS';
     cards: CardData[];
 }
 
@@ -53,15 +54,24 @@ interface CleanupAction {
     type: 'CLEAN_UP';
 }
 
+interface UpdateCardAction {
+    type: 'UPDATE_CARD'
+    index: number
+    accountName: string
+    userName: string
+    pw: string
+}
+
 // Declare a 'discriminated union' type. This guarantees that all references to 'type' properties contain one of the
 // declared type strings (and not any other arbitrary string).
-type KnownAction =  RequestCardsAction 
+export type KnownAction =  RequestCardsAction 
                     | ReceiveCardsAction
-                    | CreateCardAction
-                    | UpdateCardAction
-                    | DeleteCardAction
+                    | CreateCardsAction
+                    | UpdateCardsAction
+                    | DeleteCardsAction
                     | SearchCardsAction 
-                    | CleanupAction;
+                    | CleanupAction
+                    | UpdateCardAction;
 
 // ----------------
 // ACTION CREATORS - These are functions exposed to UI components that will trigger a state transition.
@@ -70,7 +80,7 @@ type KnownAction =  RequestCardsAction
 export const actionCreators = {
     requestCardsAction: (token): AppThunkAction<KnownAction> => (dispatch, getState) => {
         
-    }
+    },
     // requestWeatherForecasts: (startDateIndex: number, token: string): AppThunkAction<KnownAction> => (dispatch, getState) => {
     //     // Only load data if it's something we don't already have (and are not already loading)
     //     if (startDateIndex !== getState().weatherForecasts.startDateIndex) {
@@ -87,6 +97,9 @@ export const actionCreators = {
     //         dispatch({ type: 'REQUEST_WEATHER_FORECASTS', startDateIndex: startDateIndex });
     //     }
     // }
+    updateCardAction: (accountName, index, userName, pw): AppThunkAction<KnownAction> => (dispatch, getState) => {
+        dispatch({type:'UPDATE_CARD', accountName: accountName, index: index, userName: userName, pw: pw})
+    }
 };
 
 // ----------------
@@ -96,12 +109,14 @@ const unloadedState: CardsState = {
         isLoaded: false, 
         cards: [
             {
+                index: 0,
                 accountName: "test1",
                 userName: "test1@test.com",
                 pw: "test1",
                 description: "test1 description"
             },
             {
+                index: 1,
                 accountName: "test2",
                 userName: "test2@test.com",
                 pw: "test2",
@@ -117,11 +132,11 @@ export const reducer: Reducer<CardsState> = (state: CardsState, incomingAction: 
             return { ... state, isLoaded: false };
         case 'RECEIVE_CARDS':
             return { ... state, isLoaded: true, cards: action.cards };
-        case 'CREATE_CARD':
+        case 'CREATE_CARDS':
             return { ... state, isLoaded: false, cards: action.cards };
-        case 'UPDATE_CARD':
+        case 'UPDATE_CARDS':
             return { ... state, isLoaded: false, cards: action.cards };
-        case 'DELETE_CARD':
+        case 'DELETE_CARDS':
             return {
                 isLoaded: false,
                 cards: action.cards
@@ -138,6 +153,13 @@ export const reducer: Reducer<CardsState> = (state: CardsState, incomingAction: 
                 isLoaded: true,
                 cards: [],
             };
+        case 'UPDATE_CARD':
+            let new_state = {... state}
+            let index = action.index
+            new_state.cards[index].accountName = action.accountName
+            new_state.cards[index].userName = action.userName
+            new_state.cards[index].pw = action.pw
+            return new_state
         
         default:
             // The following line guarantees that every action in the KnownAction union has been covered by a case above
