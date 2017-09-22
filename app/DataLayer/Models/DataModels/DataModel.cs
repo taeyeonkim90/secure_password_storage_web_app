@@ -11,6 +11,6 @@ namespace app.DataLayer.Models
         public DateTime Created { get; set; }
         public DateTime LastModified { get; set; }
         public ApplicationUser User { get; set; }
-        
+        public string UserForeignKey { get; set; }
     }
 }

@@ -10,6 +10,16 @@ namespace app.DataLayer.Models
             : base(options)
         { }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<ApplicationUser>()
+                        .HasOne( u => u.Data)
+                        .WithOne( d => d.User )
+                        .HasForeignKey<Data>( d => d.UserForeignKey );
+        }
+        
         public DbSet<Data> Datas { get; set; }
         public DbSet<Jti> Jtis {get; set;}
     }

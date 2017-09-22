@@ -22,6 +22,7 @@ namespace app.ServiceLayer
         Task<string> GetToken(ApplicationUserDTO userDTO);
         Task<string> RefreshToken(string token);
         bool IsTokenBlacklisted(string token);
+        string ExtractUserEmail(string token);
     }
 
 	public class AuthService : IAuthService
@@ -55,6 +56,13 @@ namespace app.ServiceLayer
         {
             var user = new ApplicationUser { UserName = userDTO.Email, Email = userDTO.Email };
             var result = await _userManager.CreateAsync(user, userDTO.Password);
+
+            if (result.Succeeded)
+            {
+                // get user id
+                
+                // create a Data model for the user
+            }
 
             return result;
         }
@@ -94,6 +102,12 @@ namespace app.ServiceLayer
             return _jtiDAO.IsTokenBlacklisted(uuid);
         }
 
+        public string ExtractUserEmail(string token)
+        {
+            string userEmail = GetClaimValueFromToken(token, "sub");
+
+            return userEmail;
+        }
 
         // generates a JWT for an user
         private async Task<JwtSecurityToken> GetJwtSecurityToken(ApplicationUser user)
