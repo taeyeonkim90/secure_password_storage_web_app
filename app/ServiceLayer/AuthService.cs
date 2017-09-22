@@ -33,6 +33,7 @@ namespace app.ServiceLayer
         private readonly IPasswordHasher<ApplicationUser> _passwordHasher;
         private readonly IOptions<AppConfiguration> _appConfiguration;
         private readonly IJtiDAO _jtiDAO;
+        private readonly IDataDAO _dataDAO;
 
 
         public AuthService(
@@ -41,7 +42,8 @@ namespace app.ServiceLayer
             UserManager<ApplicationUser> userManager,
             IPasswordHasher<ApplicationUser> passwordHasher,
             IOptions<AppConfiguration> appConfiguration,
-            IJtiDAO jtiDAO
+            IJtiDAO jtiDAO,
+            IDataDAO dataDAO
             )
         {
             _dbContext = dbContext;
@@ -50,6 +52,7 @@ namespace app.ServiceLayer
             _appConfiguration = appConfiguration;
             _logger = loggerFactory.CreateLogger<AuthService>();
             _jtiDAO = jtiDAO;
+            _dataDAO = dataDAO;
         }
 
         public async Task<IdentityResult> CreateUser(ApplicationUserDTO userDTO)
@@ -59,9 +62,8 @@ namespace app.ServiceLayer
 
             if (result.Succeeded)
             {
-                // get user id
-                
-                // create a Data model for the user
+                // create a default data model for the user
+                Data data = await _dataDAO.Create(userDTO.Email);
             }
 
             return result;

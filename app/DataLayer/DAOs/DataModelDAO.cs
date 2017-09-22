@@ -9,9 +9,9 @@ namespace app.DataLayer.Models
 {
     public interface IDataDAO
     {
-        // Task Create(string userId);
-        // Task Read(string userId);
-        // Task Update(string userId, string userData);
+        Task<Data> Create(string userId, string userData="");
+        Task<Data> Read(string userId);
+        Task<Data> Update(string userId, string userData);
         // Task Delete(string userId);
     }
     public class DataDAO : IDataDAO
@@ -23,10 +23,40 @@ namespace app.DataLayer.Models
             _dbContext = dbContext;
         }
 
-        // public bool IsTokenBlacklisted(string uuid)
-        // {
-        //     var jtiEntity = _dbContext.Jtis.FirstOrDefault(x => x.Uuid == uuid);
-        //     return jtiEntity != null;
-        // }
+        public async Task<Data> Create(string userEmail, string userData="default data")
+        {
+            ApplicationUser user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Email == userEmail);
+
+            DateTime currentTime = DateTime.Now;
+            Data newData = new Data {
+                                UserData = userData,
+                                Created = currentTime,
+                                LastModified = currentTime,
+                                User = user
+            };
+            await _dbContext.Datas.AddAsync(newData);
+            await _dbContext.SaveChangesAsync();
+
+            return newData;
+        }
+
+        public async Task<Data> Read(string userEmail)
+        {
+            Data data = await _dbContext.Datas.FirstOrDefaultAsync(x => x.UserForeignKey == userEmail);
+
+            return data;
+        }
+
+        public async Task<Data> Update(string userEmail, string userData)
+        {
+            Data data = await _dbContext.Datas.FirstOrDefaultAsync(x => x.UserForeignKey == userEmail);
+            data.UserData = userData;
+            data.LastModified = DateTime.Now;
+            
+            await _dbContext.Datas.AddAsync(data);
+            await _dbContext.SaveChangesAsync();
+
+            return data;
+        }
     }
 }
