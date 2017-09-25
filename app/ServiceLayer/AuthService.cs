@@ -27,7 +27,6 @@ namespace app.ServiceLayer
 
 	public class AuthService : IAuthService
     {
-        private readonly ApplicationContext _dbContext;
         private readonly ILogger _logger;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IPasswordHasher<ApplicationUser> _passwordHasher;
@@ -37,7 +36,6 @@ namespace app.ServiceLayer
 
 
         public AuthService(
-            ApplicationContext dbContext,
             ILoggerFactory loggerFactory,
             UserManager<ApplicationUser> userManager,
             IPasswordHasher<ApplicationUser> passwordHasher,
@@ -46,7 +44,6 @@ namespace app.ServiceLayer
             IDataDAO dataDAO
             )
         {
-            _dbContext = dbContext;
             _userManager = userManager;
             _passwordHasher = passwordHasher;
             _appConfiguration = appConfiguration;

@@ -9,9 +9,9 @@ namespace app.DataLayer.Models
 {
     public interface IDataDAO
     {
-        Task<Data> Create(string userId, string userData="");
-        Task<Data> Read(string userId);
-        Task<Data> Update(string userId, string userData);
+        Task<Data> Create(string userEmail, string userData="");
+        Task<Data> Read(string userEmail);
+        Task<Data> Update(string userEmail, string userData);
         // Task Delete(string userId);
     }
     public class DataDAO : IDataDAO
