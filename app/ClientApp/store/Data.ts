@@ -31,11 +31,6 @@ interface ReceiveCardsAction {
     cards: CardData[];
 }
 
-interface CreateCardsAction {
-    type: 'CREATE_CARDS';
-    cards: CardData[];
-}
-
 interface UpdateCardsAction {
     type: 'UPDATE_CARDS';
     cards: CardData[];
@@ -63,16 +58,23 @@ interface UpdateCardAction {
     description: string
 }
 
+interface CreateCardAction {
+    type: 'CREATE_CARD'
+    accountName: string
+    userName: string
+    pw: string
+    description: string
+}
 // Declare a 'discriminated union' type. This guarantees that all references to 'type' properties contain one of the
 // declared type strings (and not any other arbitrary string).
 export type KnownAction =  RequestCardsAction 
                     | ReceiveCardsAction
-                    | CreateCardsAction
                     | UpdateCardsAction
                     | DeleteCardsAction
                     | SearchCardsAction 
                     | CleanupAction
-                    | UpdateCardAction;
+                    | UpdateCardAction
+                    | CreateCardAction;
 
 // ----------------
 // ACTION CREATORS - These are functions exposed to UI components that will trigger a state transition.
@@ -98,6 +100,9 @@ export const actionCreators = {
     //         dispatch({ type: 'REQUEST_WEATHER_FORECASTS', startDateIndex: startDateIndex });
     //     }
     // }
+    addNewCardAction: (accountName, userName, pw, description): AppThunkAction<KnownAction> => (dispatch, getState) => {
+        dispatch({type:'CREATE_CARD', accountName: accountName, userName: userName, pw: pw, description:description})
+    },
     updateCardAction: (accountName, index, userName, pw, description): AppThunkAction<KnownAction> => (dispatch, getState) => {
         dispatch({type:'UPDATE_CARD', accountName: accountName, index: index, userName: userName, pw: pw, description:description})
     }
@@ -133,8 +138,6 @@ export const reducer: Reducer<CardsState> = (state: CardsState, incomingAction: 
             return { ... state, isLoaded: false };
         case 'RECEIVE_CARDS':
             return { ... state, isLoaded: true, cards: action.cards };
-        case 'CREATE_CARDS':
-            return { ... state, isLoaded: false, cards: action.cards };
         case 'UPDATE_CARDS':
             return { ... state, isLoaded: false, cards: action.cards };
         case 'DELETE_CARDS':
@@ -165,7 +168,14 @@ export const reducer: Reducer<CardsState> = (state: CardsState, incomingAction: 
                     description: action.description
                 } : card)
             };
-        
+        case 'CREATE_CARD':
+            var { accountName, userName, pw, description } = action
+            var newCards = state.cards.map((card, index) => {return {... card, index: (index + 1)}})
+            newCards.splice(0, 0, {index:0, accountName:accountName, userName:userName, pw:pw, description:description})
+            return {
+                ... state,
+                cards:newCards 
+            };
         default:
             // The following line guarantees that every action in the KnownAction union has been covered by a case above
             const exhaustiveCheck: never = action;
