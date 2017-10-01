@@ -72,6 +72,11 @@ class Login extends React.Component<AuthProps, AuthState> {
                             placeholder="Password" />
                         <input className={s.loginButton}
                             type="submit" value="Login"/>
+                        <NavLink to={ '/register' } activeClassName='active'>
+                        <input className={s.registerRedirectButton}
+                            type="button"
+                             value="Register"/>
+                        </NavLink>
                         {this.displayError()}
                     </form>
                 </div>;

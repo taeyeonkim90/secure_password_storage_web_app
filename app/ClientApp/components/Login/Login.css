@@ -83,6 +83,18 @@
     transition: box-shadow 0.3s;
 }
 
+.registerRedirectButton {
+    margin: 0.3em;
+    font-size: 1.3em;
+    font-weight: 500;
+    color: #818181;
+    width: 100px;
+    border: solid 2px #EBEBEB;
+    border-radius: 0.2em;
+    background-color: #EBEBEB;
+    transition: box-shadow 0.3s;
+}
+
 .loginButton:hover, .loginButton.hover {
     color: black;
     border: solid 2px #818181;

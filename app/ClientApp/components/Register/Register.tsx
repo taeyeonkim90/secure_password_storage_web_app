@@ -72,6 +72,10 @@ class Register extends React.Component<AuthProps, AuthState> {
                             placeholder="Password" />
                         <input className={css.registerButton}
                             type="submit" value="Register"/>
+                        <NavLink to={ '/login' } activeClassName='active'>
+                            <input type="button" className={css.redirectLoginButton}
+                             value="Login"/>
+                        </NavLink>
                         {this.displayError()}
                     </form>
                 </div>;

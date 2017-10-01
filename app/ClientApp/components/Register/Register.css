@@ -42,7 +42,7 @@
     height: 100vh;
 }
 
-.registerForm input[type="text"], .registerForm input[type="password"], .registerButton {
+.registerForm input[type="text"], .registerForm input[type="password"], .registerButton, .redirectLoginButton {
     font-size: 1.3em;
     font-weight: 500;
     max-width: 400px;
@@ -52,7 +52,7 @@
 }
 
 @media (max-width: 480px) {
-    .registerForm input[type="text"], .registerForm input[type="password"] ,.registerButton {
+    .registerForm input[type="text"], .registerForm input[type="password"] ,.registerButton, .redirectLoginButton {
         max-width: 70%;
         width: 100%;
         margin: 0.3em;
@@ -71,7 +71,7 @@
     box-shadow: 0 0 5px 1px #114B5F;
 }
 
-.registerButton {
+.registerButton, .redirectLoginButton {
     margin: 0.3em;
     font-size: 1.3em;
     font-weight: 500;
@@ -79,12 +79,15 @@
     border: none;
     background-color: #456990;
     transition: box-shadow 0.3s;
+    text-align: center;
 }
 
-.registerButton:hover, .registerButton.hover {
+.registerButton:hover, .registerButton.hover, .redirectLoginButton:hover, .redirectLoginButton.hover {
     background-color: #114B5F;
     border: none;
 }
+
+
 
 .errorMessageContainer {
     margin: 0.3em;
