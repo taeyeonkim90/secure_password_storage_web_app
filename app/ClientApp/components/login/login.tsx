@@ -3,7 +3,7 @@ import { Link, NavLink, RouteComponentProps, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { ApplicationState } from '../../store';
 import * as AuthStore from '../../store/Authenticate';
-import * as s from './login.css';
+import * as s from './Login.css';
 
 type AuthProps =
     AuthStore.AuthState

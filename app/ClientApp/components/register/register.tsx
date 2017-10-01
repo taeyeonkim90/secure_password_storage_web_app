@@ -3,7 +3,6 @@ import { Link, NavLink, RouteComponentProps, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { ApplicationState }  from '../../store';
 import * as AuthStore from '../../store/Authenticate';
-import * as s from './register.css';
 
 type AuthProps =
 AuthStore.AuthState
@@ -51,7 +50,7 @@ class Register extends React.Component<AuthProps, AuthState> {
 
     public render() {
         if (!this.props.authenticated){
-            return  <div className={s.red}>
+            return  <div>
                         {this.displayError()}
                         <h1>Register</h1>
                         <form onSubmit={this.handleRegisterSubmit}>

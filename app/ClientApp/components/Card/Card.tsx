@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { ApplicationState }  from '../../store';
 import * as CardsState from '../../store/Data';
 import { AppThunkAction } from '../../store';
+import FieldInput from '../FieldInput/FieldInput';
 
 // At runtime, Redux will merge together...
 interface CardAction {
@@ -131,10 +132,10 @@ export default class Card extends React.Component<CardProps, CardState> {
      */
     renderIsEditHTML = () => {
         return <div>
-            <input type="text" value={this.state.accountName} name="accountName" onChange={this.handleChange} />
-            <input type="text" value={this.state.userName} name="userName" onChange={this.handleChange} />
-            <input type="text" value={this.state.pw} name="pw" onChange={this.handleChange} />
-            <input type="text" value={this.state.description} name="description" onChange={this.handleChange} />
+            <FieldInput name="accountName" type="text" data={this.state.accountName} updateState={this.handleChange}/>
+            <FieldInput name="userName" type="text" data={this.state.userName} updateState={this.handleChange}/>
+            <FieldInput name="pw" type="password" data={this.state.pw} updateState={this.handleChange}/>
+            <FieldInput name="description" type="text" data={this.state.description} updateState={this.handleChange}/>
         </div>
     }
 
