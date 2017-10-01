@@ -1,0 +1,96 @@
+::-webkit-input-placeholder { /* Chrome */
+    color: #456990;
+}
+
+:-ms-input-placeholder { /* IE 10+ */
+    color: #456990;
+}
+
+::-moz-placeholder { /* Firefox 19+ */
+    color: #456990;
+    opacity: 1;
+}
+
+:-moz-placeholder { /* Firefox 4 - 18 */
+    color: #456990;
+    opacity: 1;
+}
+
+.registerContainer {
+    height: 100vh;
+    background: no-repeat center center fixed; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    color: #114B5F;
+}
+
+@media (max-width: 767px) {
+    /* revert body padding top of 50 px */
+    .registerContainer {
+        margin-top: -50px !important;
+    }
+}
+
+.registerForm {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+.registerForm input[type="text"], .registerForm input[type="password"], .registerButton {
+    font-size: 1.3em;
+    font-weight: 500;
+    max-width: 400px;
+    width: 100vw;
+    margin: 0.3em;
+    height: 50px;
+}
+
+@media (max-width: 480px) {
+    .registerForm input[type="text"], .registerForm input[type="password"] ,.registerButton {
+        max-width: 70%;
+        width: 100%;
+        margin: 0.3em;
+    }
+}
+
+.registerElement {
+    padding: 0.7em;
+    border: none;
+    transition: box-shadow 0.3s;
+    outline: none;
+}
+
+.registerElement:focus, .registerElement.focus {
+    border: none;
+    box-shadow: 0 0 5px 1px #114B5F;
+}
+
+.registerButton {
+    margin: 0.3em;
+    font-size: 1.3em;
+    font-weight: 500;
+    color: #FFFFFF;
+    border: none;
+    background-color: #456990;
+    transition: box-shadow 0.3s;
+}
+
+.registerButton:hover, .registerButton.hover {
+    background-color: #114B5F;
+    border: none;
+}
+
+.errorMessageContainer {
+    margin: 0.3em;
+    padding: 0.3em;
+    list-style-type: none;
+    font-size: 1.2em;
+    background-color: rgba(134, 201, 138, 0.2);
+    color: #FFF;
+}

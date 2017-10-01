@@ -3,6 +3,7 @@ import { Link, NavLink, RouteComponentProps, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { ApplicationState }  from '../../store';
 import * as AuthStore from '../../store/Authenticate';
+import * as css from './Register.css';
 
 type AuthProps =
 AuthStore.AuthState
@@ -44,29 +45,39 @@ class Register extends React.Component<AuthProps, AuthState> {
         <li>{message}</li>
       );
       return (
-        <ul>{listItems}</ul>
+        <ul className={css.errorMessageContainer}>{listItems}</ul>
       );
     }
 
     public render() {
-        if (!this.props.authenticated){
-            return  <div>
+        if (!this.props.authenticated) {
+            // following image is from https://unsplash.com/photos/mgYAR7BzBk4
+            // TODO: make sure to include this link on LICENSE
+            const imageStyle = {
+                backgroundImage: 'url("./img/register.jpg")',
+            }
+
+            const registerBox =
+                <div className={css.registerContainer} style={imageStyle}>
+                    <form className={css.registerForm} onSubmit={this.handleRegisterSubmit}>
+                        <input className={css.registerElement}
+                            type="text"
+                            value={this.state.email}
+                            onChange={this.handleEmailChange}
+                            placeholder="E-mail" />
+                        <input className={css.registerElement}
+                            type="password"
+                            value={this.state.password}
+                            onChange={this.handlePasswordChange}
+                            placeholder="Password" />
+                        <input className={css.registerButton}
+                            type="submit" value="Register"/>
                         {this.displayError()}
-                        <h1>Register</h1>
-                        <form onSubmit={this.handleRegisterSubmit}>
-                            <label>
-                                email:
-                                <input type="text" value={this.state.email} onChange={this.handleEmailChange} />
-                            </label>
-                            <label>
-                                password:
-                                <input type="password" value={this.state.password} onChange={this.handlePasswordChange} />
-                            </label>
-                            <input type="submit" value="Submit" />
-                        </form>
-                    </div>
+                    </form>
+                </div>;
+            return registerBox;
         } else {
-            return <Redirect to="/" push/>;
+            return <Redirect to="/" push />;
         }
     }
 }
