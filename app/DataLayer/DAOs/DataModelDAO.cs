@@ -23,17 +23,17 @@ namespace app.DataLayer.Models
             _dbContext = dbContext;
         }
 
-        public async Task<Data> Create(string userEmail, string userData="default data")
+        public async Task<Data> Create(string userEmail, string userData)
         {
             ApplicationUser user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Email == userEmail);
 
             DateTime currentTime = DateTime.Now;
-            Data newData = new Data {
+            Data newData = new Data(){
                                 UserData = userData,
                                 Created = currentTime,
                                 LastModified = currentTime,
                                 User = user
-            };
+                                };
             await _dbContext.Datas.AddAsync(newData);
             await _dbContext.SaveChangesAsync();
 
@@ -42,18 +42,18 @@ namespace app.DataLayer.Models
 
         public async Task<Data> Read(string userEmail)
         {
-            Data data = await _dbContext.Datas.FirstOrDefaultAsync(x => x.UserForeignKey == userEmail);
+            Data data = await _dbContext.Datas.Include(d => d.User).FirstOrDefaultAsync(d => d.User.Email == userEmail);
 
             return data;
         }
 
         public async Task<Data> Update(string userEmail, string userData)
         {
-            Data data = await _dbContext.Datas.FirstOrDefaultAsync(x => x.UserForeignKey == userEmail);
+            Data data = await _dbContext.Datas.Include(d => d.User).FirstOrDefaultAsync(d => d.User.Email == userEmail);
             data.UserData = userData;
             data.LastModified = DateTime.Now;
-            
-            await _dbContext.Datas.AddAsync(data);
+
+            _dbContext.Entry(data).State = EntityState.Modified;
             await _dbContext.SaveChangesAsync();
 
             return data;

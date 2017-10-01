@@ -54,13 +54,13 @@ namespace app.ServiceLayer
 
         public async Task<IdentityResult> CreateUser(ApplicationUserDTO userDTO)
         {
-            var user = new ApplicationUser { UserName = userDTO.Email, Email = userDTO.Email };
+            var user = new ApplicationUser(){ UserName = userDTO.Email, Email = userDTO.Email };
             var result = await _userManager.CreateAsync(user, userDTO.Password);
 
             if (result.Succeeded)
             {
                 // create a default data model for the user
-                Data data = await _dataDAO.Create(userDTO.Email);
+                Data data = await _dataDAO.Create(userDTO.Email, "new default data");
             }
 
             return result;

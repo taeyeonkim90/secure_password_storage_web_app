@@ -50,6 +50,7 @@ namespace app
             // Add application services
             services.Configure<AppConfiguration>(Configuration.GetSection("AppConfiguration"));
             services.AddTransient<IAuthService,AuthService>();
+            services.AddTransient<IDataService,DataService>();  
             services.AddTransient<IJtiDAO,JtiDAO>();
             services.AddTransient<IDataDAO,DataDAO>();
         }

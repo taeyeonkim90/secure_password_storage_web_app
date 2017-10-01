@@ -38,14 +38,14 @@ namespace app.ServiceLayer
         {
             Data data = await _dataDAO.Read(userEmail);
 
-            return new DataDTO{ UserData = data.UserData };
+            return new DataDTO(){ UserData = data.UserData };
         }
 
         public async Task<DataDTO> UpdateUserData(string userEmail, string userData)
         {
             Data data = await _dataDAO.Update(userEmail, userData);
 
-            return new DataDTO{ UserData = data.UserData };
+            return new DataDTO(){ UserData = data.UserData };
         }
     }
 }
