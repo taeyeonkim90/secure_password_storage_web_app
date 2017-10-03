@@ -58,12 +58,19 @@ interface LogoutAction {
     type: 'LOGOUT'
 }
 
+interface ErrorMessageAction {
+    type: 'ERROR_MESSAGE'
+    message: string[]
+}
+
+
+
 // Declare a 'discriminated union' type. This guarantees that all references to 'type' properties contain one of the
 // declared type strings (and not any other arbitrary string).
 type KnownAction = RequestRegistrationAction | ReceiveRegistrationAction | 
                     RequestJWTAction | ReceiveJWTAction | 
                     RequestRefreshJWTAction | ReceiveRefreshJWTAction|
-                    LogoutAction
+                    LogoutAction | ErrorMessageAction
 
 // ----------------
 // ACTION CREATORS - These are functions exposed to UI components that will trigger a state transition.
@@ -117,7 +124,11 @@ export const actionCreators = {
             addTask(fetchTask) // Ensure server-side prerendering waits for this to complete
             dispatch({type: 'REQUEST_REFRESH', fetching: true})
         }
-    } 
+    } ,
+
+    errorMessage: (message:string): AppThunkAction<KnownAction> => (dispatch, getState) => {
+        dispatch({ type: 'ERROR_MESSAGE', message: [message]})
+    }
 }
 
 // ----------------
@@ -142,6 +153,8 @@ export const reducer: Reducer<AuthState> = (state: AuthState, incomingAction: Ac
             return {... state, fetching: action.fetching, token: action.token}
         case 'LOGOUT':
             return {... state, authenticated: false, message: [], token: '', key: ''}
+        case 'ERROR_MESSAGE' :
+            return {... state, message: action.message}
     }
 
     return state || unloadedState

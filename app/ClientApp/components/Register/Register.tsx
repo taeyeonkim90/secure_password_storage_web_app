@@ -13,30 +13,36 @@ AuthStore.AuthState
 interface AuthState {
     email: string
     password: string
+    passwordMatch: string
 }
 
 class Register extends React.Component<AuthProps, AuthState> {
     constructor(props){
         super(props)
-        this.state = {email:'', password:''}
+        this.state = {email:'', password:'', passwordMatch: ''}
     }
 
     handleEmailChange = (event) => {
         this.setState({email: event.target.value})
     }
-
-    handlePasswordChange = (event) => {
-        this.setState({password: event.target.value})
+    
+    handlePasswordMatchChange = (event) => {
+        this.setState({[event.target.name]: event.target.value}, () => {
+            if (this.state.password == "" || this.state.passwordMatch == ""){
+                this.props.errorMessage("")
+            }
+            else if (this.state.password != this.state.passwordMatch) {
+                this.props.errorMessage("Two passwords do not match.")
+            }
+            else{
+                this.props.errorMessage("")
+            }
+        })
     }
 
     handleRegisterSubmit = (event) => {
         event.preventDefault()
         this.props.registerUser(this.state.email, this.state.password)
-    }
-
-    handleLoginSubmit = (event) => {
-        event.preventDefault()
-        this.props.loginUser(this.state.email, this.state.password)
     }
 
     displayError = () => {
@@ -65,11 +71,16 @@ class Register extends React.Component<AuthProps, AuthState> {
                             value={this.state.email}
                             onChange={this.handleEmailChange}
                             placeholder="E-mail" />
-                        <input className={css.registerElement}
+                        <input name="password" className={css.registerElement}
                             type="password"
                             value={this.state.password}
-                            onChange={this.handlePasswordChange}
+                            onChange={this.handlePasswordMatchChange}
                             placeholder="Password" />
+                        <input name="passwordMatch" className={css.registerElement}
+                            type="password"
+                            value={this.state.passwordMatch}
+                            onChange={this.handlePasswordMatchChange}
+                            placeholder="Confirm the Password" />
                         <input className={css.registerButton}
                             type="submit" value="Register"/>
                         <NavLink to={ '/login' } activeClassName='active'>

@@ -21,17 +21,8 @@ class Login extends React.Component<AuthProps, AuthState> {
         this.state = { email: '', password: '' }
     }
 
-    handleEmailChange = (event) => {
-        this.setState({ email: event.target.value })
-    }
-
-    handlePasswordChange = (event) => {
-        this.setState({ password: event.target.value })
-    }
-
-    handleRegisterSubmit = (event) => {
-        event.preventDefault()
-        this.props.registerUser(this.state.email, this.state.password)
+    handleChange = (event) => {
+        this.setState({ [event.target.name]: event.target.value })
     }
 
     handleLoginSubmit = (event) => {
@@ -60,15 +51,15 @@ class Login extends React.Component<AuthProps, AuthState> {
             const loginBox =
                 <div className={s.loginContainer} style={imageStyle}>
                     <form className={s.loginForm} onSubmit={this.handleLoginSubmit}>
-                        <input className={s.loginElement}
+                        <input name="email" className={s.loginElement}
                             type="text"
                             value={this.state.email}
-                            onChange={this.handleEmailChange}
+                            onChange={this.handleChange}
                             placeholder="E-mail" />
-                        <input className={s.loginElement}
+                        <input name="password" className={s.loginElement}
                             type="password"
                             value={this.state.password}
-                            onChange={this.handlePasswordChange}
+                            onChange={this.handleChange}
                             placeholder="Password" />
                         <input className={s.loginButton}
                             type="submit" value="Login"/>
