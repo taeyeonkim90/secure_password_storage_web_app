@@ -3,6 +3,7 @@ import { Link, RouteComponentProps } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { ApplicationState }  from '../../store';
 import Card from '../Card/Card';
+import NewCard from '../NewCard/NewCard';
 import * as CardsState from '../../store/Data';
 import * as AuthState from '../../store/Authenticate';
 
@@ -36,7 +37,8 @@ class CardContainer extends React.Component<CardContainerProps, {}> {
         let listItems = this.props.cards.map((card, key) => 
                         <Card key={key} index={key} {...card} updateCardAction={this.props.updateCardAction}/>
                     )
-        return  <div> p
+        return  <div> 
+                    <NewCard addNewCardAction={this.props.addNewCardAction}/>
                     {listItems}
                 </div >;
     }
