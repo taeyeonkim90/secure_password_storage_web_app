@@ -2,6 +2,7 @@ import { fetch, addTask } from 'domain-task';
 import { Action, Reducer, ActionCreator } from 'redux';
 import { AppThunkAction } from './';
 import axios from 'axios';
+import * as CryptoJS from 'crypto-js';
 
 // -----------------
 // STATE - This defines the type of data maintained in the Redux store.
@@ -80,22 +81,29 @@ export type KnownAction =  RequestCardsAction
 // ACTION CREATORS - These are functions exposed to UI components that will trigger a state transition.
 // They don't directly mutate state, but they can have external side-effects (such as loading data).
 
-const parseCardsData = (data) => {
+const encryptCardsData = (cards, key) => {
+    let serializedCards = JSON.stringify(cards)
+    let encryptedData = CryptoJS.AES.encrypt(serializedCards, key)
+    return encryptedData
+}
+
+const parseCardsData = (data, key) => {
     if (data.data.userData == ""){
         return []
     }
     else {
-        return JSON.parse(data.data.userData)
+        let decryptedData = CryptoJS.decrypt(data.data.userData, key)
+        return JSON.parse(decryptedData)
     }
 }
 
 export const actionCreators = {
-    requestCardsAction: (token): AppThunkAction<KnownAction> => (dispatch, getState) => {
+    requestCardsAction: (token, key): AppThunkAction<KnownAction> => (dispatch, getState) => {
         if (!getState().data.fetching){
             let config = { headers: {'Authorization':`Bearer ${ token }`}}
             let fetchTask = axios.get('/api/Data/Card', config)
                 .then(response => {
-                    dispatch({ type: 'RECEIVE_CARDS', cards: parseCardsData(response.data)})
+                    dispatch({ type: 'RECEIVE_CARDS', cards: parseCardsData(response.data, key)})
                 })
                 .catch(error => {
                     console.log("fetch error occured when retrieving data from the backend")
@@ -103,28 +111,30 @@ export const actionCreators = {
             dispatch({ type: 'REQUEST_CARDS' })
         }
     },
-    addNewCardAction: (accountName, userName, pw, description, token): AppThunkAction<KnownAction> => (dispatch, getState) => {
+    addNewCardAction: (accountName, userName, pw, description, token, key): AppThunkAction<KnownAction> => (dispatch, getState) => {
         dispatch({type:'CREATE_CARD', accountName: accountName, userName: userName, pw: pw, description:description})
         if (!getState().data.fetching){
             let config = { headers: {'Authorization':`Bearer ${ token }`}}
-            let serialized_cards = JSON.stringify(getState().data.cards)
-            let fetchTask = axios.put('/api/Data/Card', {userData:serialized_cards}, config)
+            let encryptedData = encryptCardsData(getState().data.cards, key)
+            console.log(`printing encrypted data ${encryptedData}`)
+            let fetchTask = axios.put('/api/Data/Card', {userData:encryptedData}, config)
                 .then(response => {
-                    dispatch({ type: 'RECEIVE_CARDS', cards: parseCardsData(response.data)})
+                    console.log("updated data is received again")
+                    dispatch({ type: 'RECEIVE_CARDS', cards: parseCardsData(response.data, key)})
                 })
                 .catch(error => {
                     console.log("fetch error occured when updating data to the backend")
                 })
         }
     },
-    updateCardAction: (accountName, index, userName, pw, description, token): AppThunkAction<KnownAction> => (dispatch, getState) => {
+    updateCardAction: (accountName, index, userName, pw, description, token, key): AppThunkAction<KnownAction> => (dispatch, getState) => {
         dispatch({type:'UPDATE_CARD', accountName: accountName, index: index, userName: userName, pw: pw, description:description})
         if (!getState().data.fetching){
             let config = { headers: {'Authorization':`Bearer ${ token }`}}
-            let serialized_cards = JSON.stringify(getState().data.cards)
-            let fetchTask = axios.put('/api/Data/Card', {userData:serialized_cards}, config)
+            let encryptedData = encryptCardsData(getState().data.cards, key)
+            let fetchTask = axios.put('/api/Data/Card', {userData:encryptedData}, config)
                 .then(response => {
-                    dispatch({ type: 'RECEIVE_CARDS', cards: parseCardsData(response.data)})
+                    dispatch({ type: 'RECEIVE_CARDS', cards: parseCardsData(response.data, key)})
                 })
                 .catch(error => {
                     console.log("fetch error occured when updating data to the backend")
