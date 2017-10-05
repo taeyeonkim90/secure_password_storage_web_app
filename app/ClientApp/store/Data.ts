@@ -7,7 +7,7 @@ import axios from 'axios';
 // STATE - This defines the type of data maintained in the Redux store.
 
 export interface CardsState {
-    isLoaded: boolean;
+    fetching: boolean;
     cards: CardData[];
 }
 
@@ -70,9 +70,9 @@ interface CreateCardAction {
 export type KnownAction =  RequestCardsAction 
                     | ReceiveCardsAction
                     | UpdateCardsAction
-                    | DeleteCardsAction
-                    | SearchCardsAction 
-                    | CleanupAction
+                    // | DeleteCardsAction
+                    // | SearchCardsAction 
+                    // | CleanupAction
                     | UpdateCardAction
                     | CreateCardAction;
 
@@ -80,31 +80,56 @@ export type KnownAction =  RequestCardsAction
 // ACTION CREATORS - These are functions exposed to UI components that will trigger a state transition.
 // They don't directly mutate state, but they can have external side-effects (such as loading data).
 
+const parseCardsData = (data) => {
+    if (data.data.userData == ""){
+        return []
+    }
+    else {
+        return JSON.parse(data.data.userData)
+    }
+}
+
 export const actionCreators = {
     requestCardsAction: (token): AppThunkAction<KnownAction> => (dispatch, getState) => {
-        
+        if (!getState().data.fetching){
+            let config = { headers: {'Authorization':`Bearer ${ token }`}}
+            let fetchTask = axios.get('/api/Data/Card', config)
+                .then(response => {
+                    dispatch({ type: 'RECEIVE_CARDS', cards: parseCardsData(response.data)})
+                })
+                .catch(error => {
+                    console.log("fetch error occured when retrieving data from the backend")
+                })
+            dispatch({ type: 'REQUEST_CARDS' })
+        }
     },
-    // requestWeatherForecasts: (startDateIndex: number, token: string): AppThunkAction<KnownAction> => (dispatch, getState) => {
-    //     // Only load data if it's something we don't already have (and are not already loading)
-    //     if (startDateIndex !== getState().weatherForecasts.startDateIndex) {
-    //         let config = { headers: {'Authorization':`Bearer ${ token }`}}
-    //         let fetchTask = axios.get(`/api/SampleData/WeatherForecasts?startDateIndex=${ startDateIndex }`, config)
-    //             .then(response => {
-    //                 dispatch({ type: 'RECEIVE_WEATHER_FORECASTS', startDateIndex: startDateIndex, forecasts: response.data });
-    //             })
-    //             .catch(error => {
-    //                 dispatch({ type: "CLEAN_UP"})
-    //             });
-
-    //         addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
-    //         dispatch({ type: 'REQUEST_WEATHER_FORECASTS', startDateIndex: startDateIndex });
-    //     }
-    // }
-    addNewCardAction: (accountName, userName, pw, description): AppThunkAction<KnownAction> => (dispatch, getState) => {
+    addNewCardAction: (accountName, userName, pw, description, token): AppThunkAction<KnownAction> => (dispatch, getState) => {
         dispatch({type:'CREATE_CARD', accountName: accountName, userName: userName, pw: pw, description:description})
+        if (!getState().data.fetching){
+            let config = { headers: {'Authorization':`Bearer ${ token }`}}
+            let serialized_cards = JSON.stringify(getState().data.cards)
+            let fetchTask = axios.put('/api/Data/Card', {userData:serialized_cards}, config)
+                .then(response => {
+                    dispatch({ type: 'RECEIVE_CARDS', cards: parseCardsData(response.data)})
+                })
+                .catch(error => {
+                    console.log("fetch error occured when updating data to the backend")
+                })
+        }
     },
-    updateCardAction: (accountName, index, userName, pw, description): AppThunkAction<KnownAction> => (dispatch, getState) => {
+    updateCardAction: (accountName, index, userName, pw, description, token): AppThunkAction<KnownAction> => (dispatch, getState) => {
         dispatch({type:'UPDATE_CARD', accountName: accountName, index: index, userName: userName, pw: pw, description:description})
+        if (!getState().data.fetching){
+            let config = { headers: {'Authorization':`Bearer ${ token }`}}
+            let serialized_cards = JSON.stringify(getState().data.cards)
+            let fetchTask = axios.put('/api/Data/Card', {userData:serialized_cards}, config)
+                .then(response => {
+                    dispatch({ type: 'RECEIVE_CARDS', cards: parseCardsData(response.data)})
+                })
+                .catch(error => {
+                    console.log("fetch error occured when updating data to the backend")
+                })
+        }
     }
 };
 
@@ -112,51 +137,19 @@ export const actionCreators = {
 // REDUCER - For a given state and action, returns the new state. To support time travel, this must not mutate the old state.
 
 const unloadedState: CardsState = { 
-        isLoaded: false, 
-        cards: [
-            {
-                index: 0,
-                accountName: "test1",
-                userName: "test1@test.com",
-                pw: "test1",
-                description: "test1 description"
-            },
-            {
-                index: 1,
-                accountName: "test2",
-                userName: "test2@test.com",
-                pw: "test2",
-                description: "test2 description"
-            }
-        ] 
+        fetching: false, 
+        cards: [] 
     };
 
 export const reducer: Reducer<CardsState> = (state: CardsState, incomingAction: Action) => {
     const action = incomingAction as KnownAction;
     switch (action.type) {
         case 'REQUEST_CARDS':
-            return { ... state, isLoaded: false };
+            return { ... state, fetching: true };
         case 'RECEIVE_CARDS':
-            return { ... state, isLoaded: true, cards: action.cards };
+            return { ... state, fetching: false, cards: action.cards };
         case 'UPDATE_CARDS':
-            return { ... state, isLoaded: false, cards: action.cards };
-        case 'DELETE_CARDS':
-            return {
-                isLoaded: false,
-                cards: action.cards
-            };
-
-        case 'SEARCH_CARDS':
-            return {
-                isLoaded: false,
-                cards: state.cards
-            };
-        
-        case 'CLEAN_UP':
-            return {
-                isLoaded: true,
-                cards: [],
-            };
+            return { ... state, fetching: true, cards: action.cards };
         case 'UPDATE_CARD':
             return {
                 ... state,

@@ -19,6 +19,8 @@ class CardContainer extends React.Component<CardContainerProps, {}> {
         // This method runs when the component is first added to the page
         // let startDateIndex = parseInt(this.props.match.params.startDateIndex) || 0;
         // this.props.requestWeatherForecasts(startDateIndex, this.props.token);
+        let token = this.props.token
+        this.props.requestCardsAction(token)
     }
 
     componentWillReceiveProps(nextProps: CardContainerProps) {
@@ -28,17 +30,23 @@ class CardContainer extends React.Component<CardContainerProps, {}> {
         console.log("triggering CardsContainer props change")
     }
 
-    updateCards = () => {
-        let token = this.props.token;
+    updateCard = (accountName, index, userName, pw, description) => {
+        let token = this.props.token
+        this.props.updateCardAction(accountName, index, userName, pw, description, token)
+    }
+
+    addCard = (accountName, userName, pw, description) => {
+        let token = this.props.token
+        this.props.addNewCardAction(accountName, userName, pw, description, token)
     }
 
     public render() {
         console.log(this.props.cards)
         let listItems = this.props.cards.map((card, key) => 
-                        <Card key={key} index={key} {...card} updateCardAction={this.props.updateCardAction}/>
+                        <Card key={key} index={key} {...card} updateCard={this.updateCard}/>
                     )
         return  <div> 
-                    <NewCard addNewCardAction={this.props.addNewCardAction}/>
+                    <NewCard addCard={this.addCard}/>
                     {listItems}
                 </div >;
     }

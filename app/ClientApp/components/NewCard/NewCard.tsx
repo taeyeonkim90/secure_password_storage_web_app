@@ -9,7 +9,7 @@ import * as css from './NewCard.css';
 
 
 interface NewCardAction {
-    addNewCardAction: (accountName, userName, pw, description) => AppThunkAction<CardsState.KnownAction>
+    addCard: (accountName, userName, pw, description) => void
 } 
 
 type NewCardProps = NewCardAction
@@ -36,7 +36,7 @@ export default class Card extends React.Component<NewCardProps, NewCardState> {
 
     addNewCard = () => {
         var {accountName, userName, pw, description } = this.state
-        this.props.addNewCardAction(accountName, userName, pw, description)
+        this.props.addCard(accountName, userName, pw, description)
         this.cancelNewCard()
     }
 

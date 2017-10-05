@@ -8,7 +8,7 @@ import FieldInput from '../FieldInput/FieldInput';
 
 // At runtime, Redux will merge together...
 interface CardAction {
-    updateCardAction: (accountName, index, userName, pw, description) => AppThunkAction<CardsState.KnownAction>
+    updateCard: (accountName, index, userName, pw, description) => void
 } 
 
 type CardProps = CardsState.CardData
@@ -161,7 +161,7 @@ export default class Card extends React.Component<CardProps, CardState> {
 
     save = () => {
         this.setState((prevState, props) => ({isEdit: false}))
-        this.props.updateCardAction(this.state.accountName, this.state.index, this.state.userName, this.state.pw, this.state.description);
+        this.props.updateCard(this.state.accountName, this.state.index, this.state.userName, this.state.pw, this.state.description);
         this.forceUpdate();
     }
 

@@ -22,6 +22,10 @@ class Register extends React.Component<AuthProps, AuthState> {
         this.state = {email:'', password:'', passwordMatch: ''}
     }
 
+    componentWillMount() {
+        this.props.errorMessage("")
+    }
+
     handleEmailChange = (event) => {
         this.setState({email: event.target.value})
     }
@@ -47,8 +51,8 @@ class Register extends React.Component<AuthProps, AuthState> {
 
     displayError = () => {
         var messages = this.props.message
-        const listItems = messages.map((message) =>
-        <li>{message}</li>
+        const listItems = messages.map((message, i) =>
+        <li key={i}>{message}</li>
       );
       return (
         <ul className={css.errorMessageContainer}>{listItems}</ul>

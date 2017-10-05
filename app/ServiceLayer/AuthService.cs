@@ -60,7 +60,7 @@ namespace app.ServiceLayer
             if (result.Succeeded)
             {
                 // create a default data model for the user
-                Data data = await _dataDAO.Create(userDTO.Email, "new default data");
+                Data data = await _dataDAO.Create(userDTO.Email, "");
             }
 
             return result;

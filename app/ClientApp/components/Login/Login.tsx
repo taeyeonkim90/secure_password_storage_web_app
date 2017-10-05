@@ -21,6 +21,10 @@ class Login extends React.Component<AuthProps, AuthState> {
         this.state = { email: '', password: '' }
     }
 
+    componentWillMount() {
+        this.props.errorMessage("")
+    }
+
     handleChange = (event) => {
         this.setState({ [event.target.name]: event.target.value })
     }
@@ -32,8 +36,8 @@ class Login extends React.Component<AuthProps, AuthState> {
 
     displayError = () => {
         var messages = this.props.message
-        const listItems = messages.map((message) =>
-            <li>{message}</li>
+        const listItems = messages.map((message, i) =>
+            <li key={i}>{message}</li>
         );
         return (
             <ul className={s.errorMessageContainer}>{listItems}</ul>
