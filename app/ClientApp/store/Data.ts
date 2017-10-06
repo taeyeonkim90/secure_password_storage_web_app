@@ -84,7 +84,7 @@ export type KnownAction =  RequestCardsAction
 const encryptCardsData = (cards, key) => {
     let serializedCards = JSON.stringify(cards)
     let encryptedData = CryptoJS.AES.encrypt(serializedCards, key)
-    return encryptedData
+    return encryptedData.toString()
 }
 
 const parseCardsData = (data, key) => {
@@ -92,8 +92,9 @@ const parseCardsData = (data, key) => {
         return []
     }
     else {
-        let decryptedData = CryptoJS.decrypt(data.data.userData, key)
-        return JSON.parse(decryptedData)
+        let bytes = CryptoJS.AES.decrypt(data.data.userData, key)
+        let decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8))
+        return decryptedData
     }
 }
 
@@ -116,7 +117,6 @@ export const actionCreators = {
         if (!getState().data.fetching){
             let config = { headers: {'Authorization':`Bearer ${ token }`}}
             let encryptedData = encryptCardsData(getState().data.cards, key)
-            console.log(`printing encrypted data ${encryptedData}`)
             let fetchTask = axios.put('/api/Data/Card', {userData:encryptedData}, config)
                 .then(response => {
                     console.log("updated data is received again")
