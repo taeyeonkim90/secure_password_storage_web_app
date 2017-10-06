@@ -32,14 +32,14 @@ namespace app.Controllers
         {
             if (!ModelState.IsValid)
             {
-                var message = ModelState.Values.SelectMany(v => v.Errors)
+                var messages = ModelState.Values.SelectMany(v => v.Errors)
                             .Select(modelError => modelError.ErrorMessage)
                             .ToList();
                 return
                     BadRequest(new
                         {
                             status = false,
-                            message = message
+                            messages = messages
                         });
             }
 
@@ -47,12 +47,12 @@ namespace app.Controllers
 
             if (!result.Succeeded)
             {
-                var message = result.Errors.Select(x => x.Description).ToList();
+                var messages = result.Errors.Select(x => x.Description).ToList();
                 return
                     BadRequest(new
                         {
                             status = false,
-                            message = message
+                            messages = messages
                         });
             }
 
@@ -60,7 +60,7 @@ namespace app.Controllers
             return Ok(new
                     {
                         status = true,
-                        message = new List<string>() { "User has been created" }
+                        messages = new List<string>() { "User has been created" }
                     });
         }
 
@@ -68,14 +68,14 @@ namespace app.Controllers
         public async Task<IActionResult> Token([FromBody] ApplicationUserDTO userDTO)
         {
             if (!ModelState.IsValid){
-                var message = ModelState.Values.SelectMany(v => v.Errors)
+                var messages = ModelState.Values.SelectMany(v => v.Errors)
                             .Select(modelError => modelError.ErrorMessage)
                             .ToList();
                 return
                     BadRequest(new
                         {
                             status = false,
-                            message = message
+                            messages = messages
                         });
             }
 
@@ -86,7 +86,7 @@ namespace app.Controllers
                 return Ok(new
                 {
                     status = true,
-                    message = new List<string>() { "Token has been generated" },
+                    messages = new List<string>() { "Token has been generated" },
                     token = encodedToken
                 });
             }
@@ -94,7 +94,7 @@ namespace app.Controllers
             return BadRequest(new
                 {
                     status = false,
-                    message = new List<string>() { "Log in failed" }
+                    messages = new List<string>() { "Log in failed" }
                 });
         }
 
@@ -105,7 +105,7 @@ namespace app.Controllers
             return Ok(new
             {
                 status = true,
-                message = new List<string>() { "Token validated" }
+                messages = new List<string>() { "Token validated" }
             });
         }
 
@@ -121,7 +121,7 @@ namespace app.Controllers
                 return BadRequest(new
                 {
                     status = false,
-                    message = new List<string>() { "This token cannot be used to obtain a new JWT" },
+                    messages = new List<string>() { "This token cannot be used to obtain a new JWT" },
                     token = encodedToken
                 });
             }
@@ -130,7 +130,7 @@ namespace app.Controllers
             return Ok(new
             {
                 status = true,
-                message = new List<string>() { "New token has been generated" },
+                messages = new List<string>() { "New token has been generated" },
                 token = newToken
             });
         }

@@ -9,7 +9,7 @@ import axios from 'axios'
 export interface AuthState {
     fetching: boolean
     authenticated: boolean
-    message: string[]
+    messages: string[]
     token?: string
     masterKey?: string
 }
@@ -26,7 +26,7 @@ interface ReceiveRegistrationAction{
     type: "RECEIVE_REGISTRATION"
     fetching: boolean
     authenticated: boolean
-    message: string[]
+    messages: string[]
 }
 
 interface RequestJWTAction {
@@ -38,7 +38,7 @@ interface ReceiveJWTAction {
     type: 'RECEIVE_JWT'
     fetching: boolean
     authenticated: boolean
-    message: string[]
+    messages: string[]
     token: string
     masterKey: string
 }
@@ -60,10 +60,26 @@ interface LogoutAction {
 
 interface ErrorMessageAction {
     type: 'ERROR_MESSAGE'
-    message: string[]
+    messages: string[]
 }
 
+function parseSuccessMessages(response) {
+    var messages = []
+    if (response.data.messages){
+        messages = response.data.messages
+    }
 
+    return messages
+}
+
+function parseErrorMessages(error) {
+    var messages = []
+    if (error.response.data.messages){
+        messages = error.response.data.messages
+    }
+
+    return messages
+}
 
 // Declare a 'discriminated union' type. This guarantees that all references to 'type' properties contain one of the
 // declared type strings (and not any other arbitrary string).
@@ -81,10 +97,10 @@ export const actionCreators = {
         if (!getState().auth.fetching) {
             let fetchTask = axios.post('/api/Account/Create', {Email: email, Password: password})
                 .then(response => {
-                    dispatch({ type: 'RECEIVE_REGISTRATION', authenticated: false, message: response.data.message, fetching: false })
+                    dispatch({ type: 'RECEIVE_REGISTRATION', authenticated: false, messages: parseSuccessMessages(response), fetching: false })
                 })
                 .catch(error => {
-                    dispatch({ type: 'RECEIVE_REGISTRATION', authenticated: false, message: error.response.data.message, fetching: false })
+                    dispatch({ type: 'RECEIVE_REGISTRATION', authenticated: false, messages: parseErrorMessages(error), fetching: false })
                 })
             addTask(fetchTask) // Ensure server-side prerendering waits for this to complete
             dispatch({type: 'REQUEST_REGISTRATION', fetching: true})
@@ -96,10 +112,10 @@ export const actionCreators = {
             let fetchTask = axios.post('/api/Account/Token', {Email: email, Password: password})
                 .then(response => {
                     // var hash = crypto.createHmac('sha1', 'W"?\3^32UhXq!&y>').update(password).digest('hex')
-                    dispatch({ type: 'RECEIVE_JWT', fetching: false, authenticated: response.data.status, message: response.data.message, token: response.data.token, masterKey: password})
+                    dispatch({ type: 'RECEIVE_JWT', fetching: false, authenticated: response.data.status, messages: parseSuccessMessages(response), token: response.data.token, masterKey: password})
                 })
                 .catch(error => {
-                    dispatch({ type: 'RECEIVE_JWT', fetching: false, authenticated: false, message: error.response.data.message, token: '', masterKey: ''})
+                    dispatch({ type: 'RECEIVE_JWT', fetching: false, authenticated: false, messages: parseErrorMessages(error), token: '', masterKey: ''})
                 })
             addTask(fetchTask) // Ensure server-side prerendering waits for this to complete
             dispatch({type: 'REQUEST_JWT', fetching: true})
@@ -126,15 +142,15 @@ export const actionCreators = {
         }
     } ,
 
-    errorMessage: (message:string): AppThunkAction<KnownAction> => (dispatch, getState) => {
-        dispatch({ type: 'ERROR_MESSAGE', message: [message]})
+    errorMessage: (messages:string): AppThunkAction<KnownAction> => (dispatch, getState) => {
+        dispatch({ type: 'ERROR_MESSAGE', messages: [messages]})
     }
 }
 
 // ----------------
 // REDUCER - For a given state and action, returns the new state. To support time travel, this must not mutate the old state.
 
-const unloadedState: AuthState = { fetching: false, authenticated: false, message: []}
+const unloadedState: AuthState = { fetching: false, authenticated: false, messages: []}
 
 export const reducer: Reducer<AuthState> = (state: AuthState, incomingAction: Action) => {
     const action = incomingAction as KnownAction
@@ -142,19 +158,19 @@ export const reducer: Reducer<AuthState> = (state: AuthState, incomingAction: Ac
         case 'REQUEST_REGISTRATION':
             return {... state, fetching: action.fetching}
         case 'RECEIVE_REGISTRATION':
-            return {... state, fetching: action.fetching, authenticated: action.authenticated, message: action.message}
+            return {... state, fetching: action.fetching, authenticated: action.authenticated, messages: action.messages}
         case 'REQUEST_JWT':
             return {... state, fetching: action.fetching}
         case 'RECEIVE_JWT':
-            return {... state, fetching: action.fetching, authenticated: action.authenticated, message: action.message, token: action.token, masterKey: action.masterKey}
+            return {... state, fetching: action.fetching, authenticated: action.authenticated, messages: action.messages, token: action.token, masterKey: action.masterKey}
         case 'REQUEST_REFRESH':
             return {... state, fetching: action.fetching}
         case 'RECEIVE_REFRESH':
             return {... state, fetching: action.fetching, token: action.token}
         case 'LOGOUT':
-            return {... state, authenticated: false, message: [], token: '', masterKey: ''}
+            return {... state, authenticated: false, messages: [], token: '', masterKey: ''}
         case 'ERROR_MESSAGE' :
-            return {... state, message: action.message}
+            return {... state, messages: action.messages}
     }
 
     return state || unloadedState

@@ -40,7 +40,7 @@ namespace app.Controllers
             return Ok(new
             {
                 status = true,
-                message = new List<string>() { "Data retrieved" },
+                messages = new List<string>() { "Data retrieved" },
                 data = data
             });
 
@@ -56,7 +56,7 @@ namespace app.Controllers
             return Ok(new
             {
                 status = true,
-                message = new List<string>() { "Data updated" },
+                messages = new List<string>() { "Data updated" },
                 data = updatedData
             });
         } 

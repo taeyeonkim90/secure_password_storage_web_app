@@ -35,7 +35,7 @@ class Login extends React.Component<AuthProps, AuthState> {
     }
 
     displayError = () => {
-        var messages = this.props.message
+        var messages = this.props.messages
         const listItems = messages.map((message, i) =>
             <li key={i}>{message}</li>
         );
