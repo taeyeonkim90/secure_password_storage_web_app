@@ -26,6 +26,11 @@
     color: #114B5F;
 }
 
+.transparent {
+    opacity: 0.7;
+    filter: alpha(opacity=70); /* For IE8 and earlier */
+}
+
 @media (max-width: 767px) {
     /* revert body padding top of 50 px */
     .registerContainer {
@@ -40,6 +45,12 @@
     align-items: center;
     justify-content: center;
     height: 100vh;
+}
+
+.loading {
+    margin: auto;
+    width: 10vw;
+    position: absolute;
 }
 
 .registerForm input[type="text"], .registerForm input[type="password"], .registerButton, .redirectLoginButton {
