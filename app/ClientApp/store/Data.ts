@@ -206,12 +206,7 @@ export const reducer: Reducer<CardsState> = (state: CardsState, incomingAction: 
             return {
                 ... state,
                 cards: newCards.map((card, index) => {
-                    if (index > action.index){
-                        return {... card, index:index-1}
-                    }
-                    else {
-                        return {... card}
-                    }
+                    return {...card, index:index}
                 })
             };
         default:
