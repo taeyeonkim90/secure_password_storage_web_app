@@ -49,6 +49,12 @@ class Register extends React.Component<AuthProps, AuthState> {
         this.props.registerUser(this.state.email, this.state.password)
     }
 
+    loadingBar = () => {
+        return (
+            <img className={css.loading} src="img/loading.gif"></img> 
+        );
+    }
+
     displayError = () => {
         var messages = this.props.messages
         const listItems = messages.map((message, i) =>
@@ -58,7 +64,7 @@ class Register extends React.Component<AuthProps, AuthState> {
         <ul className={css.errorMessageContainer}>{listItems}</ul>
       );
     }
-
+    
     public render() {
         if (!this.props.authenticated) {
             // following image is from https://unsplash.com/photos/mgYAR7BzBk4
@@ -66,9 +72,14 @@ class Register extends React.Component<AuthProps, AuthState> {
             const imageStyle = {
                 backgroundImage: 'url("./img/register.jpg")',
             }
-
+            var cssContainerStyle;
+            if(this.props.fetching){
+                cssContainerStyle = css.registerContainer + ' ' + css.transparent;
+            }else {
+                cssContainerStyle = css.registerContainer;
+            }
             const registerBox =
-                <div className={css.registerContainer} style={imageStyle}>
+                <div className={cssContainerStyle} style={imageStyle}>
                     <form className={css.registerForm} onSubmit={this.handleRegisterSubmit}>
                         <input className={css.registerElement}
                             type="text"
@@ -91,7 +102,7 @@ class Register extends React.Component<AuthProps, AuthState> {
                             <input type="button" className={css.redirectLoginButton}
                              value="Login"/>
                         </NavLink>
-                        {this.displayError()}
+                        {this.props.fetching ? this.loadingBar() : this.displayError()}
                     </form>
                 </div>;
             return registerBox;
