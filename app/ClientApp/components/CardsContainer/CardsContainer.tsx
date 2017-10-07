@@ -40,9 +40,14 @@ class CardContainer extends React.Component<CardContainerProps, {}> {
         this.props.addNewCardAction(accountName, userName, pw, description, token, masterKey)
     }
 
+    deleteCard = (index) => {
+        let { token, masterKey} = this.props
+        this.props.deleteCardAction(index, token, masterKey)
+    }
+
     public render() {
         let listItems = this.props.cards.map((card, key) => 
-                        <Card key={key} index={key} {...card} updateCard={this.updateCard}/>
+                        <Card key={key} index={key} {...card} updateCard={this.updateCard} deleteCard={this.deleteCard}/>
                     )
         return  <div> 
                     <NewCard addCard={this.addCard}/>

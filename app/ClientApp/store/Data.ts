@@ -66,6 +66,12 @@ interface CreateCardAction {
     pw: string
     description: string
 }
+
+interface DeleteCardAction {
+    type: 'DELETE_CARD'
+    index: number
+}
+
 // Declare a 'discriminated union' type. This guarantees that all references to 'type' properties contain one of the
 // declared type strings (and not any other arbitrary string).
 export type KnownAction =  RequestCardsAction 
@@ -75,7 +81,8 @@ export type KnownAction =  RequestCardsAction
                     // | SearchCardsAction 
                     // | CleanupAction
                     | UpdateCardAction
-                    | CreateCardAction;
+                    | CreateCardAction
+                    | DeleteCardAction;
 
 // ----------------
 // ACTION CREATORS - These are functions exposed to UI components that will trigger a state transition.
@@ -140,6 +147,20 @@ export const actionCreators = {
                     console.log("fetch error occured when updating data to the backend")
                 })
         }
+    },
+    deleteCardAction: (index, token, key): AppThunkAction<KnownAction> => (dispatch, getState) => {
+        dispatch({type: 'DELETE_CARD', index: index})
+        if(!getState().data.fetching){
+            let config = { headers: {'Authorization':`Bearer ${ token }`}}
+            let encryptedData = encryptCardsData(getState().data.cards, key)
+            let fetchTask = axios.put('/api/Data/Card', {userData:encryptedData}, config)
+                .then(response => {
+                    dispatch({ type: 'RECEIVE_CARDS', cards: parseCardsData(response.data, key)})
+                })
+                .catch(error => {
+                    console.log("fetch error occured when updating data to the backend")
+                })
+        }
     }
 };
 
@@ -178,6 +199,20 @@ export const reducer: Reducer<CardsState> = (state: CardsState, incomingAction: 
             return {
                 ... state,
                 cards:newCards 
+            };
+        case 'DELETE_CARD':
+            var newCards = [... state.cards]
+            newCards.splice(action.index, 1)
+            return {
+                ... state,
+                cards: newCards.map((card, index) => {
+                    if (index > action.index){
+                        return {... card, index:index-1}
+                    }
+                    else {
+                        return {... card}
+                    }
+                })
             };
         default:
             // The following line guarantees that every action in the KnownAction union has been covered by a case above
