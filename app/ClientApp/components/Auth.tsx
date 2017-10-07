@@ -34,7 +34,7 @@ export default function(ComposedClass){
                         }
                     })
                     .catch(error => {
-                        this.props.logoutUser()
+                        this.props.logoutUser("User has been logged out due to invalid user authorization.")
                 })
                 addTask(fetchTask)
             }

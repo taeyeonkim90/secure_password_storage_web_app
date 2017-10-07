@@ -56,6 +56,7 @@ interface ReceiveRefreshJWTAction {
 
 interface LogoutAction {
     type: 'LOGOUT'
+    messages: string[]
 }
 
 interface ErrorMessageAction {
@@ -122,8 +123,8 @@ export const actionCreators = {
         }
     },
     // logout
-    logoutUser: (): AppThunkAction<KnownAction> => (dispatch, getState) => {
-        dispatch({ type: 'LOGOUT'})
+    logoutUser: (message:string): AppThunkAction<KnownAction> => (dispatch, getState) => {
+        dispatch({ type: 'LOGOUT', messages:[message]})
     },
 
     // refresh token
@@ -168,7 +169,7 @@ export const reducer: Reducer<AuthState> = (state: AuthState, incomingAction: Ac
         case 'RECEIVE_REFRESH':
             return {... state, fetching: action.fetching, token: action.token}
         case 'LOGOUT':
-            return {... state, authenticated: false, messages: [], token: '', masterKey: ''}
+            return {... state, authenticated: false, messages: action.messages, token: '', masterKey: ''}
         case 'ERROR_MESSAGE' :
             return {... state, messages: action.messages}
     }
