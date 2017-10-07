@@ -46,9 +46,11 @@ class Register extends React.Component<AuthProps, AuthState> {
     }
 
     loadingBar = () => {
-        return (
-            <img className={css.loading} src="img/loading.gif"></img> 
-        );
+        if (this.props.fetching){
+            return (
+                <img className={css.loading} src="img/loading.gif"></img> 
+            );
+        }
     }
 
     displayError = () => {
@@ -100,7 +102,8 @@ class Register extends React.Component<AuthProps, AuthState> {
                             <input type="button" className={css.redirectLoginButton} onClick={()=>this.props.errorMessage("")}
                              value="Login"/>
                         </NavLink>
-                        {this.props.fetching ? this.loadingBar() : this.displayError()}
+                        {this.displayError()}
+                        {this.loadingBar()}
                     </form>
                 </div>;
             return registerBox;
