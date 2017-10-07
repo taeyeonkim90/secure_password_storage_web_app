@@ -4,12 +4,14 @@ import { Link, NavLink, RouteComponentProps, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { ApplicationState } from '../../store';
 import * as AuthStore from '../../store/Authenticate';
+import ActionButton from '../ActionButton/ActionButton';
 
-export class Layout extends React.Component<any, {}> {
+class Layout extends React.Component<any, {}> {
     public render() {
         return <div className='container-fluid'>
             <div className='row'>
                 <div className='col-sm-12'>
+                    <ActionButton email={this.props.email} logOut={this.props.logoutUser}></ActionButton>
                     { this.props.children }
                 </div>
             </div>

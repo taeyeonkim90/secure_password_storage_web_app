@@ -22,10 +22,6 @@ class Register extends React.Component<AuthProps, AuthState> {
         this.state = {email:'', password:'', passwordMatch: ''}
     }
 
-    componentWillMount() {
-        this.props.errorMessage("")
-    }
-
     handleEmailChange = (event) => {
         this.setState({email: event.target.value})
     }
@@ -52,11 +48,13 @@ class Register extends React.Component<AuthProps, AuthState> {
     displayError = () => {
         var messages = this.props.messages
         const listItems = messages.map((message, i) =>
-        <li key={i}>{message}</li>
-      );
-      return (
-        <ul className={css.errorMessageContainer}>{listItems}</ul>
-      );
+            <li key={i}>{message}</li>
+        );
+        if (messages.length > 0 && messages[0]!="") {
+            return (
+                <ul className={css.errorMessageContainer}>{listItems}</ul>
+            );
+        }
     }
 
     public render() {
@@ -88,7 +86,7 @@ class Register extends React.Component<AuthProps, AuthState> {
                         <input className={css.registerButton}
                             type="submit" value="Register"/>
                         <NavLink to={ '/login' } activeClassName='active'>
-                            <input type="button" className={css.redirectLoginButton}
+                            <input type="button" className={css.redirectLoginButton} onClick={()=>this.props.errorMessage("")}
                              value="Login"/>
                         </NavLink>
                         {this.displayError()}

@@ -21,10 +21,6 @@ class Login extends React.Component<AuthProps, AuthState> {
         this.state = { email: '', password: '' }
     }
 
-    componentWillMount() {
-        this.props.errorMessage("")
-    }
-
     handleChange = (event) => {
         this.setState({ [event.target.name]: event.target.value })
     }
@@ -39,9 +35,11 @@ class Login extends React.Component<AuthProps, AuthState> {
         const listItems = messages.map((message, i) =>
             <li key={i}>{message}</li>
         );
-        return (
-            <ul className={s.errorMessageContainer}>{listItems}</ul>
-        );
+        if (messages.length > 0 && messages[0]!="") {
+            return (
+                <ul className={s.errorMessageContainer}>{listItems}</ul>
+            );
+        }
     }
 
     public render() {
@@ -68,9 +66,10 @@ class Login extends React.Component<AuthProps, AuthState> {
                         <input className={s.loginButton}
                             type="submit" value="Login"/>
                         <NavLink to={ '/register' } activeClassName='active'>
-                        <input className={s.registerRedirectButton}
-                            type="button"
-                             value="Register"/>
+                            <input className={s.registerRedirectButton}
+                                type="button"
+                                value="Register"
+                                onClick={()=>this.props.errorMessage("")}/>
                         </NavLink>
                         {this.displayError()}
                     </form>

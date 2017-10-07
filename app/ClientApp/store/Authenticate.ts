@@ -11,6 +11,7 @@ export interface AuthState {
     authenticated: boolean
     messages: string[]
     token?: string
+    email?: string
     masterKey?: string
 }
 
@@ -40,6 +41,7 @@ interface ReceiveJWTAction {
     authenticated: boolean
     messages: string[]
     token: string
+    email: string
     masterKey: string
 }
 
@@ -113,10 +115,10 @@ export const actionCreators = {
             let fetchTask = axios.post('/api/Account/Token', {Email: email, Password: password})
                 .then(response => {
                     // var hash = crypto.createHmac('sha1', 'W"?\3^32UhXq!&y>').update(password).digest('hex')
-                    dispatch({ type: 'RECEIVE_JWT', fetching: false, authenticated: response.data.status, messages: parseSuccessMessages(response), token: response.data.token, masterKey: password})
+                    dispatch({ type: 'RECEIVE_JWT', fetching: false, authenticated: response.data.status, messages: parseSuccessMessages(response), token: response.data.token, email:email, masterKey: password})
                 })
                 .catch(error => {
-                    dispatch({ type: 'RECEIVE_JWT', fetching: false, authenticated: false, messages: parseErrorMessages(error), token: '', masterKey: ''})
+                    dispatch({ type: 'RECEIVE_JWT', fetching: false, authenticated: false, messages: parseErrorMessages(error), token:'', email:'', masterKey:''})
                 })
             addTask(fetchTask) // Ensure server-side prerendering waits for this to complete
             dispatch({type: 'REQUEST_JWT', fetching: true})
@@ -163,13 +165,13 @@ export const reducer: Reducer<AuthState> = (state: AuthState, incomingAction: Ac
         case 'REQUEST_JWT':
             return {... state, fetching: action.fetching}
         case 'RECEIVE_JWT':
-            return {... state, fetching: action.fetching, authenticated: action.authenticated, messages: action.messages, token: action.token, masterKey: action.masterKey}
+            return {... state, fetching: action.fetching, authenticated: action.authenticated, messages: action.messages, token: action.token, email: action.email, masterKey: action.masterKey}
         case 'REQUEST_REFRESH':
             return {... state, fetching: action.fetching}
         case 'RECEIVE_REFRESH':
             return {... state, fetching: action.fetching, token: action.token}
         case 'LOGOUT':
-            return {... state, authenticated: false, messages: action.messages, token: '', masterKey: ''}
+            return {... state, authenticated: false, messages: action.messages, token:'', email:'', masterKey:''}
         case 'ERROR_MESSAGE' :
             return {... state, messages: action.messages}
     }

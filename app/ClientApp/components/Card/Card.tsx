@@ -88,7 +88,6 @@ export default class Card extends React.Component<CardProps, CardState> {
 
     // toggles isExpanded when + or - button is pressed
     toggleIsExpand = () => {
-        console.log("isExpand before pressing button", this.state.isExpand)
         this.setState((prevState, props) => ({
             isExpand: !prevState.isExpand
         }));
@@ -96,7 +95,6 @@ export default class Card extends React.Component<CardProps, CardState> {
 
     // handles isEditing condition when 'edit' or 'cancel' button is pressed
     toggleIsEdit = () => {
-        console.log("isEdit before pressing button", this.state.isEdit)
         this.setState((prevState, props) => ({
             isEdit: !prevState.isEdit
         }));

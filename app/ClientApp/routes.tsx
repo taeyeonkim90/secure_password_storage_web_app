@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Route, Switch} from 'react-router-dom';
-import { Layout } from './components/Layout/Layout';
+import Layout from './components/Layout/Layout';
 import CardsContainer from './components/CardsContainer/CardsContainer'
 import Home from './components/Home';
 import FetchData from './components/FetchData';
