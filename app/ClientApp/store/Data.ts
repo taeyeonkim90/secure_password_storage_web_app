@@ -108,6 +108,7 @@ const parseCardsData = (data, key) => {
 export const actionCreators = {
     requestCardsAction: (token, key): AppThunkAction<KnownAction> => (dispatch, getState) => {
         if (!getState().data.dataFetching){
+            dispatch({ type: 'REQUEST_CARDS' })
             let config = { headers: {'Authorization':`Bearer ${ token }`}}
             let fetchTask = axios.get('/api/Data/Card', config)
                 .then(response => {
@@ -116,11 +117,11 @@ export const actionCreators = {
                 .catch(error => {
                     console.log("fetch error occured when retrieving data from the backend")
                 })
-            dispatch({ type: 'REQUEST_CARDS' })
         }
     },
     addNewCardAction: (accountName, userName, pw, description, token, key): AppThunkAction<KnownAction> => (dispatch, getState) => {
         if (!getState().data.dataFetching){
+            dispatch({type:'CREATE_CARD', accountName: accountName, userName: userName, pw: pw, description:description})
             let config = { headers: {'Authorization':`Bearer ${ token }`}}
             let encryptedData = encryptCardsData(getState().data.cards, key)
             let fetchTask = axios.put('/api/Data/Card', {userData:encryptedData}, config)
@@ -131,11 +132,11 @@ export const actionCreators = {
                 .catch(error => {
                     console.log("fetch error occured when updating data to the backend")
                 })
-            dispatch({type:'CREATE_CARD', accountName: accountName, userName: userName, pw: pw, description:description})
         }
     },
     updateCardAction: (accountName, index, userName, pw, description, token, key): AppThunkAction<KnownAction> => (dispatch, getState) => {
         if (!getState().data.dataFetching){
+            dispatch({type:'UPDATE_CARD', accountName: accountName, index: index, userName: userName, pw: pw, description:description})
             let config = { headers: {'Authorization':`Bearer ${ token }`}}
             let encryptedData = encryptCardsData(getState().data.cards, key)
             let fetchTask = axios.put('/api/Data/Card', {userData:encryptedData}, config)
@@ -145,11 +146,11 @@ export const actionCreators = {
                 .catch(error => {
                     console.log("fetch error occured when updating data to the backend")
                 })
-            dispatch({type:'UPDATE_CARD', accountName: accountName, index: index, userName: userName, pw: pw, description:description})
         }
     },
     deleteCardAction: (index, token, key): AppThunkAction<KnownAction> => (dispatch, getState) => {
         if(!getState().data.dataFetching){
+            dispatch({type: 'DELETE_CARD', index: index})
             let config = { headers: {'Authorization':`Bearer ${ token }`}}
             let encryptedData = encryptCardsData(getState().data.cards, key)
             let fetchTask = axios.put('/api/Data/Card', {userData:encryptedData}, config)
@@ -159,7 +160,6 @@ export const actionCreators = {
                 .catch(error => {
                     console.log("fetch error occured when updating data to the backend")
                 })
-            dispatch({type: 'DELETE_CARD', index: index})
         }
     }
 };
