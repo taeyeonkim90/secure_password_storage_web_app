@@ -131,7 +131,7 @@ export const actionCreators = {
 
     // refresh token
     refreshToken: (token:string): AppThunkAction<KnownAction> => (dispatch, getState) => {
-        if (!getState().auth.authFetching) {
+        if (!getState().auth.authFetching && getState().auth.authenticated) {
             let config = { headers: {'Authorization':`Bearer ${ token }`}}
             let fetchTask = axios.post('/api/Account/Refresh', {}, config)
                 .then(response => {
