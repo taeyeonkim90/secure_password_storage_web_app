@@ -46,7 +46,7 @@ class Register extends React.Component<AuthProps, AuthState> {
     }
 
     loadingBar = () => {
-        if (this.props.fetching){
+        if (this.props.authFetching){
             return (
                 <img className={css.loading} src="img/loading.gif"></img> 
             );
@@ -73,7 +73,7 @@ class Register extends React.Component<AuthProps, AuthState> {
                 backgroundImage: 'url("./img/register.jpg")',
             }
             var cssContainerStyle;
-            if(this.props.fetching){
+            if(this.props.authFetching){
                 cssContainerStyle = css.registerContainer + ' ' + css.transparent;
             }else {
                 cssContainerStyle = css.registerContainer;

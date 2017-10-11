@@ -7,7 +7,7 @@ import axios from 'axios'
 // STATE - This defines the type of data maintained in the Redux store.
 
 export interface AuthState {
-    fetching: boolean
+    authFetching: boolean
     authenticated: boolean
     messages: string[]
     token?: string
@@ -20,24 +20,24 @@ export interface AuthState {
 // They do not themselves have any side-effects they just describe something that is going to happen.
 interface RequestRegistrationAction{
     type: "REQUEST_REGISTRATION"
-    fetching: boolean
+    authFetching: boolean
 }
 
 interface ReceiveRegistrationAction{
     type: "RECEIVE_REGISTRATION"
-    fetching: boolean
+    authFetching: boolean
     authenticated: boolean
     messages: string[]
 }
 
 interface RequestJWTAction {
     type: 'REQUEST_JWT'
-    fetching: boolean
+    authFetching: boolean
 }
 
 interface ReceiveJWTAction {
     type: 'RECEIVE_JWT'
-    fetching: boolean
+    authFetching: boolean
     authenticated: boolean
     messages: string[]
     token: string
@@ -47,12 +47,12 @@ interface ReceiveJWTAction {
 
 interface RequestRefreshJWTAction {
     type: 'REQUEST_REFRESH'
-    fetching: boolean
+    authFetching: boolean
 }
 
 interface ReceiveRefreshJWTAction {
     type: 'RECEIVE_REFRESH'
-    fetching: boolean
+    authFetching: boolean
     token: string
 }
 
@@ -97,31 +97,31 @@ type KnownAction = RequestRegistrationAction | ReceiveRegistrationAction |
 
 export const actionCreators = {
     registerUser: (email:string, password:string): AppThunkAction<KnownAction> => (dispatch, getState) => {
-        if (!getState().auth.fetching) {
+        if (!getState().auth.authFetching) {
             let fetchTask = axios.post('/api/Account/Create', {Email: email, Password: password})
                 .then(response => {
-                    dispatch({ type: 'RECEIVE_REGISTRATION', authenticated: false, messages: parseSuccessMessages(response), fetching: false })
+                    dispatch({ type: 'RECEIVE_REGISTRATION', authenticated: false, messages: parseSuccessMessages(response), authFetching: false })
                 })
                 .catch(error => {
-                    dispatch({ type: 'RECEIVE_REGISTRATION', authenticated: false, messages: parseErrorMessages(error), fetching: false })
+                    dispatch({ type: 'RECEIVE_REGISTRATION', authenticated: false, messages: parseErrorMessages(error), authFetching: false })
                 })
             addTask(fetchTask) // Ensure server-side prerendering waits for this to complete
-            dispatch({type: 'REQUEST_REGISTRATION', fetching: true})
+            dispatch({type: 'REQUEST_REGISTRATION', authFetching: true})
         }
     },
     // login
     loginUser: (email:string, password:string): AppThunkAction<KnownAction> => (dispatch, getState) => {
-        if (!getState().auth.fetching) {
+        if (!getState().auth.authFetching) {
             let fetchTask = axios.post('/api/Account/Token', {Email: email, Password: password})
                 .then(response => {
                     // var hash = crypto.createHmac('sha1', 'W"?\3^32UhXq!&y>').update(password).digest('hex')
-                    dispatch({ type: 'RECEIVE_JWT', fetching: false, authenticated: response.data.status, messages: parseSuccessMessages(response), token: response.data.token, email:email, masterKey: password})
+                    dispatch({ type: 'RECEIVE_JWT', authFetching: false, authenticated: response.data.status, messages: parseSuccessMessages(response), token: response.data.token, email:email, masterKey: password})
                 })
                 .catch(error => {
-                    dispatch({ type: 'RECEIVE_JWT', fetching: false, authenticated: false, messages: parseErrorMessages(error), token:'', email:'', masterKey:''})
+                    dispatch({ type: 'RECEIVE_JWT', authFetching: false, authenticated: false, messages: parseErrorMessages(error), token:'', email:'', masterKey:''})
                 })
             addTask(fetchTask) // Ensure server-side prerendering waits for this to complete
-            dispatch({type: 'REQUEST_JWT', fetching: true})
+            dispatch({type: 'REQUEST_JWT', authFetching: true})
         }
     },
     // logout
@@ -131,17 +131,17 @@ export const actionCreators = {
 
     // refresh token
     refreshToken: (token:string): AppThunkAction<KnownAction> => (dispatch, getState) => {
-        if (!getState().auth.fetching) {
+        if (!getState().auth.authFetching) {
             let config = { headers: {'Authorization':`Bearer ${ token }`}}
             let fetchTask = axios.post('/api/Account/Refresh', {}, config)
                 .then(response => {
-                    dispatch({ type: 'RECEIVE_REFRESH', fetching: false, token: response.data.token})
+                    dispatch({ type: 'RECEIVE_REFRESH', authFetching: false, token: response.data.token})
                 })
                 .catch(error => {
-                    dispatch({ type: 'RECEIVE_REFRESH', fetching: false, token: error.response.data.token})
+                    dispatch({ type: 'RECEIVE_REFRESH', authFetching: false, token: error.response.data.token})
                 })
             addTask(fetchTask) // Ensure server-side prerendering waits for this to complete
-            dispatch({type: 'REQUEST_REFRESH', fetching: true})
+            dispatch({type: 'REQUEST_REFRESH', authFetching: true})
         }
     },
 
@@ -153,23 +153,23 @@ export const actionCreators = {
 // ----------------
 // REDUCER - For a given state and action, returns the new state. To support time travel, this must not mutate the old state.
 
-const unloadedState: AuthState = { fetching: false, authenticated: false, messages: []}
+const unloadedState: AuthState = { authFetching: false, authenticated: false, messages: []}
 
 export const reducer: Reducer<AuthState> = (state: AuthState, incomingAction: Action) => {
     const action = incomingAction as KnownAction
     switch (action.type) {
         case 'REQUEST_REGISTRATION':
-            return {... state, fetching: action.fetching}
+            return {... state, authFetching: action.authFetching}
         case 'RECEIVE_REGISTRATION':
-            return {... state, fetching: action.fetching, authenticated: action.authenticated, messages: action.messages}
+            return {... state, authFetching: action.authFetching, authenticated: action.authenticated, messages: action.messages}
         case 'REQUEST_JWT':
-            return {... state, fetching: action.fetching}
+            return {... state, authFetching: action.authFetching}
         case 'RECEIVE_JWT':
-            return {... state, fetching: action.fetching, authenticated: action.authenticated, messages: action.messages, token: action.token, email: action.email, masterKey: action.masterKey}
+            return {... state, authFetching: action.authFetching, authenticated: action.authenticated, messages: action.messages, token: action.token, email: action.email, masterKey: action.masterKey}
         case 'REQUEST_REFRESH':
-            return {... state, fetching: action.fetching}
+            return {... state, authFetching: action.authFetching}
         case 'RECEIVE_REFRESH':
-            return {... state, fetching: action.fetching, token: action.token}
+            return {... state, authFetching: action.authFetching, token: action.token}
         case 'LOGOUT':
             return {... state, authenticated: false, messages: action.messages, token:'', email:'', masterKey:''}
         case 'ERROR_MESSAGE' :

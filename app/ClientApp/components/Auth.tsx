@@ -30,7 +30,7 @@ export default function(ComposedClass){
         }
 
         verifyToken = () => {
-            if (!this.props.fetching){
+            if (!this.props.authFetching){
                 // get token from props
                 let token = this.props.token
                 // send a request to verify token validity
@@ -68,7 +68,10 @@ export default function(ComposedClass){
         }
         
         componentWillReceiveProps(nextProps: AuthProps) {
-            this.verifyToken()
+            // Token will be verified only when we receive data from the backend to prevent firing double verification
+            if (!this.props.dataFetching){
+                this.verifyToken()
+            }
         }
 
         componentWillUnmount(){

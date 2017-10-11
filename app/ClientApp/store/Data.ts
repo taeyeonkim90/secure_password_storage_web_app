@@ -8,7 +8,7 @@ import * as CryptoJS from 'crypto-js';
 // STATE - This defines the type of data maintained in the Redux store.
 
 export interface CardsState {
-    fetching: boolean;
+    dataFetching: boolean;
     cards: CardData[];
 }
 
@@ -107,7 +107,7 @@ const parseCardsData = (data, key) => {
 
 export const actionCreators = {
     requestCardsAction: (token, key): AppThunkAction<KnownAction> => (dispatch, getState) => {
-        if (!getState().data.fetching){
+        if (!getState().data.dataFetching){
             let config = { headers: {'Authorization':`Bearer ${ token }`}}
             let fetchTask = axios.get('/api/Data/Card', config)
                 .then(response => {
@@ -120,8 +120,7 @@ export const actionCreators = {
         }
     },
     addNewCardAction: (accountName, userName, pw, description, token, key): AppThunkAction<KnownAction> => (dispatch, getState) => {
-        dispatch({type:'CREATE_CARD', accountName: accountName, userName: userName, pw: pw, description:description})
-        if (!getState().data.fetching){
+        if (!getState().data.dataFetching){
             let config = { headers: {'Authorization':`Bearer ${ token }`}}
             let encryptedData = encryptCardsData(getState().data.cards, key)
             let fetchTask = axios.put('/api/Data/Card', {userData:encryptedData}, config)
@@ -132,11 +131,11 @@ export const actionCreators = {
                 .catch(error => {
                     console.log("fetch error occured when updating data to the backend")
                 })
+            dispatch({type:'CREATE_CARD', accountName: accountName, userName: userName, pw: pw, description:description})
         }
     },
     updateCardAction: (accountName, index, userName, pw, description, token, key): AppThunkAction<KnownAction> => (dispatch, getState) => {
-        dispatch({type:'UPDATE_CARD', accountName: accountName, index: index, userName: userName, pw: pw, description:description})
-        if (!getState().data.fetching){
+        if (!getState().data.dataFetching){
             let config = { headers: {'Authorization':`Bearer ${ token }`}}
             let encryptedData = encryptCardsData(getState().data.cards, key)
             let fetchTask = axios.put('/api/Data/Card', {userData:encryptedData}, config)
@@ -146,11 +145,11 @@ export const actionCreators = {
                 .catch(error => {
                     console.log("fetch error occured when updating data to the backend")
                 })
+            dispatch({type:'UPDATE_CARD', accountName: accountName, index: index, userName: userName, pw: pw, description:description})
         }
     },
     deleteCardAction: (index, token, key): AppThunkAction<KnownAction> => (dispatch, getState) => {
-        dispatch({type: 'DELETE_CARD', index: index})
-        if(!getState().data.fetching){
+        if(!getState().data.dataFetching){
             let config = { headers: {'Authorization':`Bearer ${ token }`}}
             let encryptedData = encryptCardsData(getState().data.cards, key)
             let fetchTask = axios.put('/api/Data/Card', {userData:encryptedData}, config)
@@ -160,6 +159,7 @@ export const actionCreators = {
                 .catch(error => {
                     console.log("fetch error occured when updating data to the backend")
                 })
+            dispatch({type: 'DELETE_CARD', index: index})
         }
     }
 };
@@ -168,7 +168,7 @@ export const actionCreators = {
 // REDUCER - For a given state and action, returns the new state. To support time travel, this must not mutate the old state.
 
 const unloadedState: CardsState = { 
-        fetching: false, 
+        dataFetching: false, 
         cards: [] 
     };
 
@@ -176,14 +176,15 @@ export const reducer: Reducer<CardsState> = (state: CardsState, incomingAction: 
     const action = incomingAction as KnownAction;
     switch (action.type) {
         case 'REQUEST_CARDS':
-            return { ... state, fetching: true };
+            return { ... state, dataFetching: true };
         case 'RECEIVE_CARDS':
-            return { ... state, fetching: false, cards: action.cards };
+            return { ... state, dataFetching: false, cards: action.cards };
         case 'UPDATE_CARDS':
-            return { ... state, fetching: true, cards: action.cards };
+            return { ... state, dataFetching: true, cards: action.cards };
         case 'UPDATE_CARD':
             return {
                 ... state,
+                dataFetching: true,
                 cards: state.cards.map((card, index) => index === action.index ? {
                     ... card,
                     accountName: action.accountName,
@@ -198,13 +199,15 @@ export const reducer: Reducer<CardsState> = (state: CardsState, incomingAction: 
             newCards.splice(0, 0, {index:0, accountName:accountName, userName:userName, pw:pw, description:description})
             return {
                 ... state,
-                cards:newCards 
+                cards: newCards,
+                dataFetching: true
             };
         case 'DELETE_CARD':
             var newCards = [... state.cards]
             newCards.splice(action.index, 1)
             return {
                 ... state,
+                dataFetching: true,
                 cards: newCards.map((card, index) => {
                     return {...card, index:index}
                 })
