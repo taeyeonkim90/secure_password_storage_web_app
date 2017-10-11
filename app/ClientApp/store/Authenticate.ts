@@ -143,7 +143,7 @@ export const actionCreators = {
             addTask(fetchTask) // Ensure server-side prerendering waits for this to complete
             dispatch({type: 'REQUEST_REFRESH', fetching: true})
         }
-    } ,
+    },
 
     errorMessage: (messages:string): AppThunkAction<KnownAction> => (dispatch, getState) => {
         dispatch({ type: 'ERROR_MESSAGE', messages: [messages]})

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { NavMenu } from '../NavMenu';
 import { Link, NavLink, RouteComponentProps, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { ApplicationState } from '../../store';

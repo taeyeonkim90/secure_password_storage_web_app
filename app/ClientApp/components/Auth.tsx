@@ -3,20 +3,32 @@ import { Link, RouteComponentProps } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { ApplicationState }  from '../store';
 import { Redirect } from 'react-router-dom';
-import * as CounterStore from '../store/Counter';
-import * as WeatherForecasts from '../store/WeatherForecasts';
 import * as AuthStore from '../store/Authenticate';
+import * as DataStore from '../store/Data';
 import axios from 'axios';
 import { fetch, addTask } from 'domain-task';
 import * as JWT from 'jwt-decode';
 
+interface AuthStates {
+    timer: any
+    count: number
+}
+
 type AuthProps =
 AuthStore.AuthState
+& DataStore.CardsState
 & typeof AuthStore.actionCreators
 & RouteComponentProps<{}>;
 
+let DEFAULT_COUNT = 30 
+
 export default function(ComposedClass){
-    class Auth extends React.Component<AuthProps, {}> {
+    class Auth extends React.Component<AuthProps, AuthStates> {
+        constructor(props){
+            super(props)
+            this.state = {timer: null, count: DEFAULT_COUNT}
+        }
+
         verifyToken = () => {
             if (!this.props.fetching){
                 // get token from props
@@ -32,6 +44,8 @@ export default function(ComposedClass){
                         if ((exp - current) < 300){
                             this.props.refreshToken(token)
                         }
+                        // reset the timer
+                        this.state.count && this.setState({count:DEFAULT_COUNT})
                     })
                     .catch(error => {
                         this.props.logoutUser("User has been logged out due to invalid user authorization.")
@@ -40,12 +54,25 @@ export default function(ComposedClass){
             }
         }
 
-        componentWillMount() {
+        timeOutTick = () => {
+            (this.state.count < 1)
+            ? this.props.logoutUser("User has been logged out due to prolonged inactivity.")
+            : this.setState({count: this.state.count-1})
+        }
+
+        componentDidMount(){
             this.verifyToken()
+            // timer interval set to 10 seconds
+            let timer = setInterval(this.timeOutTick, 10000)
+            this.setState({timer:timer})
         }
         
         componentWillReceiveProps(nextProps: AuthProps) {
             this.verifyToken()
+        }
+
+        componentWillUnmount(){
+            this.state.timer && clearInterval(this.state.timer)
         }
 
         public render() {
@@ -58,7 +85,10 @@ export default function(ComposedClass){
     }
 
     return connect(
-        (state: ApplicationState) => state.auth, // Selects which state properties are merged into the component's props
+        (state: ApplicationState) => {
+            const {auth, data} = state
+            return { ...auth, ...data }
+        },
         AuthStore.actionCreators                 // Selects which action creators are merged into the component's props
     )(Auth) as typeof Auth;
 }
