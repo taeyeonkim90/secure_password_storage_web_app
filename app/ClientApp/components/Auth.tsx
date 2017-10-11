@@ -30,7 +30,7 @@ export default function(ComposedClass){
         }
 
         verifyToken = () => {
-            if (!this.props.authFetching){
+            if (!this.props.authFetching && this.props.authenticated){
                 // get token from props
                 let token = this.props.token
                 // send a request to verify token validity
