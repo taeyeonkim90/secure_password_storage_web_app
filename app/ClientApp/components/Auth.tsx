@@ -86,7 +86,7 @@ export default function(ComposedClass){
 
         public render() {
             if (this.props.authenticated){
-                return <ComposedClass {...this.props}/>;
+                return <ComposedClass/>;
             } else {
                 return <Redirect to="/login" push/>;
             }
