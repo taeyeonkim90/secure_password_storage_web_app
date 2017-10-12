@@ -25,10 +25,8 @@ let DEFAULT_COUNT = 30
 
 export default function(ComposedClass){
     class Auth extends React.Component<AuthProps, AuthStates> {
-        constructor(props){
-            super(props)
-            this.state = {timer: null, count: DEFAULT_COUNT}
-        }
+        timer = null
+        count = DEFAULT_COUNT
 
         logout = (message:string) => {
             this.props.logoutUser(message)
@@ -51,7 +49,7 @@ export default function(ComposedClass){
                             this.props.refreshToken(token)
                         }
                         // reset the timer
-                        this.state.count && this.setState({count:DEFAULT_COUNT})
+                        this.count = DEFAULT_COUNT
                     })
                     .catch(error => {
                         this.logout("User has been logged out due to invalid user authorization.")
@@ -61,16 +59,15 @@ export default function(ComposedClass){
         }
 
         timeOutTick = () => {
-            (this.state.count < 1)
+            (this.count < 1)
             ? this.logout("User has been logged out due to prolonged inactivity.")
-            : this.setState({count: this.state.count-1})
+            : this.count = this.count - 1
         }
 
         componentDidMount(){
             this.verifyToken()
             // timer interval set to 10 seconds
-            let timer = setInterval(this.timeOutTick, 10000)
-            this.setState({timer:timer})
+            this.timer = setInterval(this.timeOutTick, 10000)
         }
         
         componentWillReceiveProps(nextProps: AuthProps) {
@@ -81,12 +78,12 @@ export default function(ComposedClass){
         }
 
         componentWillUnmount(){
-            this.state.timer && clearInterval(this.state.timer)
+            this.timer && clearInterval(this.timer)
         }
 
         public render() {
             if (this.props.authenticated){
-                return <ComposedClass/>;
+                return <ComposedClass {... this.props}/>;
             } else {
                 return <Redirect to="/login" push/>;
             }

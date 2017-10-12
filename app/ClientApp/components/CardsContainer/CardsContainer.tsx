@@ -14,7 +14,7 @@ type CardContainerProps =
     & typeof DataStore.actionCreators
     & typeof AuthStore.actionCreators 
 
-class CardContainer extends React.Component<CardContainerProps, {}> {
+export default class CardContainer extends React.Component<CardContainerProps, {}> {
 
     componentWillMount() {
         // This method runs when the component is first added to the page
@@ -56,10 +56,10 @@ class CardContainer extends React.Component<CardContainerProps, {}> {
     }
 }
 
-export default connect(
-    (state: ApplicationState) => {
-        const {auth, data} = state
-        return { ...auth, ...data }
-    },
-    {... AuthStore.actionCreators, ... DataStore.actionCreators}
-)(CardContainer) as typeof CardContainer
+// export default connect(
+//     (state: ApplicationState) => {
+//         const {auth, data} = state
+//         return { ...auth, ...data }
+//     },
+//     {... AuthStore.actionCreators, ... DataStore.actionCreators}
+// )(CardContainer) as typeof CardContainer
