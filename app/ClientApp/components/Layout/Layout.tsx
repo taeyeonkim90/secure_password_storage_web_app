@@ -3,14 +3,20 @@ import { Link, NavLink, RouteComponentProps, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { ApplicationState } from '../../store';
 import * as AuthStore from '../../store/Authenticate';
+import * as DataStore from '../../store/Data';
 import ActionButton from '../ActionButton/ActionButton';
 
 class Layout extends React.Component<any, {}> {
+    logout = (message:string) => {
+        this.props.logoutUser(message)
+        this.props.cleanUpCardsAction()
+    }
+
     public render() {
         return <div className='container-fluid'>
             <div className='row'>
                 <div className='col-sm-12'>
-                    <ActionButton email={this.props.email} logOut={this.props.logoutUser}></ActionButton>
+                    <ActionButton email={this.props.email} logOut={this.logout}></ActionButton>
                     { this.props.children }
                 </div>
             </div>
@@ -19,6 +25,9 @@ class Layout extends React.Component<any, {}> {
 }
 
 export default connect(
-    (state: ApplicationState) => state.auth, // Selects which state properties are merged into the component's props
-    AuthStore.actionCreators                 // Selects which action creators are merged into the component's props
+    (state: ApplicationState) => {
+        const {auth, data} = state
+        return { ...auth, ...data }
+    },
+    {... AuthStore.actionCreators, ... DataStore.actionCreators}
 )(Layout) as typeof Layout;

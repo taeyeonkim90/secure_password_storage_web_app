@@ -8,46 +8,46 @@ import * as CryptoJS from 'crypto-js';
 // STATE - This defines the type of data maintained in the Redux store.
 
 export interface CardsState {
-    dataFetching: boolean;
-    cards: CardData[];
+    dataFetching: boolean
+    cards: CardData[]
 }
 
 export interface CardData {
-    index: number;
-    accountName: string;
-    userName: string;
-    pw: string;
-    description: string;
+    index: number
+    accountName: string
+    userName: string
+    pw: string
+    description: string
 }
 
 // -----------------
 // ACTIONS - These are serializable (hence replayable) descriptions of state transitions.
 // They do not themselves have any side-effects; they just describe something that is going to happen.
 interface RequestCardsAction {
-    type: 'REQUEST_CARDS';
+    type: 'REQUEST_CARDS'
 }
 
 interface ReceiveCardsAction {
-    type: 'RECEIVE_CARDS';
-    cards: CardData[];
+    type: 'RECEIVE_CARDS'
+    cards: CardData[]
 }
 
 interface UpdateCardsAction {
-    type: 'UPDATE_CARDS';
-    cards: CardData[];
+    type: 'UPDATE_CARDS'
+    cards: CardData[]
 }
 
 interface DeleteCardsAction {
-    type: 'DELETE_CARDS';
-    cards: CardData[];
+    type: 'DELETE_CARDS'
+    cards: CardData[]
 }
 
 interface SearchCardsAction {
-    type: 'SEARCH_CARDS';
+    type: 'SEARCH_CARDS'
 }
 
 interface CleanupAction {
-    type: 'CLEAN_UP';
+    type: 'CLEANUP_CARDS'
 }
 
 interface UpdateCardAction {
@@ -79,10 +79,10 @@ export type KnownAction =  RequestCardsAction
                     | UpdateCardsAction
                     // | DeleteCardsAction
                     // | SearchCardsAction 
-                    // | CleanupAction
+                    | CleanupAction
                     | UpdateCardAction
                     | CreateCardAction
-                    | DeleteCardAction;
+                    | DeleteCardAction
 
 // ----------------
 // ACTION CREATORS - These are functions exposed to UI components that will trigger a state transition.
@@ -148,6 +148,9 @@ export const actionCreators = {
                 })
         }
     },
+    cleanUpCardsAction: (): AppThunkAction<KnownAction> => (dispatch, getState) => {
+        dispatch({ type: 'CLEANUP_CARDS' })
+    },
     deleteCardAction: (index, token, key): AppThunkAction<KnownAction> => (dispatch, getState) => {
         if(!getState().data.dataFetching){
             dispatch({type: 'DELETE_CARD', index: index})
@@ -176,11 +179,13 @@ export const reducer: Reducer<CardsState> = (state: CardsState, incomingAction: 
     const action = incomingAction as KnownAction;
     switch (action.type) {
         case 'REQUEST_CARDS':
-            return { ... state, dataFetching: true };
+            return { ... state, dataFetching: true }
         case 'RECEIVE_CARDS':
-            return { ... state, dataFetching: false, cards: action.cards };
+            return { ... state, dataFetching: false, cards: action.cards }
         case 'UPDATE_CARDS':
-            return { ... state, dataFetching: true, cards: action.cards };
+            return { ... state, dataFetching: true, cards: action.cards }
+        case 'CLEANUP_CARDS':
+            return unloadedState
         case 'UPDATE_CARD':
             return {
                 ... state,
@@ -192,7 +197,7 @@ export const reducer: Reducer<CardsState> = (state: CardsState, incomingAction: 
                     pw: action.pw,
                     description: action.description
                 } : card)
-            };
+            }
         case 'CREATE_CARD':
             var { accountName, userName, pw, description } = action
             var newCards = state.cards.map((card, index) => {return {... card, index: (index + 1)}})
@@ -201,7 +206,7 @@ export const reducer: Reducer<CardsState> = (state: CardsState, incomingAction: 
                 ... state,
                 cards: newCards,
                 dataFetching: true
-            };
+            }
         case 'DELETE_CARD':
             var newCards = [... state.cards]
             newCards.splice(action.index, 1)
@@ -211,11 +216,11 @@ export const reducer: Reducer<CardsState> = (state: CardsState, incomingAction: 
                 cards: newCards.map((card, index) => {
                     return {...card, index:index}
                 })
-            };
+            }
         default:
             // The following line guarantees that every action in the KnownAction union has been covered by a case above
-            const exhaustiveCheck: never = action;
+            const exhaustiveCheck: never = action
     }
 
-    return state || unloadedState;
+    return state || unloadedState
 };
