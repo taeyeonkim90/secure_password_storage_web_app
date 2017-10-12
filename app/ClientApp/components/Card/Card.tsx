@@ -117,12 +117,14 @@ export default class Card extends React.Component<CardProps, CardState> {
     }
 
     renderIsExpandedHTML = () => {
+        let {accountName, userName, pw, description} = this.state
+
         return <div>
             <button onClick={this.toggleIsExpand}>-</button>
-            <FieldDetail displayName="Domain" data={this.state.accountName} />
-            <FieldDetail displayName="ID" data={this.state.userName} />
-            <FieldDetail displayName="Password" data={this.state.pw} />
-            <FieldDetail displayName="Description" data={this.state.description} />
+            <FieldDetail displayName="Domain" data={accountName} /> 
+            <FieldDetail displayName="ID" data={userName} /> 
+            <FieldDetail displayName="Password" data={pw} /> 
+            <FieldDetail displayName="Description" data={description} />
             <button onClick={this.toggleIsEdit}>Edit</button>
         </div>
     }
