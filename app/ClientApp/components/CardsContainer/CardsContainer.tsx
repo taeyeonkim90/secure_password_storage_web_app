@@ -4,16 +4,17 @@ import { connect } from 'react-redux';
 import { ApplicationState }  from '../../store';
 import Card from '../Card/Card';
 import NewCard from '../NewCard/NewCard';
-import * as CardsState from '../../store/Data';
-import * as AuthState from '../../store/Authenticate';
+import * as DataStore from '../../store/Data';
+import * as AuthStore from '../../store/Authenticate';
 
 // At runtime, Redux will merge together...
 type CardContainerProps =
-    CardsState.CardsState
-    & AuthState.AuthState
-    & typeof CardsState.actionCreators;
+    DataStore.CardsState
+    & AuthStore.AuthState
+    & typeof DataStore.actionCreators
+    & typeof AuthStore.actionCreators 
 
-class CardContainer extends React.Component<CardContainerProps, {}> {
+export default class CardContainer extends React.Component<CardContainerProps, {}> {
 
     componentWillMount() {
         // This method runs when the component is first added to the page
@@ -55,10 +56,3 @@ class CardContainer extends React.Component<CardContainerProps, {}> {
     }
 }
 
-export default connect(
-    (state: ApplicationState) => {
-        const {auth, data} = state
-        return { ...auth, ...data }
-    }, // Selects which state properties are merged into the component's props
-    CardsState.actionCreators                 // Selects which action creators are merged into the component's props
-)(CardContainer) as typeof CardContainer;

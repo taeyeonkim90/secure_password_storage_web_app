@@ -18,6 +18,7 @@ type AuthProps =
 AuthStore.AuthState
 & DataStore.CardsState
 & typeof AuthStore.actionCreators
+& typeof DataStore.actionCreators
 & RouteComponentProps<{}>;
 
 let DEFAULT_COUNT = 30 
@@ -27,6 +28,11 @@ export default function(ComposedClass){
         constructor(props){
             super(props)
             this.state = {timer: null, count: DEFAULT_COUNT}
+        }
+
+        logout = (message:string) => {
+            this.props.cleanUpCardsAction()
+            this.props.logoutUser(message)
         }
 
         verifyToken = () => {
@@ -48,7 +54,7 @@ export default function(ComposedClass){
                         this.state.count && this.setState({count:DEFAULT_COUNT})
                     })
                     .catch(error => {
-                        this.props.logoutUser("User has been logged out due to invalid user authorization.")
+                        this.logout("User has been logged out due to invalid user authorization.")
                 })
                 addTask(fetchTask)
             }
@@ -56,7 +62,7 @@ export default function(ComposedClass){
 
         timeOutTick = () => {
             (this.state.count < 1)
-            ? this.props.logoutUser("User has been logged out due to prolonged inactivity.")
+            ? this.logout("User has been logged out due to prolonged inactivity.")
             : this.setState({count: this.state.count-1})
         }
 
@@ -92,6 +98,6 @@ export default function(ComposedClass){
             const {auth, data} = state
             return { ...auth, ...data }
         },
-        AuthStore.actionCreators                 // Selects which action creators are merged into the component's props
+        {... AuthStore.actionCreators, ... DataStore.actionCreators}
     )(Auth) as typeof Auth;
 }
