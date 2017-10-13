@@ -10,6 +10,7 @@ import * as CryptoJS from 'crypto-js';
 export interface CardsState {
     dataFetching: boolean
     cards: CardData[]
+    messages: string[]
 }
 
 export interface CardData {
@@ -30,6 +31,7 @@ interface RequestCardsAction {
 interface ReceiveCardsAction {
     type: 'RECEIVE_CARDS'
     cards: CardData[]
+    messages: string[]
 }
 
 interface UpdateCardsAction {
@@ -67,9 +69,30 @@ interface CreateCardAction {
     description: string
 }
 
+interface ErrorMessageAction {
+    type: 'ERROR_MESSAGE'
+    messages: string[]
+}
+
 interface DeleteCardAction {
     type: 'DELETE_CARD'
     index: number
+}
+
+function parseSuccessMessages(response) {
+    var messages = []
+    if (response.data.messages){
+        messages = response.data.messages
+    }
+    return messages
+}
+
+function parseErrorMessages(error) {
+    var messages = []
+    if (error.response.data.messages){
+        messages = error.response.data.messages
+    }
+    return messages
 }
 
 // Declare a 'discriminated union' type. This guarantees that all references to 'type' properties contain one of the
@@ -82,6 +105,7 @@ export type KnownAction =  RequestCardsAction
                     | CleanupAction
                     | UpdateCardAction
                     | CreateCardAction
+                    | ErrorMessageAction
                     | DeleteCardAction
 
 // ----------------
@@ -112,10 +136,11 @@ export const actionCreators = {
             let config = { headers: {'Authorization':`Bearer ${ token }`}}
             let fetchTask = axios.get('/api/Data/Card', config)
                 .then(response => {
-                    dispatch({ type: 'RECEIVE_CARDS', cards: parseCardsData(response.data, key)})
+                    dispatch({ type: 'RECEIVE_CARDS', cards: parseCardsData(response.data, key), messages: []})
                 })
                 .catch(error => {
                     console.log("fetch error occured when retrieving data from the backend")
+                    dispatch({ type: 'ERROR_MESSAGE', messages: ["Failed to retrieve user information."]})
                 })
         }
     },
@@ -127,10 +152,11 @@ export const actionCreators = {
             let fetchTask = axios.put('/api/Data/Card', {userData:encryptedData}, config)
                 .then(response => {
                     console.log("updated data is received again")
-                    dispatch({ type: 'RECEIVE_CARDS', cards: parseCardsData(response.data, key)})
+                    dispatch({ type: 'RECEIVE_CARDS', cards: parseCardsData(response.data, key), messages: ["New password information has been added"]})
                 })
                 .catch(error => {
                     console.log("fetch error occured when updating data to the backend")
+                    dispatch({ type: 'ERROR_MESSAGE', messages: ["Failed to add a new card. Please try again."]})
                 })
         }
     },
@@ -141,15 +167,19 @@ export const actionCreators = {
             let encryptedData = encryptCardsData(getState().data.cards, key)
             let fetchTask = axios.put('/api/Data/Card', {userData:encryptedData}, config)
                 .then(response => {
-                    dispatch({ type: 'RECEIVE_CARDS', cards: parseCardsData(response.data, key)})
+                    dispatch({ type: 'RECEIVE_CARDS', cards: parseCardsData(response.data, key), messages: ["Existing information has been updated."]})
                 })
                 .catch(error => {
                     console.log("fetch error occured when updating data to the backend")
+                    dispatch({ type: 'ERROR_MESSAGE', messages: ["Failed to update existing card. Please try again."]})
                 })
         }
     },
     cleanUpCardsAction: (): AppThunkAction<KnownAction> => (dispatch, getState) => {
         dispatch({ type: 'CLEANUP_CARDS' })
+    },
+    errorMessageAction: (messages:string): AppThunkAction<KnownAction> => (dispatch, getState) => {
+        dispatch({ type: 'ERROR_MESSAGE', messages: [messages]})
     },
     deleteCardAction: (index, token, key): AppThunkAction<KnownAction> => (dispatch, getState) => {
         if(!getState().data.dataFetching){
@@ -158,10 +188,11 @@ export const actionCreators = {
             let encryptedData = encryptCardsData(getState().data.cards, key)
             let fetchTask = axios.put('/api/Data/Card', {userData:encryptedData}, config)
                 .then(response => {
-                    dispatch({ type: 'RECEIVE_CARDS', cards: parseCardsData(response.data, key)})
+                    dispatch({ type: 'RECEIVE_CARDS', cards: parseCardsData(response.data, key), messages: ["A domain information has been deleted."]})
                 })
                 .catch(error => {
                     console.log("fetch error occured when updating data to the backend")
+                    dispatch({ type: 'ERROR_MESSAGE', messages: ["Failed to delete existing card. Please try again."]})
                 })
         }
     }
@@ -172,7 +203,8 @@ export const actionCreators = {
 
 const unloadedState: CardsState = { 
         dataFetching: false, 
-        cards: [] 
+        cards: [],
+        messages: []
     };
 
 export const reducer: Reducer<CardsState> = (state: CardsState, incomingAction: Action) => {
@@ -181,7 +213,7 @@ export const reducer: Reducer<CardsState> = (state: CardsState, incomingAction: 
         case 'REQUEST_CARDS':
             return { ... state, dataFetching: true }
         case 'RECEIVE_CARDS':
-            return { ... state, dataFetching: false, cards: action.cards }
+            return { ... state, dataFetching: false, cards: action.cards, messages: action.messages }
         case 'UPDATE_CARDS':
             return { ... state, dataFetching: true, cards: action.cards }
         case 'CLEANUP_CARDS':
@@ -206,6 +238,11 @@ export const reducer: Reducer<CardsState> = (state: CardsState, incomingAction: 
                 ... state,
                 cards: newCards,
                 dataFetching: true
+            }
+        case 'ERROR_MESSAGE':
+            return {
+                ... state,
+                messages: action.messages
             }
         case 'DELETE_CARD':
             var newCards = [... state.cards]
