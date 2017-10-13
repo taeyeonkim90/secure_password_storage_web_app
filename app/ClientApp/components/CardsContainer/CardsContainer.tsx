@@ -70,9 +70,9 @@ export default class CardContainer extends React.Component<CardContainerProps, {
 
     public render() {
         return  <div> 
+                    {this.renderLoadingBar()}
                     <NewCard addCard={this.addCard}/>
                     {this.renderCards()}
-                    {this.renderLoadingBar()}
                 </div >;
     }
 }

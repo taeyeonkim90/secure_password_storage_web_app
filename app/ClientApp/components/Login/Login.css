@@ -51,12 +51,13 @@
 }
 
 .loading {
-    margin: auto;
-    left:0;
-    right:0;
-    top:0;
-    bottom:0;
-    position: absolute;   
+    position: absolute;
+    width: 20vh;
+    top: 50vh;
+    left: 50vw;
+    transform: translate(-50%, -100%);
+    -webkit-transform: translate(-50%, -100%);  /* Safari */
+    -ms-transform: translate(-50%, -100%);   /* IE 9 */ 
 }
 
 @media (max-width: 480px) {
