@@ -56,8 +56,7 @@
     right:0;
     top:0;
     bottom:0;
-    position: absolute;
-    
+    position: absolute;   
 }
 
 @media (max-width: 480px) {

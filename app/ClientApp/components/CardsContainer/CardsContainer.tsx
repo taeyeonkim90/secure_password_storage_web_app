@@ -6,6 +6,7 @@ import Card from '../Card/Card';
 import NewCard from '../NewCard/NewCard';
 import * as DataStore from '../../store/Data';
 import * as AuthStore from '../../store/Authenticate';
+import * as css from './CardsContainer.css'
 
 // At runtime, Redux will merge together...
 type CardContainerProps =
@@ -30,6 +31,15 @@ export default class CardContainer extends React.Component<CardContainerProps, {
         // this.props.requestWeatherForecasts(startDateIndex, this.props.token);
     }
 
+    loadingBar = () => {
+        if (this.props.dataFetching){
+            console.log("Loading is happening")
+            return (
+                <img className={css.loading} src="img/loading.gif"></img> 
+            );
+        }
+    }
+
     updateCard = (accountName, index, userName, pw, description) => {
         let { token, masterKey } = this.props
         this.props.updateCardAction(accountName, index, userName, pw, description, token, masterKey)
@@ -52,6 +62,7 @@ export default class CardContainer extends React.Component<CardContainerProps, {
         return  <div> 
                     <NewCard addCard={this.addCard}/>
                     {listItems}
+                    {this.loadingBar()}
                 </div >;
     }
 }
