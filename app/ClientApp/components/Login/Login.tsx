@@ -29,16 +29,8 @@ class Login extends React.Component<AuthProps, AuthState> {
         event.preventDefault()
         this.props.loginUser(this.state.email, this.state.password)
     }
-
-    loadingBar = () => {
-        if(this.props.authFetching){
-            return (
-                <img className={s.loading} src="img/loading.gif"></img> 
-            );
-        }
-    }
     
-    displayError = () => {
+    renderErrors = () => {
         var messages = this.props.messages
         const listItems = messages.map((message, i) =>
             <li key={i}>{message}</li>
@@ -46,6 +38,14 @@ class Login extends React.Component<AuthProps, AuthState> {
         if (messages.length > 0 && messages[0]!="") {
             return (
                 <ul className={s.errorMessageContainer}>{listItems}</ul>
+            );
+        }
+    }
+
+    renderLoadingBar = () => {
+        if(this.props.authFetching){
+            return (
+                <img className={s.loading} src="img/loading.gif"></img> 
             );
         }
     }
@@ -78,8 +78,8 @@ class Login extends React.Component<AuthProps, AuthState> {
                                 value="Register"
                                 onClick={()=>this.props.errorMessage("")}/>
                         </NavLink>
-                        {this.displayError()}
-                        {this.loadingBar()}
+                        {this.renderErrors()}
+                        {this.renderLoadingBar()}
                     </form>
                 </div>;
             return loginBox;

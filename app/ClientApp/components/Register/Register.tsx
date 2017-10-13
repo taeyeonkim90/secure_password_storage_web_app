@@ -45,15 +45,7 @@ class Register extends React.Component<AuthProps, AuthState> {
         this.props.registerUser(this.state.email, this.state.password)
     }
 
-    loadingBar = () => {
-        if (this.props.authFetching){
-            return (
-                <img className={css.loading} src="img/loading.gif"></img> 
-            );
-        }
-    }
-
-    displayError = () => {
+    renderErrors = () => {
         var messages = this.props.messages
         const listItems = messages.map((message, i) =>
             <li key={i}>{message}</li>
@@ -61,6 +53,14 @@ class Register extends React.Component<AuthProps, AuthState> {
         if (messages.length > 0 && messages[0]!="") {
             return (
                 <ul className={css.errorMessageContainer}>{listItems}</ul>
+            );
+        }
+    }
+
+    renderLoadingBar = () => {
+        if (this.props.authFetching){
+            return (
+                <img className={css.loading} src="img/loading.gif"></img> 
             );
         }
     }
@@ -96,8 +96,8 @@ class Register extends React.Component<AuthProps, AuthState> {
                             <input type="button" className={css.redirectLoginButton} onClick={()=>this.props.errorMessage("")}
                              value="Login"/>
                         </NavLink>
-                        {this.displayError()}
-                        {this.loadingBar()}
+                        {this.renderErrors()}
+                        {this.renderLoadingBar()}
                     </form>
                 </div>;
             return registerBox;

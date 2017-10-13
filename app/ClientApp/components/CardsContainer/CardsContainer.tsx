@@ -31,15 +31,6 @@ export default class CardContainer extends React.Component<CardContainerProps, {
         // this.props.requestWeatherForecasts(startDateIndex, this.props.token);
     }
 
-    loadingBar = () => {
-        if (this.props.dataFetching){
-            console.log("Loading is happening")
-            return (
-                <img className={css.loading} src="img/loading.gif"></img> 
-            );
-        }
-    }
-
     updateCard = (accountName, index, userName, pw, description) => {
         let { token, masterKey } = this.props
         this.props.updateCardAction(accountName, index, userName, pw, description, token, masterKey)
@@ -55,14 +46,32 @@ export default class CardContainer extends React.Component<CardContainerProps, {
         this.props.deleteCardAction(index, token, masterKey)
     }
 
+    renderCards = () => {
+        console.log(this.props.cards.length)
+        if (this.props.cards.length != 0){
+            return this.props.cards.map((card, key) => 
+                <Card key={key} index={key} {...card} updateCard={this.updateCard} deleteCard={this.deleteCard}/>
+            )
+        }
+        else {
+            return <p>You have no password information. Press above button to add new information.</p>
+        }
+    }
+
+    renderLoadingBar = () => {
+        if (this.props.dataFetching){
+            console.log("Loading is happening")
+            return (
+                <img className={css.loading} src="img/loading.gif"></img> 
+            );
+        }
+    }
+
     public render() {
-        let listItems = this.props.cards.map((card, key) => 
-                        <Card key={key} index={key} {...card} updateCard={this.updateCard} deleteCard={this.deleteCard}/>
-                    )
         return  <div> 
                     <NewCard addCard={this.addCard}/>
-                    {listItems}
-                    {this.loadingBar()}
+                    {this.renderCards()}
+                    {this.renderLoadingBar()}
                 </div >;
     }
 }
