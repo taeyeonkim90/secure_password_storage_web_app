@@ -52,7 +52,9 @@ export default function(ComposedClass){
                         this.count = DEFAULT_COUNT
                     })
                     .catch(error => {
-                        this.logout("User has been logged out due to invalid user authorization.")
+                        if (this.props.authenticated){
+                            this.logout("User has been logged out due to invalid user authorization.")    
+                        }
                 })
                 addTask(fetchTask)
             }
