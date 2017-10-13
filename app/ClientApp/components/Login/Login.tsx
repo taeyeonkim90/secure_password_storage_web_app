@@ -30,6 +30,14 @@ class Login extends React.Component<AuthProps, AuthState> {
         this.props.loginUser(this.state.email, this.state.password)
     }
 
+    loadingBar = () => {
+        if(this.props.authFetching){
+            return (
+                <img className={s.loading} src="img/loading.gif"></img> 
+            );
+        }
+    }
+    
     displayError = () => {
         var messages = this.props.messages
         const listItems = messages.map((message, i) =>
@@ -49,7 +57,6 @@ class Login extends React.Component<AuthProps, AuthState> {
             const imageStyle = {
                 backgroundImage: 'url("./img/login.jpg")',
             }
-
             const loginBox =
                 <div className={s.loginContainer} style={imageStyle}>
                     <form className={s.loginForm} onSubmit={this.handleLoginSubmit}>
@@ -72,6 +79,7 @@ class Login extends React.Component<AuthProps, AuthState> {
                                 onClick={()=>this.props.errorMessage("")}/>
                         </NavLink>
                         {this.displayError()}
+                        {this.loadingBar()}
                     </form>
                 </div>;
             return loginBox;

@@ -1,5 +1,6 @@
 export const loginContainer: string;
 export const loginForm: string;
+export const loading: string;
 export const loginElement: string;
 export const focus: string;
 export const loginButton: string;

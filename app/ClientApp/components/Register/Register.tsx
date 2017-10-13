@@ -72,14 +72,8 @@ class Register extends React.Component<AuthProps, AuthState> {
             const imageStyle = {
                 backgroundImage: 'url("./img/register.jpg")',
             }
-            var cssContainerStyle;
-            if(this.props.authFetching){
-                cssContainerStyle = css.registerContainer + ' ' + css.transparent;
-            }else {
-                cssContainerStyle = css.registerContainer;
-            }
             const registerBox =
-                <div className={cssContainerStyle} style={imageStyle}>
+                <div className={css.registerContainer} style={imageStyle}>
                     <form className={css.registerForm} onSubmit={this.handleRegisterSubmit}>
                         <input className={css.registerElement}
                             type="text"
