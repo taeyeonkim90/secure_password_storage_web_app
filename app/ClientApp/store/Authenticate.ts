@@ -9,7 +9,7 @@ import axios from 'axios'
 export interface AuthState {
     authFetching: boolean
     authenticated: boolean
-    messages: string[]
+    authMessages: string[]
     token?: string
     email?: string
     masterKey?: string
@@ -27,7 +27,7 @@ interface ReceiveRegistrationAction{
     type: "RECEIVE_REGISTRATION"
     authFetching: boolean
     authenticated: boolean
-    messages: string[]
+    authMessages: string[]
 }
 
 interface RequestJWTAction {
@@ -39,7 +39,7 @@ interface ReceiveJWTAction {
     type: 'RECEIVE_JWT'
     authFetching: boolean
     authenticated: boolean
-    messages: string[]
+    authMessages: string[]
     token: string
     email: string
     masterKey: string
@@ -58,12 +58,12 @@ interface ReceiveRefreshJWTAction {
 
 interface LogoutAction {
     type: 'LOGOUT'
-    messages: string[]
+    authMessages: string[]
 }
 
 interface ErrorMessageAction {
     type: 'ERROR_MESSAGE'
-    messages: string[]
+    authMessages: string[]
 }
 
 function parseSuccessMessages(response) {
@@ -100,10 +100,10 @@ export const actionCreators = {
         if (!getState().auth.authFetching) {
             let fetchTask = axios.post('/api/Account/Create', {Email: email, Password: password})
                 .then(response => {
-                    dispatch({ type: 'RECEIVE_REGISTRATION', authenticated: false, messages: parseSuccessMessages(response), authFetching: false })
+                    dispatch({ type: 'RECEIVE_REGISTRATION', authenticated: false, authMessages: parseSuccessMessages(response), authFetching: false })
                 })
                 .catch(error => {
-                    dispatch({ type: 'RECEIVE_REGISTRATION', authenticated: false, messages: parseErrorMessages(error), authFetching: false })
+                    dispatch({ type: 'RECEIVE_REGISTRATION', authenticated: false, authMessages: parseErrorMessages(error), authFetching: false })
                 })
             addTask(fetchTask) // Ensure server-side prerendering waits for this to complete
             dispatch({type: 'REQUEST_REGISTRATION', authFetching: true})
@@ -115,10 +115,10 @@ export const actionCreators = {
             let fetchTask = axios.post('/api/Account/Token', {Email: email, Password: password})
                 .then(response => {
                     // var hash = crypto.createHmac('sha1', 'W"?\3^32UhXq!&y>').update(password).digest('hex')
-                    dispatch({ type: 'RECEIVE_JWT', authFetching: false, authenticated: response.data.status, messages: parseSuccessMessages(response), token: response.data.token, email:email, masterKey: password})
+                    dispatch({ type: 'RECEIVE_JWT', authFetching: false, authenticated: response.data.status, authMessages: parseSuccessMessages(response), token: response.data.token, email:email, masterKey: password})
                 })
                 .catch(error => {
-                    dispatch({ type: 'RECEIVE_JWT', authFetching: false, authenticated: false, messages: parseErrorMessages(error), token:'', email:'', masterKey:''})
+                    dispatch({ type: 'RECEIVE_JWT', authFetching: false, authenticated: false, authMessages: parseErrorMessages(error), token:'', email:'', masterKey:''})
                 })
             addTask(fetchTask) // Ensure server-side prerendering waits for this to complete
             dispatch({type: 'REQUEST_JWT', authFetching: true})
@@ -126,7 +126,7 @@ export const actionCreators = {
     },
     // logout
     logoutUser: (message:string): AppThunkAction<KnownAction> => (dispatch, getState) => {
-        dispatch({ type: 'LOGOUT', messages:[message]})
+        dispatch({ type: 'LOGOUT', authMessages:[message]})
     },
 
     // refresh token
@@ -146,14 +146,14 @@ export const actionCreators = {
     },
 
     errorMessage: (messages:string): AppThunkAction<KnownAction> => (dispatch, getState) => {
-        dispatch({ type: 'ERROR_MESSAGE', messages: [messages]})
+        dispatch({ type: 'ERROR_MESSAGE', authMessages: [messages]})
     }
 }
 
 // ----------------
 // REDUCER - For a given state and action, returns the new state. To support time travel, this must not mutate the old state.
 
-const unloadedState: AuthState = { authFetching: false, authenticated: false, messages: []}
+const unloadedState: AuthState = { authFetching: false, authenticated: false, authMessages: []}
 
 export const reducer: Reducer<AuthState> = (state: AuthState, incomingAction: Action) => {
     const action = incomingAction as KnownAction
@@ -161,19 +161,19 @@ export const reducer: Reducer<AuthState> = (state: AuthState, incomingAction: Ac
         case 'REQUEST_REGISTRATION':
             return {... state, authFetching: action.authFetching}
         case 'RECEIVE_REGISTRATION':
-            return {... state, authFetching: action.authFetching, authenticated: action.authenticated, messages: action.messages}
+            return {... state, authFetching: action.authFetching, authenticated: action.authenticated, authMessages: action.authMessages}
         case 'REQUEST_JWT':
             return {... state, authFetching: action.authFetching}
         case 'RECEIVE_JWT':
-            return {... state, authFetching: action.authFetching, authenticated: action.authenticated, messages: action.messages, token: action.token, email: action.email, masterKey: action.masterKey}
+            return {... state, authFetching: action.authFetching, authenticated: action.authenticated, authMessages: action.authMessages, token: action.token, email: action.email, masterKey: action.masterKey}
         case 'REQUEST_REFRESH':
             return {... state, authFetching: action.authFetching}
         case 'RECEIVE_REFRESH':
             return {... state, authFetching: action.authFetching, token: action.token}
         case 'LOGOUT':
-            return {... state, authenticated: false, messages: action.messages, token:'', email:'', masterKey:''}
+            return {... state, authenticated: false, authMessages: action.authMessages, token:'', email:'', masterKey:''}
         case 'ERROR_MESSAGE' :
-            return {... state, messages: action.messages}
+            return {... state, authMessages: action.authMessages}
     }
 
     return state || unloadedState

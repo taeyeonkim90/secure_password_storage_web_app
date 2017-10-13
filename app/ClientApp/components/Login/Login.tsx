@@ -31,7 +31,7 @@ class Login extends React.Component<AuthProps, AuthState> {
     }
     
     renderErrors = () => {
-        var messages = this.props.messages
+        var messages = this.props.authMessages
         const listItems = messages.map((message, i) =>
             <li key={i}>{message}</li>
         );

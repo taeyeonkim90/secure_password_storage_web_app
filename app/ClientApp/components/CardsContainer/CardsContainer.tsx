@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { toast } from 'react-toastify';
+
 import { ApplicationState }  from '../../store';
 import Card from '../Card/Card';
 import NewCard from '../NewCard/NewCard';
@@ -29,6 +31,7 @@ export default class CardContainer extends React.Component<CardContainerProps, {
         // This method runs when incoming props (e.g., route params) change
         // let startDateIndex = parseInt(nextProps.match.params.startDateIndex) || 0;
         // this.props.requestWeatherForecasts(startDateIndex, this.props.token);
+        
     }
 
     updateCard = (accountName, index, userName, pw, description) => {
@@ -47,7 +50,6 @@ export default class CardContainer extends React.Component<CardContainerProps, {
     }
 
     renderCards = () => {
-        console.log(this.props.cards.length)
         if (this.props.cards.length != 0){
             return this.props.cards.map((card, key) => 
                 <Card key={key} index={key} {...card} updateCard={this.updateCard} deleteCard={this.deleteCard}/>
@@ -60,7 +62,6 @@ export default class CardContainer extends React.Component<CardContainerProps, {
 
     renderLoadingBar = () => {
         if (this.props.dataFetching){
-            console.log("Loading is happening")
             return (
                 <img className={css.loading} src="img/loading.gif"></img> 
             );
