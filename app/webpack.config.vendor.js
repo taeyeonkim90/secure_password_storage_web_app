@@ -29,7 +29,8 @@ module.exports = (env) => {
                 'redux',
                 'redux-thunk',
                 'react-router-redux',
-                'jquery'
+                'jquery',
+                'react-toastify/dist/ReactToastify.min.css'
             ],
         },
         output: {
