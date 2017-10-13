@@ -6,22 +6,21 @@ const FieldInput = (props) => {
     var placeholder = ""
     switch (props.name) {
         case ("accountName"):
-            placeholder = "Facebook, Gmail, etc."
+            placeholder = "Domain name: Facebook, Gmail, etc."
             break;
         case ("userName"):
-            placeholder = "example@example.com"
+            placeholder = "ID: example@example.com"
             break;
         case ("pw"):
-            placeholder = "your password"
+            placeholder = "pw: longer the better"
             break;
         case ("description"):
-            placeholder = "descriptions for your information"
+            placeholder = "description: notes related to your password"
             break;
     }
 
     return (
         <div>
-            <p> {props.displayName}: </p>
             <input className={css.fieldInput}
                 type={props.type}
                 name={props.name}

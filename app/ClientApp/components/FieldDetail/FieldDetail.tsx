@@ -7,9 +7,8 @@ import { toast } from 'react-toastify';
 const FieldDetail = (props) => {
     return (
         <div>
-            <p> {props.displayName}: </p>
-            <CopyToClipboard text={props.data} onCopy={()=>toast(`Copied ${props.displayName} value to the clipboard`)}>
-                <p className={css.fieldDetail} > {props.data} </p>
+            <CopyToClipboard text={props.data} onCopy={()=>toast(`Copied ${props.data} to the clipboard`)}>
+                <p className={css.fieldDetail} > {props.display} </p>
             </CopyToClipboard>
         </div>
         )

@@ -106,10 +106,10 @@ export default class Card extends React.Component<CardProps, CardState> {
      */
     renderIsEditHTML = () => {
         return <div>
-            <FieldInput displayName="Domain" name="accountName" type="text" data={this.state.accountName} updateState={this.handleChange}/>
-            <FieldInput displayName="ID" name="userName" type="text" data={this.state.userName} updateState={this.handleChange}/>
-            <FieldInput displayName="Password" name="pw" type="password" data={this.state.pw} updateState={this.handleChange}/>
-            <FieldInput displayName="Description" name="description" type="text" data={this.state.description} updateState={this.handleChange}/>
+            <FieldInput name="accountName" type="text" data={this.state.accountName} updateState={this.handleChange}/>
+            <FieldInput name="userName" type="text" data={this.state.userName} updateState={this.handleChange}/>
+            <FieldInput name="pw" type="password" data={this.state.pw} updateState={this.handleChange}/>
+            <FieldInput name="description" type="text" data={this.state.description} updateState={this.handleChange}/>
             <button onClick={this.delete}>Delete</button>
             <button onClick={this.save}>Update</button>
             <button onClick={this.cancel}>Cancel</button>
@@ -121,10 +121,10 @@ export default class Card extends React.Component<CardProps, CardState> {
 
         return <div>
             <button onClick={this.toggleIsExpand}>-</button>
-            <FieldDetail displayName="Domain" data={accountName} /> 
-            <FieldDetail displayName="ID" data={userName} /> 
-            <FieldDetail displayName="Password" data={pw} /> 
-            <FieldDetail displayName="Description" data={description} />
+            <FieldDetail display={accountName} data={accountName} /> 
+            <FieldDetail display={userName} data={userName} /> 
+            <FieldDetail display={pw} data={pw} /> 
+            <FieldDetail display={description} data={description} />
             <button onClick={this.toggleIsEdit}>Edit</button>
         </div>
     }
@@ -132,7 +132,7 @@ export default class Card extends React.Component<CardProps, CardState> {
     renderIsNotExpandedHTML = () => {
         return <div>
             <button onClick={this.toggleIsExpand}>+</button>
-            <FieldDetail displayName="Domain" data={this.state.accountName} />
+            <FieldDetail display={this.state.accountName} data={this.state.pw} />
         </div>
     }
 
@@ -148,10 +148,6 @@ export default class Card extends React.Component<CardProps, CardState> {
             renderedView = this.renderIsEditHTML()
         }
         
-        return (
-        <div >
-            {renderedView}
-        </div>
-        );
+        return renderedView
     }
 }
