@@ -1,7 +1,26 @@
+.cardContainer {
+    border: 3px solid rgba(139, 154, 187, 0.671);
+    padding: 10px;
+    margin: 10px;
+    text-align: center;
+}
+
 .card{
     height: 40px;
 }
 
 .expanded{
     height: auto !important;
+}
+
+.foldButton {
+    display: block;
+    margin-left: auto;
+}
+
+.button {
+    display: inline-block;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 25px;
 }

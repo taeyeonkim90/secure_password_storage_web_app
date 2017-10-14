@@ -1,6 +1,7 @@
 .newCardContainer {
-    border: 3px solid rgba(223, 233, 255, 0.671);
+    border: 3px solid rgba(139, 154, 187, 0.671);
     padding: 10px;
+    margin: 10px;
     text-align: center;
 }
 

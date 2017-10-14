@@ -11,7 +11,7 @@
 .container {
     margin: auto;
     width: 50%;
-    border: 3px solid rgba(223, 233, 255, 0.671);
+    /* border: 3px solid rgba(223, 233, 255, 0.671); */
     padding: 10px;
 }
 
