@@ -26,6 +26,11 @@
     color: #004304;
 }
 
+.appLogo {
+    height: 100px;
+    margin: 20px;
+}
+
 .loginForm {
     display: flex;
     flex-direction: column;

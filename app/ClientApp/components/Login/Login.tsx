@@ -30,6 +30,12 @@ class Login extends React.Component<AuthProps, AuthState> {
         this.props.loginUser(this.state.email, this.state.password)
     }
     
+    renderAppLogo = () => {
+        return (
+            <img className={s.appLogo} src="img/appLogo.jpg"></img>
+        )
+    }
+
     renderErrors = () => {
         var messages = this.props.authMessages
         const listItems = messages.map((message, i) =>
@@ -60,6 +66,7 @@ class Login extends React.Component<AuthProps, AuthState> {
             const loginBox =
                 <div className={s.loginContainer} style={imageStyle}>
                     <form className={s.loginForm} onSubmit={this.handleLoginSubmit}>
+                        {this.renderAppLogo()}
                         <input name="email" className={s.loginElement}
                             type="text"
                             value={this.state.email}

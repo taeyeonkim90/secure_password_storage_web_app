@@ -1,5 +1,6 @@
 export const registerContainer: string;
 export const registerForm: string;
+export const appLogo: string;
 export const loading: string;
 export const registerButton: string;
 export const redirectLoginButton: string;

@@ -35,6 +35,11 @@
     height: 100vh;
 }
 
+.appLogo {
+    height: 100px;
+    margin: 20px;
+}
+
 .loading {
     position: absolute;
     width: 20vh;

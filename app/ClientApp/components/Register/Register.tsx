@@ -57,6 +57,12 @@ class Register extends React.Component<AuthProps, AuthState> {
         }
     }
 
+    renderAppLogo = () => {
+        return (
+            <img className={css.appLogo} src="img/appLogo.jpg"></img>
+        )
+    }
+
     renderLoadingBar = () => {
         if (this.props.authFetching){
             return (
@@ -75,6 +81,7 @@ class Register extends React.Component<AuthProps, AuthState> {
             const registerBox =
                 <div className={css.registerContainer} style={imageStyle}>
                     <form className={css.registerForm} onSubmit={this.handleRegisterSubmit}>
+                        {this.renderAppLogo()}
                         <input className={css.registerElement}
                             type="text"
                             value={this.state.email}

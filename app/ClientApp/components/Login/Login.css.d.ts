@@ -1,4 +1,5 @@
 export const loginContainer: string;
+export const appLogo: string;
 export const loginForm: string;
 export const loading: string;
 export const loginButton: string;
