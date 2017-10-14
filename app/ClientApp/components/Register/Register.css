@@ -57,6 +57,7 @@
     width: 100vw;
     margin: 0.3em;
     height: 50px;
+    flex-shrink: 0;
 }
 
 @media (max-width: 480px) {
