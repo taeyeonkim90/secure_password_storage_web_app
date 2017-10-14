@@ -23,7 +23,7 @@ class Layout extends React.Component<any, {}> {
                     <ToastContainer 
                     position="top-right"
                     type="default"
-                    autoClose={3000}
+                    autoClose={3500}
                     hideProgressBar={true}
                     newestOnTop={true}
                     closeOnClick

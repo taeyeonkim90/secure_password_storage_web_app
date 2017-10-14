@@ -24,15 +24,14 @@ input[type=submit]:hover {
 } */
 
 .fieldDetail {
+    height: 3em;
     width: 100%;
     padding: 12px 20px;
     margin: 8px 0;
     display: inline-block;
     border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
 }
 
 .fieldDetail:hover {
-    background-color: #45a049;
+    background-color: rgba(130, 167, 248, 0.671);
 }

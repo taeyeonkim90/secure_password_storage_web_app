@@ -7,3 +7,24 @@
     -webkit-transform: translate(-50%, -100%);  /* Safari */
     -ms-transform: translate(-50%, -100%);   /* IE 9 */
 }
+
+.container {
+    margin: auto;
+    width: 50%;
+    /* border: 3px solid rgba(223, 233, 255, 0.671); */
+    padding: 10px;
+}
+
+@media (max-width: 1000px) {
+    /* revert body padding top of 50 px */
+    .container {
+        width: 70%;
+    }
+}
+
+@media (max-width: 600px) {
+    /* revert body padding top of 50 px */
+    .container {
+        width: 100%;
+    }
+}

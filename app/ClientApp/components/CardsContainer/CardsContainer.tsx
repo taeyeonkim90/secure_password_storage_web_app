@@ -69,18 +69,10 @@ export default class CardContainer extends React.Component<CardContainerProps, {
     }
 
     public render() {
-        return  <div> 
-                    {this.renderLoadingBar()}
+        return  <div className={css.container}> 
                     <NewCard addCard={this.addCard}/>
                     {this.renderCards()}
+                    {this.renderLoadingBar()}
                 </div >;
     }
 }
-
-// export default connect(
-//     (state: ApplicationState) => {
-//         const {auth, data} = state
-//         return { ...auth, ...data }
-//     },
-//     {... AuthStore.actionCreators, ... DataStore.actionCreators}
-// )(CardContainer) as typeof CardContainer

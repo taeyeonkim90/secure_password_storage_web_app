@@ -8,6 +8,7 @@ import * as CardsState from '../../store/Data';
 import { AppThunkAction } from '../../store';
 import FieldInput from '../FieldInput/FieldInput';
 import FieldDetail from '../FieldDetail/FieldDetail';
+import * as css from './Card.css';
 
 // At runtime, Redux will merge together...
 interface CardAction {
@@ -78,7 +79,8 @@ export default class Card extends React.Component<CardProps, CardState> {
 
     // cancels any Card information change
     cancel = () => {
-        this.resetCardState();
+        this.resetCardState()
+        toast("Editing a card has been cancelled")
     }
 
     // resets CardState to props (ex. when pressing cancel while editing)
@@ -91,21 +93,21 @@ export default class Card extends React.Component<CardProps, CardState> {
             userName: this.props.userName, 
             pw: this.props.pw, 
             description: this.props.description
-        }));
+        }))
     }
 
     // toggles isExpanded when + or - button is pressed
     toggleIsExpand = () => {
         this.setState((prevState, props) => ({
             isExpand: !prevState.isExpand
-        }));
+        }))
     }
 
     // handles isEditing condition when 'edit' or 'cancel' button is pressed
     toggleIsEdit = () => {
         this.setState((prevState, props) => ({
             isEdit: !prevState.isEdit
-        }));
+        }))
     }
 
 
@@ -114,13 +116,14 @@ export default class Card extends React.Component<CardProps, CardState> {
      */
     renderIsEditHTML = () => {
         return <div>
+            <button className={css.foldButton} onClick={this.cancel}>-</button>
             <FieldInput name="accountName" type="text" data={this.state.accountName} updateState={this.handleChange}/>
             <FieldInput name="userName" type="text" data={this.state.userName} updateState={this.handleChange}/>
             <FieldInput name="pw" type="password" data={this.state.pw} updateState={this.handleChange}/>
             <FieldInput name="description" type="text" data={this.state.description} updateState={this.handleChange}/>
-            <button onClick={this.delete}>Delete</button>
-            <button onClick={this.save}>Update</button>
-            <button onClick={this.cancel}>Cancel</button>
+            <button className={css.button} onClick={this.delete}>Delete</button>
+            <button className={css.button} onClick={this.save}>Update</button>
+            <button className={css.button} onClick={this.cancel}>Cancel</button>
         </div>
     }
 
@@ -128,18 +131,18 @@ export default class Card extends React.Component<CardProps, CardState> {
         let {accountName, userName, pw, description} = this.state
 
         return <div>
-            <button onClick={this.toggleIsExpand}>-</button>
+            <button className={css.foldButton} onClick={this.toggleIsExpand}>-</button>
             <FieldDetail display={accountName} data={accountName} /> 
             <FieldDetail display={userName} data={userName} /> 
             <FieldDetail display={pw} data={pw} /> 
             <FieldDetail display={description} data={description} />
-            <button onClick={this.toggleIsEdit}>Edit</button>
+            <button className={css.button} onClick={this.toggleIsEdit}>Edit</button>
         </div>
     }
 
     renderIsNotExpandedHTML = () => {
         return <div>
-            <button onClick={this.toggleIsExpand}>+</button>
+            <button className={css.foldButton} onClick={this.toggleIsExpand}>+</button>
             <FieldDetail display={this.state.accountName} data={this.state.pw} />
         </div>
     }
@@ -156,6 +159,6 @@ export default class Card extends React.Component<CardProps, CardState> {
             renderedView = this.renderIsEditHTML()
         }
         
-        return renderedView
+        return <div className={css.cardContainer}> {renderedView} </div>
     }
 }
