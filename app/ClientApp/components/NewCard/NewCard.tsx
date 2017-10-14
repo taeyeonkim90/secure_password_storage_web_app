@@ -68,13 +68,13 @@ export default class Card extends React.Component<NewCardProps, NewCardState> {
     }
 
     renderIsEditHTML = () => {
-        return <div>
+        return <div className={css.newCardContainer}>
             <FieldInput displayName="Domain" name="accountName" type="text" data={this.state.accountName} updateState={this.handleChange}/>
             <FieldInput displayName="ID" name="userName" type="text" data={this.state.userName} updateState={this.handleChange}/>
             <FieldInput displayName="Password" name="pw" type="password" data={this.state.pw} updateState={this.handleChange}/>
             <FieldInput displayName="Description" name="description" type="text" data={this.state.description} updateState={this.handleChange}/>
-            <button onClick={this.addNewCard}>Add</button>
-            <button onClick={this.cancelNewCard}>Cancel</button>
+            <button className={css.button} onClick={this.addNewCard}>Add</button>
+            <button className={css.button} onClick={this.cancelNewCard}>Cancel</button>
         </div>
     }
 
