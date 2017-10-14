@@ -6,7 +6,7 @@ import { ToastContainer } from 'react-toastify';
 import { ApplicationState } from '../../store';
 import * as AuthStore from '../../store/Authenticate';
 import * as DataStore from '../../store/Data';
-import ActionButton from '../ActionButton/ActionButton';
+import NavBar from '../NavBar/NavBar';
 
 class Layout extends React.Component<any, {}> {
     logout = (message:string) => {
@@ -15,10 +15,8 @@ class Layout extends React.Component<any, {}> {
     }
 
     public render() {
-        return <div className='container-fluid'>
-            <div className='row'>
-                <div className='col-sm-12'>
-                    <ActionButton email={this.props.email} logOut={this.logout}></ActionButton>
+        return <div>
+                <NavBar email={this.props.email} logout={this.logout}></NavBar>
                     { this.props.children }
                     <ToastContainer 
                     position="top-right"
@@ -27,11 +25,8 @@ class Layout extends React.Component<any, {}> {
                     hideProgressBar={true}
                     newestOnTop={true}
                     closeOnClick
-                    pauseOnHover
-                    />
-                </div>
-            </div>
-        </div>;
+                    pauseOnHover/>
+                </div>;
     }
 }
 

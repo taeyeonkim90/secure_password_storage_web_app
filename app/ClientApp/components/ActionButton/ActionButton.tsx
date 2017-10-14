@@ -15,30 +15,40 @@ class ActionButton extends React.Component<any, ActionButtonState> {
         }
     }
 
-    // toggles isExpanded when + or - button is pressed
-    toggleIsExpand = () => {
+    expand = () => {
         this.setState((prevState, props) => ({
             isExpand: !prevState.isExpand
-        }));
+        }))
+    }
+
+    collapse = (e) => {
+        if (e.relatedTarget 
+            && typeof e.relatedTarget !== 'undefined'
+            && e.relatedTarget.className === 'dropdownButton') {
+            return
+        }
+        this.setState((prevState, props) => ({
+            isExpand: false
+        }))
     }
 
     signOut = () => {
-        this.props.logOut("User has signed out.")
+        this.props.logout("User has signed out.")
     }
 
     renderDropdown = () => {
         if (this.state.isExpand) {
             return (
-                <div className={css.dropDown}>
+                <div  className={css.dropDown}>
                     <ul>
                         <li>
-                            <input type="button" value="test"/>
+                            <input className="dropdownButton" type="button" value="Hello"/>
                         </li>
                         <li>
-                            <input type="button" value="test1"/>
+                            <input className="dropdownButton" type="button" value="World"/>
                         </li>
                         <li>
-                            <input type="button" value="sign out" onClick={this.signOut}/>
+                            <input className="dropdownButton" type="button" value="Sign Out" onClick={this.signOut}/>
                         </li>
                     </ul>  
                 </div>
@@ -49,8 +59,8 @@ class ActionButton extends React.Component<any, ActionButtonState> {
     public render() {
         let displayLetter = this.props.email? this.props.email.charAt(0).toUpperCase() : "";
         return (
-            <div>
-                <button className={css.circle} onClick={this.toggleIsExpand}>
+            <div className={css.actionButtonContainer} onBlur={this.collapse}>
+                <button className={css.circle} onClick={this.expand}>
                     {displayLetter}
                 </button>
                 { this.renderDropdown() }
