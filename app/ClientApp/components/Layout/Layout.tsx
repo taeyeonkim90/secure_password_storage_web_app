@@ -23,7 +23,7 @@ class Layout extends React.Component<any, {}> {
                     type="default"
                     autoClose={3500}
                     hideProgressBar={true}
-                    newestOnTop={true}
+                    newestOnTop={false}
                     closeOnClick
                     pauseOnHover/>
                 </div>;
