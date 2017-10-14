@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { toast } from 'react-toastify';
+
 import { ApplicationState }  from '../../store';
 import * as CardsState from '../../store/Data';
 import { AppThunkAction } from '../../store';
@@ -64,8 +66,14 @@ export default class Card extends React.Component<CardProps, CardState> {
 
     // saves the changed Card information to the redux store
     save = () => {
-        this.setState((prevState, props) => ({isEdit: false}))
-        this.props.updateCard(this.state.accountName, this.state.index, this.state.userName, this.state.pw, this.state.description);
+        let {accountName, userName, pw} = this.state
+        if (!accountName || !userName || !pw) {
+            toast.warn("Domain, user name, and password fields cannot be empty")
+        }
+        else {
+            this.setState((prevState, props) => ({isEdit: false}))
+            this.props.updateCard(this.state.accountName, this.state.index, this.state.userName, this.state.pw, this.state.description);
+        }
     }
 
     // cancels any Card information change

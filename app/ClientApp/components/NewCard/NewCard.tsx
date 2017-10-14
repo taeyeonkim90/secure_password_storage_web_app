@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { toast } from 'react-toastify';
+
 import { ApplicationState }  from '../../store';
 import * as CardsState from '../../store/Data';
 import { AppThunkAction } from '../../store';
@@ -35,9 +37,14 @@ export default class Card extends React.Component<NewCardProps, NewCardState> {
     }
 
     addNewCard = () => {
-        var {accountName, userName, pw, description } = this.state
-        this.props.addCard(accountName, userName, pw, description)
-        this.cancelNewCard()
+        let {accountName, userName, pw, description } = this.state
+        if (!accountName || !userName || !pw) {
+            toast.warn("Domain, user name, and password fields cannot be empty")
+        }
+        else {
+            this.props.addCard(accountName, userName, pw, description)
+            this.cancelNewCard()
+        }
     }
 
     cancelNewCard = () => {
