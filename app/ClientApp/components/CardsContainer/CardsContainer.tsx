@@ -55,8 +55,11 @@ export default class CardContainer extends React.Component<CardContainerProps, {
                 <Card key={key} index={key} {...card} updateCard={this.updateCard} deleteCard={this.deleteCard}/>
             )
         }
-        else {
+        else if (!this.props.dataFetching){
             return <p>You have no password information. Press above button to add new information.</p>
+        }
+        else {
+            return <p/>
         }
     }
 

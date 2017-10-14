@@ -48,8 +48,6 @@ export default function(ComposedClass){
                         if ((exp - current) < 300){
                             this.props.refreshToken(token)
                         }
-                        // reset the timer
-                        this.count = DEFAULT_COUNT
                     })
                     .catch(error => {
                         if (this.props.authenticated){
@@ -58,6 +56,10 @@ export default function(ComposedClass){
                 })
                 addTask(fetchTask)
             }
+        }
+
+        resetTimeOut = () => {
+            this.count = DEFAULT_COUNT
         }
 
         timeOutTick = () => {
@@ -85,7 +87,9 @@ export default function(ComposedClass){
 
         public render() {
             if (this.props.authenticated){
-                return <ComposedClass {... this.props}/>;
+                return <div onClick={this.resetTimeOut}>
+                            <ComposedClass {... this.props}/>
+                       </div>;
             } else {
                 return <Redirect to="/login" push/>;
             }
