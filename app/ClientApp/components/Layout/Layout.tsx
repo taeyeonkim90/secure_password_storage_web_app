@@ -19,7 +19,7 @@ class Layout extends React.Component<any, {}> {
                 <NavBar email={this.props.email} logout={this.logout}></NavBar>
                     { this.props.children }
                     <ToastContainer 
-                    position="top-right"
+                    position="bottom-center"
                     type="default"
                     autoClose={3500}
                     hideProgressBar={true}
