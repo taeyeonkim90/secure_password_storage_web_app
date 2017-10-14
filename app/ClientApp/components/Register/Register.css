@@ -26,13 +26,6 @@
     color: #114B5F;
 }
 
-@media (max-width: 767px) {
-    /* revert body padding top of 50 px */
-    .registerContainer {
-        margin-top: -50px !important;
-    }
-}
-
 .registerForm {
     display: flex;
     flex-direction: column;
@@ -67,6 +60,12 @@
         width: 100%;
         margin: 0.3em;
     }
+
+    .registerForm a {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }
 }
 
 .registerElement {
@@ -96,8 +95,6 @@
     background-color: #114B5F;
     border: none;
 }
-
-
 
 .errorMessageContainer {
     margin: 0.3em;

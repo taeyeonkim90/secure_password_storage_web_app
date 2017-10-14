@@ -26,13 +26,6 @@
     color: #004304;
 }
 
-@media (max-width: 767px) {
-    /* revert body padding top of 50 px */
-    .loginContainer {
-        margin-top: -50px !important;
-    }
-}
-
 .loginForm {
     display: flex;
     flex-direction: column;
@@ -40,14 +33,6 @@
     align-items: center;
     justify-content: center;
     height: 100vh;
-}
-
-.loginForm input[type="text"], .loginForm input[type="password"] {
-    font-size: 1.3em;
-    font-weight: 500;
-    max-width: 400px;
-    width: 100vw;
-    margin: 0.3em;
 }
 
 .loading {
@@ -60,49 +45,50 @@
     -ms-transform: translate(-50%, -100%);   /* IE 9 */ 
 }
 
+.loginForm input[type="text"], .loginForm input[type="password"], .loginButton, .registerRedirectButton {
+    font-size: 1.3em;
+    font-weight: 500;
+    max-width: 400px;
+    width: 100vw;
+    margin: 0.3em;
+    height: 50px;
+}
+
 @media (max-width: 480px) {
-    .loginForm input[type="text"], .loginForm input[type="password"] {
+    .loginForm input[type="text"], .loginForm input[type="password"], .loginButton, .registerRedirectButton {
         max-width: 70%;
         width: 100%;
         margin: 0.3em;
+    }
+
+    .loginForm a {
+        display: flex;
+        justify-content: center;
+        width: 100%;
     }
 }
 
 .loginElement {
     padding: 0.7em;
-    border: solid 2px #86c98a;
-    border-radius: 0.4em;
+    border: none;
     transition: box-shadow 0.3s;
     outline: none;
 }
 
 .loginElement:focus, .loginElement.focus {
-    border: solid 2px #54a759;
-    box-shadow: 0 0 5px 1px #2d8632;
+    border: none;
+    box-shadow: 0 0 5px 1px #114B5F;
 }
 
-.loginButton {
+.loginButton, .registerRedirectButton {
     margin: 0.3em;
     font-size: 1.3em;
     font-weight: 500;
-    color: #818181;
-    width: 70px;
-    border: solid 2px #EBEBEB;
-    border-radius: 0.2em;
-    background-color: #EBEBEB;
+    color: #FFFFFF;
+    border: none;
+    background-color: #456990;
     transition: box-shadow 0.3s;
-}
-
-.registerRedirectButton {
-    margin: 0.3em;
-    font-size: 1.3em;
-    font-weight: 500;
-    color: #818181;
-    width: 100px;
-    border: solid 2px #EBEBEB;
-    border-radius: 0.2em;
-    background-color: #EBEBEB;
-    transition: box-shadow 0.3s;
+    text-align: center;
 }
 
 .loginButton:hover, .loginButton.hover {
