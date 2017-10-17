@@ -24,7 +24,7 @@ build-deploy:
 
 run-deploy:
 	@echo "************ Running Production Docker container ************"
-	docker-compose -f docker-compose-deploy.yml up
+	docker-compose -f docker-compose-deploy-image.yml up
 
 clean-deploy:
 	docker-compose -f docker-compose-deploy.yml down

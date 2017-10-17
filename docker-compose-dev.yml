@@ -1,6 +1,6 @@
 version: "3"
 services:
-  web:
+  secure-password-dev:
     build:
       context: "./app"
       dockerfile: Dockerfile-dev
