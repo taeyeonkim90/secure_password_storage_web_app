@@ -10,8 +10,5 @@ node node_modules/webpack/bin/webpack.js
 echo "************ Restoring Dotnet Dependencies (inside Docker container) ************"
 dotnet restore
 
-echo "************ Migrating Database ************"
-dotnet ef database update
-
 echo "************ Running ASP.net Core App ************"
 dotnet watch run

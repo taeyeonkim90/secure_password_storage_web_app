@@ -4,18 +4,14 @@ services:
     build:
       context: "./app"
       dockerfile: Dockerfile-dev
+    environment:
+      ASPNETCORE_URLS: "http://*:5000"
+      ASPNETCORE_ENVIRONMENT: "Development"
+      DOTNET_USE_POLLING_FILE_WATCHER: "1"
     restart: always
     ports:
       - "8080:5000"
-    links:
-      - db
     volumes:
       - "./app:/app"
       - /app/obj
-    entrypoint: ["sh", "./start.sh"] 
-  db:
-    image: postgres
-    environment:
-      POSTGRES_DB: "ApplicationDB"
-      POSTGRES_USER: "db_user"
-      POSTGRES_PASSWORD: "rnVzx2Ru9zz6h2s2"
+      - /app/bin

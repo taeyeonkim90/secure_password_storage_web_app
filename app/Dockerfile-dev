@@ -3,8 +3,5 @@ FROM microsoft/aspnetcore-build:1.1.2
 WORKDIR /app
 
 EXPOSE 5000/tcp
-ENV ASPNETCORE_URLS http://*:5000
-ENV ASPNETCORE_ENVIRONMENT="Development"
-ENV DOTNET_USE_POLLING_FILE_WATCHER="1"
 
-ENTRYPOINT ["sh","./start.sh"]
+ENTRYPOINT ["sh","./start-dev.sh"]

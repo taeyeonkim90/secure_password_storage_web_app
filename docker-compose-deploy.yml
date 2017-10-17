@@ -1,0 +1,11 @@
+version: "3"
+services:
+  web:
+    build:
+      context: "./app"
+      dockerfile: Dockerfile-deploy
+    environment:
+      ASPNETCORE_URLS: "http://*:5000"
+    restart: always
+    ports:
+      - "8080:5000"

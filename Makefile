@@ -1,10 +1,6 @@
-build:
-	@echo "************ Restoring Dotnet Dependencies ************"
+build-dev:
+	@echo "************ Restoring Dotnet Dependencies for development purpose************"
 	cd ./app && dotnet restore
-
-	@echo "************ Creating Migrations Scripts ************"
-	rm -rf ./app/Migrations
-	cd ./app && dotnet ef migrations add DBMigration
 
 	@echo "************ Restoring NPM Dependencies ************"
 	cd ./app && rm -f npm-shrinkwrap.json
@@ -13,8 +9,38 @@ build:
 	@echo "************ Building Docker images ************"
 	docker-compose -f docker-compose-dev.yml build
 
-run:
+run-dev:
+	@echo "************ Running Development Docker container ************"
 	docker-compose -f docker-compose-dev.yml up
 
-clean:
+clean-dev:
 	docker-compose -f docker-compose-dev.yml down
+
+
+
+build-deploy:
+	@echo "************ Building Docker images ************"
+	docker-compose -f docker-compose-deploy.yml build
+
+run-deploy:
+	@echo "************ Running Production Docker container ************"
+	docker-compose -f docker-compose-deploy.yml up
+
+clean-deploy:
+	docker-compose -f docker-compose-deploy.yml down
+
+
+
+migrate-create-script:
+	@echo "************ Restoring Dotnet Dependencies ************"
+	cd ./app && dotnet restore
+
+	@echo "************ Creating Migrations Scripts ************"
+	cd ./app && dotnet ef migrations add $(name)
+
+migrate-perform-migration:
+	@echo "************ Restoring Dotnet Dependencies ************"
+	cd ./app && dotnet restore
+
+	@echo "************ Executing Migrations Scripts ************"
+	cd ./app && dotnet ef database update
