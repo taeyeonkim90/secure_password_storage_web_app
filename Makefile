@@ -23,8 +23,12 @@ build-deploy:
 	docker-compose -f docker-compose-deploy.yml build
 
 run-deploy:
-	@echo "************ Running Production Docker container ************"
+	@echo "************ Running Production Docker container  ************"
 	docker-compose -f docker-compose-deploy-image.yml up
+
+run-deploy-detached:
+	@echo "************ Running Production Docker container in detached mode ************"
+	docker-compose -f docker-compose-deploy-image.yml up -d
 
 clean-deploy:
 	docker-compose -f docker-compose-deploy.yml down
