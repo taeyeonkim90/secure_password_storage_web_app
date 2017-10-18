@@ -33,6 +33,11 @@ run-deploy-detached:
 clean-deploy:
 	docker-compose -f docker-compose-deploy-image.yml down
 
+push-deploy-image:
+	docker login
+	docker tag securepasswordstoragewebapp_secure-password-deploy taeyeonkim90/secure-password:$(version)
+	docker push taeyeonkim90/secure-password:$(version)
+
 
 
 migrate-create-script:
