@@ -1,7 +1,7 @@
 version: "3"
 services:
   secure-password-deploy:
-    image: securepasswordstoragewebapp_secure-password-deploy
+    image: taeyeonkim90/secure-password 
     environment:
       ASPNETCORE_URLS: "http://*:5000"
     restart: always
