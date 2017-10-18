@@ -31,7 +31,7 @@ run-deploy-detached:
 	docker-compose -f docker-compose-deploy-image.yml up -d
 
 clean-deploy:
-	docker-compose -f docker-compose-deploy.yml down
+	docker-compose -f docker-compose-deploy-image.yml down
 
 
 
