@@ -14,6 +14,10 @@
     background:#000;
 }
 
+.circle:focus {
+    outline: none;
+}
+
 .dropDown {
     position: absolute;
     top: 4em;
