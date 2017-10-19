@@ -11,11 +11,20 @@ export default function configureStore(history: History, initialState?: Applicat
     const windowIfDefined = typeof window === 'undefined' ? null : window as any;
     // If devTools is installed, connect to it
     const devToolsExtension = windowIfDefined && windowIfDefined.devToolsExtension as () => GenericStoreEnhancer;
-    const createStoreWithMiddleware = compose(
-        applyMiddleware(thunk, logger, routerMiddleware(history)),
-        // applyMiddleware(thunk, routerMiddleware(history)), // temporary removal of logger
-        devToolsExtension ? devToolsExtension() : f => f
-    )(createStore);
+
+    // build middleware. add redux-logger only on development mode
+    var createStoreWithMiddleware = null;
+    if (module.hot) {
+        createStoreWithMiddleware = compose(
+            applyMiddleware(thunk, logger, routerMiddleware(history)),
+            devToolsExtension ? devToolsExtension() : f => f
+        )(createStore);
+    } else {
+        createStoreWithMiddleware = compose(
+            applyMiddleware(thunk, routerMiddleware(history)),
+            devToolsExtension ? devToolsExtension() : f => f
+        )(createStore);
+    }
 
     // Combine all reducers and instantiate the app-wide store instance
     const allReducers = buildRootReducer(reducers);
