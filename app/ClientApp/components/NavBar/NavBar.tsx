@@ -11,7 +11,7 @@ class NavBar extends React.Component<any, {}> {
 
     public render() {
         return <div className={css.navBar}>
-            <div className={css.logo}> Logo </div>
+            <img className={css.appLogo} src="img/appLogo.jpg"></img>
             <ActionButton email={this.props.email} logout={this.props.logout}></ActionButton>
         </div>;
         
