@@ -48,17 +48,15 @@ migrate-create-script:
 	cd ./app && dotnet ef migrations add $(name)
 
 migrate-perform-migration-dev:
-	export ASPNETCORE_ENVIRONMENT=Development
-
 	@echo "************ Restoring Dotnet Dependencies ************"
 	cd ./app && dotnet restore
 
 	@echo "************ Executing Migrations Scripts ************"
-	cd ./app && dotnet ef database update
+	cd ./app && dotnet ef database update -d Development
 
 migrate-perform-migration-deploy:
 	@echo "************ Restoring Dotnet Dependencies ************"
 	cd ./app && dotnet restore
 
 	@echo "************ Executing Migrations Scripts ************"
-	cd ./app && dotnet ef database update
+	cd ./app && dotnet ef database update -e Production
