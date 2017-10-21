@@ -15,9 +15,17 @@ type CardContainerProps =
     DataStore.CardsState
     & AuthStore.AuthState
     & typeof DataStore.actionCreators
-    & typeof AuthStore.actionCreators 
+    & typeof AuthStore.actionCreators
 
-export default class CardContainer extends React.Component<CardContainerProps, {}> {
+interface CardContainerStates {
+    searchVal: string
+}
+
+export default class CardContainer extends React.Component<CardContainerProps, CardContainerStates> {
+    constructor(props){
+        super(props)
+        this.state = {searchVal:''}
+    }
 
     componentWillMount() {
         // This method runs when the component is first added to the page
@@ -49,15 +57,31 @@ export default class CardContainer extends React.Component<CardContainerProps, {
         this.props.deleteCardAction(index, token, masterKey)
     }
 
+    handleSearch = (e) => {
+        this.setState({searchVal:e.target.value})
+    }
+
     renderCards = () => {
-        if (this.props.cards.length != 0){
-            return this.props.cards.map((card, key) => 
-                <Card key={key} index={key} {...card} updateCard={this.updateCard} deleteCard={this.deleteCard}/>
-            )
-        }
-        else if (!this.props.dataFetching){
-            return <p>You have no password information. Press above button to add new information.</p>
-        }
+        if (!this.props.dataFetching){
+            if (this.props.cards.length == 0){
+                return <p>You have no password information. Press above button to add new information.</p>
+            }
+            else {
+                let searchVal = this.state.searchVal.toLowerCase()
+                let cards = this.props.cards.filter((card) => {
+                    let cardName = card.accountName.toLowerCase()
+                    return cardName.includes(searchVal)
+                })
+                if (cards.length != 0){
+                    return cards.map((card, key) => 
+                        <Card key={key} index={key} {...card} updateCard={this.updateCard} deleteCard={this.deleteCard}/>
+                    )
+                }
+                else {
+                    return <p>No matching results were found </p>
+                }
+            }
+        } 
         else {
             return <p/>
         }
@@ -73,6 +97,7 @@ export default class CardContainer extends React.Component<CardContainerProps, {
 
     public render() {
         return  <div className={css.container}> 
+                    <input type="text" name="search" placeholder="Search.." value={this.state.searchVal} onChange={this.handleSearch}></input>
                     <NewCard addCard={this.addCard}/>
                     {this.renderCards()}
                     {this.renderLoadingBar()}
