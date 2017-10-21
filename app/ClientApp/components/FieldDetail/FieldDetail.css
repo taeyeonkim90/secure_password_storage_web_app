@@ -24,12 +24,13 @@ input[type=submit]:hover {
 } */
 
 .fieldDetail {
-    height: 3em;
+    /* height: 3em; */
     width: 100%;
     padding: 12px 20px;
     margin: 8px 0;
     display: inline-block;
     border: 1px solid #ccc;
+    word-wrap: break-word;
 }
 
 .fieldDetail:hover {
