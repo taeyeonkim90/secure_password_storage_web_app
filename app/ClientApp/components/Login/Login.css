@@ -55,7 +55,6 @@
 
 @media (max-width: 480px) {
     .loginForm input[type="text"], .loginForm input[type="password"]{
-        max-width: 70%;
         width: 100%;
         margin: 0.3em;
     }

@@ -78,11 +78,13 @@ class Login extends React.Component<AuthProps, AuthState> {
                     <div className={s.loginContainer}>
                         <div className={s.loginForm}>
                             {this.renderAppLogo()}
-                                <input name="email" onKeyPress={this.handleKeyPress} className={s.loginElement}
-                                    type="text"
-                                    value={this.state.email}
-                                    onChange={this.handleChange}
-                                    placeholder="E-mail" />
+                                <div className={s.loginElementContainer}>
+                                    <input name="email" onKeyPress={this.handleKeyPress} className={s.loginElement}
+                                        type="text"
+                                        value={this.state.email}
+                                        onChange={this.handleChange}
+                                        placeholder="E-mail" />
+                                </div>
                                 <div className={s.loginElementContainer}>
                                     <input name="password" onKeyPress={this.handleKeyPress} className={s.loginElement}
                                         type="password"
