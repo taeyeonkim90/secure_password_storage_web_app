@@ -29,10 +29,16 @@ class Login extends React.Component<AuthProps, AuthState> {
         event.preventDefault()
         this.props.loginUser(this.state.email, this.state.password)
     }
+
+    handleKeyPress = (event) => {
+        if (event.key === "Enter"){
+            this.props.loginUser(this.state.email, this.state.password)
+        }
+    }
     
     renderAppLogo = () => {
         return (
-            <img className={s.appLogo} src="img/appLogo.jpg"></img>
+            <img className={s.appLogo} src="img/GMK_logo.png"></img>
         )
     }
 
@@ -56,38 +62,43 @@ class Login extends React.Component<AuthProps, AuthState> {
         }
     }
 
+    renderRegisterLink = () => {
+        return <NavLink to={ '/register' } activeClassName='active'>
+                <p className={s.register} onClick={()=>this.props.errorMessage("")}>Don't have an account? Click here to register</p>
+            </NavLink>
+    }
+
     public render() {
         if (!this.props.authenticated) {
             // following image is from https://unsplash.com/photos/PjABCLdM6DY
             // TODO: make sure to include this link on LICENSE
-            const imageStyle = {
-                backgroundImage: 'url("./img/login.jpg")',
-            }
             const loginBox =
-                <div className={s.loginContainer} style={imageStyle}>
-                    <form className={s.loginForm} onSubmit={this.handleLoginSubmit}>
-                        {this.renderAppLogo()}
-                        <input name="email" className={s.loginElement}
-                            type="text"
-                            value={this.state.email}
-                            onChange={this.handleChange}
-                            placeholder="E-mail" />
-                        <input name="password" className={s.loginElement}
-                            type="password"
-                            value={this.state.password}
-                            onChange={this.handleChange}
-                            placeholder="Password" />
-                        <input className={s.loginButton}
-                            type="submit" value="Login"/>
-                        <NavLink to={ '/register' } activeClassName='active'>
-                            <input className={s.registerRedirectButton}
-                                type="button"
-                                value="Register"
-                                onClick={()=>this.props.errorMessage("")}/>
-                        </NavLink>
-                        {this.renderErrors()}
-                        {this.renderLoadingBar()}
-                    </form>
+                <div>
+                    <div className={`${s.fixedBar} ${s.topBar}`}></div>
+                    <div className={s.loginContainer}>
+                        <div className={s.loginForm}>
+                            {this.renderAppLogo()}
+                                <input name="email" onKeyPress={this.handleKeyPress} className={s.loginElement}
+                                    type="text"
+                                    value={this.state.email}
+                                    onChange={this.handleChange}
+                                    placeholder="E-mail" />
+                                <div className={s.loginElementContainer}>
+                                    <input name="password" onKeyPress={this.handleKeyPress} className={s.loginElement}
+                                        type="password"
+                                        value={this.state.password}
+                                        onChange={this.handleChange}
+                                        placeholder="Password" />
+                                    <button className={s.loginIcon} onClick={this.handleLoginSubmit}>
+                                        <i className="material-icons">search</i>
+                                    </button>
+                                </div>
+                            {this.renderRegisterLink()}
+                            {this.renderErrors()}
+                            {this.renderLoadingBar()}
+                        </div>
+                    </div>
+                    <div className={`${s.fixedBar} ${s.bottomBar}`}></div>
                 </div>;
             return loginBox;
         } else {
