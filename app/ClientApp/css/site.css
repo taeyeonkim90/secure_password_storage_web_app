@@ -1,3 +1,26 @@
+body {
+    font-family: sans-serif;
+    color: #58595b;
+}
+
+::-webkit-input-placeholder { /* Chrome */
+    color: #58595b !important;
+}
+
+:-ms-input-placeholder { /* IE 10+ */
+    color: #58595b !important;
+}
+
+::-moz-placeholder { /* Firefox 19+ */
+    color: #58595b !important;
+    opacity: 1;
+}
+
+:-moz-placeholder { /* Firefox 4 - 18 */
+    color: #58595b !important;
+    opacity: 1;
+}
+
 .main-nav li .glyphicon {
     margin-right: 10px;
 }
