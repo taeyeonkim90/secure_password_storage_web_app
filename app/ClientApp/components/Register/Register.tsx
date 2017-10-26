@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { ApplicationState }  from '../../store';
 import * as AuthStore from '../../store/Authenticate';
 import * as css from './Register.css';
+import Loading from '../Loading/Loading';
 
 type AuthProps =
 AuthStore.AuthState
@@ -65,9 +66,7 @@ class Register extends React.Component<AuthProps, AuthState> {
 
     renderLoadingBar = () => {
         if (this.props.authFetching){
-            return (
-                <img className={css.loading} src="img/loading.gif"></img> 
-            );
+            return <Loading/>
         }
     }
     
