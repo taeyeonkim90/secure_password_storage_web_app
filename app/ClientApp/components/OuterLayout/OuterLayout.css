@@ -1,0 +1,15 @@
+.fixedBar {
+    background-color: #143e60;
+    position: absolute;
+    height: 2vh;
+    left: 10%;
+    width: 80%;
+}
+
+.topBar {
+    top: 0vh;
+}
+
+.bottomBar {
+    bottom: 0vh;
+}

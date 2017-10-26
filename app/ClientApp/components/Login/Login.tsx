@@ -74,7 +74,6 @@ class Login extends React.Component<AuthProps, AuthState> {
             // TODO: make sure to include this link on LICENSE
             const loginBox =
                 <div>
-                    <div className={`${s.fixedBar} ${s.topBar}`}></div>
                     <div className={s.loginContainer}>
                         <div className={s.loginForm}>
                             {this.renderAppLogo()}
@@ -92,7 +91,7 @@ class Login extends React.Component<AuthProps, AuthState> {
                                         onChange={this.handleChange}
                                         placeholder="Password" />
                                     <button className={s.loginIcon} onClick={this.handleLoginSubmit}>
-                                        <i className="material-icons">search</i>
+                                        <i className="material-icons">vpn_key</i>
                                     </button>
                                 </div>
                             {this.renderRegisterLink()}
@@ -100,7 +99,6 @@ class Login extends React.Component<AuthProps, AuthState> {
                             {this.renderLoadingBar()}
                         </div>
                     </div>
-                    <div className={`${s.fixedBar} ${s.bottomBar}`}></div>
                 </div>;
             return loginBox;
         } else {

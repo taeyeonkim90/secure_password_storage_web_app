@@ -1,26 +1,10 @@
-.fixedBar {
-    background-color: #143e60;
-    position: absolute;
-    height: 2vh;
-    left: 10%;
-    width: 80%;
-}
-
-.topBar {
-    top: 0;
-}
-
-.bottomBar {
-    bottom: 0;
-}
-
 .loginContainer {
     height: 100vh;
     background-color: #e5e5e5;
 }
 
 .appLogo {
-    height: 22vh;
+    height: 12em;
     margin: 1.5em;
 }
 
@@ -55,7 +39,7 @@
 
 @media (max-width: 480px) {
     .loginForm input[type="text"], .loginForm input[type="password"]{
-        width: 100%;
+        width: 93vw;
         margin: 0.3em;
     }
 }
@@ -79,6 +63,11 @@
     box-shadow: 0 0 5px 1px #58595b;
 }
 
+/* .loginElement:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 30px white inset;
+    box-shadow: 0 0 0 30px white inset;
+} */
+
 .errorMessageContainer {
     margin: 0.3em;
     padding: 0.3em;
@@ -98,7 +87,7 @@
     overflow: hidden;
     outline:none;
     top: 18px;
-    left: 90%;
+    left: 88%;
 }
 
 .register {

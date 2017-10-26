@@ -1,6 +1,3 @@
-export const fixedBar: string;
-export const topBar: string;
-export const bottomBar: string;
 export const loginContainer: string;
 export const appLogo: string;
 export const loading: string;
