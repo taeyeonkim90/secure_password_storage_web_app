@@ -93,7 +93,7 @@ class Login extends React.Component<AuthProps, AuthState> {
                                         onChange={this.handleChange}
                                         placeholder="Password" />
                                     <button className={s.loginIcon} >
-                                        <i className="material-icons">vpn_key</i>
+                                        <i className="material-icons blue">vpn_key</i>
                                     </button>
                                 </div>
                             {this.renderRegisterLink()}

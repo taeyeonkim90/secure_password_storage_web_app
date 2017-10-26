@@ -101,7 +101,7 @@ class Register extends React.Component<AuthProps, AuthState> {
                                 onChange={this.handlePasswordMatchChange}
                                 placeholder="Confirm the Password" />
                             <button className={css.loginIcon}>
-                                <i className="material-icons">vpn_key</i>
+                                <i className="material-icons blue">vpn_key</i>
                             </button>
                         </div>
                         {this.renderErrors()}

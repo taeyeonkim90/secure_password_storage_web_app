@@ -30,7 +30,8 @@ module.exports = (env) => {
                 'redux-thunk',
                 'react-router-redux',
                 'jquery',
-                'react-toastify/dist/ReactToastify.min.css'
+                'react-toastify/dist/ReactToastify.min.css',
+                './ClientApp/css/global.css'
             ],
         },
         output: {
