@@ -60,7 +60,9 @@ class Register extends React.Component<AuthProps, AuthState> {
 
     renderAppLogo = () => {
         return (
-            <img className={css.appLogo} src="img/appLogo.jpg"></img>
+            <NavLink to={ '/login' } onClick={()=>this.props.errorMessage("")} activeClassName='active'>
+                <img className={css.appLogo} src="img/GMK_logo.png"></img>
+            </NavLink>
         )
     }
 
@@ -74,34 +76,34 @@ class Register extends React.Component<AuthProps, AuthState> {
         if (!this.props.authenticated) {
             // following image is from https://unsplash.com/photos/mgYAR7BzBk4
             // TODO: make sure to include this link on LICENSE
-            const imageStyle = {
-                backgroundImage: 'url("./img/register.jpg")',
-            }
             const registerBox =
-                <div className={css.registerContainer} style={imageStyle}>
+                <div className={css.registerContainer}>
                     <form className={css.registerForm} onSubmit={this.handleRegisterSubmit}>
                         {this.renderAppLogo()}
-                        <input className={css.registerElement}
-                            type="text"
-                            value={this.state.email}
-                            onChange={this.handleEmailChange}
-                            placeholder="E-mail" />
-                        <input name="password" className={css.registerElement}
-                            type="password"
-                            value={this.state.password}
-                            onChange={this.handlePasswordMatchChange}
-                            placeholder="Password" />
-                        <input name="passwordMatch" className={css.registerElement}
-                            type="password"
-                            value={this.state.passwordMatch}
-                            onChange={this.handlePasswordMatchChange}
-                            placeholder="Confirm the Password" />
-                        <input className={css.registerButton}
-                            type="submit" value="Register"/>
-                        <NavLink to={ '/login' } activeClassName='active'>
-                            <input type="button" className={css.redirectLoginButton} onClick={()=>this.props.errorMessage("")}
-                             value="Login"/>
-                        </NavLink>
+                        <div className={css.registerElementContainer}>
+                            <input className={css.registerElement}
+                                type="text"
+                                value={this.state.email}
+                                onChange={this.handleEmailChange}
+                                placeholder="E-mail" />
+                        </div>
+                        <div className={css.registerElementContainer}>
+                            <input name="password" className={css.registerElement}
+                                type="password"
+                                value={this.state.password}
+                                onChange={this.handlePasswordMatchChange}
+                                placeholder="Password" />
+                        </div>
+                        <div className={css.registerElementContainer}>
+                            <input name="passwordMatch" className={css.registerElement}
+                                type="password"
+                                value={this.state.passwordMatch}
+                                onChange={this.handlePasswordMatchChange}
+                                placeholder="Confirm the Password" />
+                            <button className={css.loginIcon}>
+                                <i className="material-icons">vpn_key</i>
+                            </button>
+                        </div>
                         {this.renderErrors()}
                         {this.renderLoadingBar()}
                     </form>

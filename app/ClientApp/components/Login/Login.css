@@ -8,16 +8,6 @@
     margin: 1.5em;
 }
 
-.loading {
-    position: absolute;
-    width: 20vh;
-    top: 50vh;
-    left: 50vw;
-    transform: translate(-50%, -100%);
-    -webkit-transform: translate(-50%, -100%);  /* Safari */
-    -ms-transform: translate(-50%, -100%);   /* IE 9 */ 
-}
-
 .loginForm {
     display: flex;
     flex-direction: column;
@@ -68,16 +58,6 @@
     box-shadow: 0 0 0 30px white inset;
 } */
 
-.errorMessageContainer {
-    margin: 0.3em;
-    padding: 0.3em;
-    list-style-type: none;
-    font-size: 1.2em;
-    border-radius: 0.2em;
-    background-color: rgba(25, 92, 90, 0.2);
-    color: #58595b;
-}
-
 .loginIcon {
     position: absolute;
     background-color: Transparent;
@@ -93,5 +73,15 @@
 .register {
     font-size: 1.2em;
     padding: 0.7em;
+    color: #58595b;
+}
+
+.errorMessageContainer {
+    margin: 0.3em;
+    padding: 0.3em;
+    list-style-type: none;
+    font-size: 1.2em;
+    border-radius: 0.2em;
+    background-color: rgba(25, 92, 90, 0.2);
     color: #58595b;
 }

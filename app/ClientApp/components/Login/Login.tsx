@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { ApplicationState } from '../../store';
 import * as AuthStore from '../../store/Authenticate';
 import * as s from './Login.css';
+import Loading from '../Loading/Loading';
 
 type AuthProps =
     AuthStore.AuthState
@@ -38,7 +39,9 @@ class Login extends React.Component<AuthProps, AuthState> {
     
     renderAppLogo = () => {
         return (
-            <img className={s.appLogo} src="img/GMK_logo.png"></img>
+            <NavLink to={ '/login' } onClick={()=>this.props.errorMessage("")} activeClassName='active'>
+                <img className={s.appLogo} src="img/GMK_logo.png"></img>
+            </NavLink>
         )
     }
 
@@ -57,7 +60,7 @@ class Login extends React.Component<AuthProps, AuthState> {
     renderLoadingBar = () => {
         if(this.props.authFetching){
             return (
-                <img className={s.loading} src="img/loading.gif"></img> 
+                <Loading/>
             );
         }
     }
@@ -73,33 +76,31 @@ class Login extends React.Component<AuthProps, AuthState> {
             // following image is from https://unsplash.com/photos/PjABCLdM6DY
             // TODO: make sure to include this link on LICENSE
             const loginBox =
-                <div>
                     <div className={s.loginContainer}>
-                        <div className={s.loginForm}>
+                        <form className={s.loginForm} onSubmit={this.handleLoginSubmit}>
                             {this.renderAppLogo()}
                                 <div className={s.loginElementContainer}>
-                                    <input name="email" onKeyPress={this.handleKeyPress} className={s.loginElement}
+                                    <input name="email" className={s.loginElement}
                                         type="text"
                                         value={this.state.email}
                                         onChange={this.handleChange}
                                         placeholder="E-mail" />
                                 </div>
                                 <div className={s.loginElementContainer}>
-                                    <input name="password" onKeyPress={this.handleKeyPress} className={s.loginElement}
+                                    <input name="password" className={s.loginElement}
                                         type="password"
                                         value={this.state.password}
                                         onChange={this.handleChange}
                                         placeholder="Password" />
-                                    <button className={s.loginIcon} onClick={this.handleLoginSubmit}>
+                                    <button className={s.loginIcon} >
                                         <i className="material-icons">vpn_key</i>
                                     </button>
                                 </div>
                             {this.renderRegisterLink()}
                             {this.renderErrors()}
                             {this.renderLoadingBar()}
-                        </div>
-                    </div>
-                </div>;
+                        </form>
+                    </div>;
             return loginBox;
         } else {
             return <Redirect to="/" push />;

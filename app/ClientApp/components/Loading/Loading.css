@@ -1,6 +1,6 @@
 .spinner {
     /* margin: 100px auto 0; */
-    width: 100px;
+    width: 120px;
     text-align: center;
     position: absolute;
     top: 50vh;
@@ -11,9 +11,9 @@
 }
   
 .spinner > div {
-    width: 25px;
-    height: 25px;
-    background-color: #37a8a5;
+    width: 30px;
+    height: 30px;
+    background-color: #143e60;
 
     border-radius: 100%;
     display: inline-block;
@@ -29,6 +29,8 @@
 .spinner .bounce2 {
     -webkit-animation-delay: -0.16s;
     animation-delay: -0.16s;
+    margin-left: 5px;
+    margin-right: 5px;
 }
 
 @-webkit-keyframes sk-bouncedelay {

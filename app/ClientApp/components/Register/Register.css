@@ -23,7 +23,12 @@
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
-    color: #114B5F;
+    background-color: #e5e5e5;
+}
+
+.appLogo {
+    height: 12em;
+    margin: 1.5em;
 }
 
 .registerForm {
@@ -35,12 +40,7 @@
     height: 100vh;
 }
 
-.appLogo {
-    height: 100px;
-    margin: 20px;
-}
-
-.registerForm input[type="text"], .registerForm input[type="password"], .registerButton, .redirectLoginButton {
+.registerForm input[type="text"], .registerForm input[type="password"]{
     font-size: 1.3em;
     font-weight: 500;
     max-width: 400px;
@@ -51,17 +51,17 @@
 }
 
 @media (max-width: 480px) {
-    .registerForm input[type="text"], .registerForm input[type="password"] ,.registerButton, .redirectLoginButton {
-        max-width: 70%;
-        width: 100%;
+    .registerForm input[type="text"], .registerForm input[type="password"]{
+        /* max-width: 70%; */
+        width: 93vw;
         margin: 0.3em;
     }
+}
 
-    .registerForm a {
-        display: flex;
-        justify-content: center;
-        width: 100%;
-    }
+.registerElementContainer{
+    position: relative;
+    display: flex;
+    flex-direction: row;
 }
 
 .registerElement {
@@ -76,20 +76,16 @@
     box-shadow: 0 0 5px 1px #114B5F;
 }
 
-.registerButton, .redirectLoginButton {
-    margin: 0.3em;
-    font-size: 1.3em;
-    font-weight: 500;
-    color: #FFFFFF;
+.loginIcon {
+    position: absolute;
+    background-color: Transparent;
+    background-repeat:no-repeat;
     border: none;
-    background-color: #456990;
-    transition: box-shadow 0.3s;
-    text-align: center;
-}
-
-.registerButton:hover, .registerButton.hover, .redirectLoginButton:hover, .redirectLoginButton.hover {
-    background-color: #114B5F;
-    border: none;
+    cursor:pointer;
+    overflow: hidden;
+    outline:none;
+    top: 18px;
+    left: 88%;
 }
 
 .errorMessageContainer {
@@ -97,6 +93,6 @@
     padding: 0.3em;
     list-style-type: none;
     font-size: 1.2em;
-    background-color: rgba(134, 201, 138, 0.2);
-    color: #FFF;
+    background-color: rgba(25, 92, 90, 0.2);
+    color: #58595b;
 }
