@@ -1,8 +1,3 @@
-body {
-    font-family: sans-serif;
-    color: #58595b;
-}
-
 ::-webkit-input-placeholder { /* Chrome */
     color: #58595b !important;
 }

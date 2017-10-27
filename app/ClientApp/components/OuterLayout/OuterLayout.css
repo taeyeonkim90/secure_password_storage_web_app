@@ -1,3 +1,10 @@
+.wrapper {
+    height:100%;
+    min-height:100%;
+    position: relative;
+}
+
+/* fixedBars are positioned absolute within the above wrapper */
 .fixedBar {
     background-color: #143e60;
     position: absolute;

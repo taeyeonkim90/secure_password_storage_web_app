@@ -4,14 +4,12 @@
 }
 
 .circle {
-    width: 50px;
-    height: 50px;
-    border-radius:25px;
-    font-size:2em;
-    color:#fff;
-    line-height:50px;
-    text-align:center;
-    background:#000;
+    background-color: Transparent;
+    background-repeat:no-repeat;
+    border: none;
+    cursor:pointer;
+    overflow: hidden;
+    outline:none;
 }
 
 .circle:focus {
@@ -20,10 +18,10 @@
 
 .dropDown {
     position: absolute;
-    top: 4.5em;
-    right: 0em;
+    top: 3.3em;
+    right: 0.5em;
     background-color: #f9f9f9;
-    border: 1px solid #1b9bff;
+    border: 1px solid #143e60;
     border-radius: 0.2em;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }

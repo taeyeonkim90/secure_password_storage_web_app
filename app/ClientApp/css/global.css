@@ -1,1 +1,12 @@
 .material-icons.blue { color: #143e60; }
+.material-icons.em-35 { font-size: 3.5em; }
+
+body {
+    font-family: sans-serif;
+    color: #58595b;
+    height: 100%;
+}
+
+html {
+    height: 100%;
+}

@@ -17,15 +17,15 @@ class Layout extends React.Component<any, {}> {
     public render() {
         return <div>
                 <NavBar email={this.props.email} logout={this.logout}></NavBar>
-                    { this.props.children }
-                    <ToastContainer 
-                    position="bottom-center"
-                    type="default"
-                    autoClose={3500}
-                    hideProgressBar={true}
-                    newestOnTop={false}
-                    closeOnClick
-                    pauseOnHover/>
+                { this.props.children }
+                <ToastContainer 
+                position="bottom-center"
+                type="default"
+                autoClose={3500}
+                hideProgressBar={true}
+                newestOnTop={false}
+                closeOnClick
+                pauseOnHover/>
                 </div>;
     }
 }

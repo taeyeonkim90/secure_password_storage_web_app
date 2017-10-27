@@ -2,8 +2,8 @@
     display: flex;
     width: 100%;
     justify-content: space-between;
-    background-color: #014386;
-    padding: 0.5em;
+    background-color: #e5e5e5;
+    /* padding: 0.5em; */
 }
 
 .navBar ActionButton {

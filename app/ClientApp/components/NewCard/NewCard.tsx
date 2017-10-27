@@ -79,13 +79,10 @@ export default class Card extends React.Component<NewCardProps, NewCardState> {
     }
 
     public render() {
-        return (
-            <div>
-                {this.state.isExpand
+        var result = this.state.isExpand
                 ?this.renderIsEditHTML()
                 :<img className={css.newCard} src="img/add.svg" onClick={this.showTempCard}></img>
-                }
-            </div>
-        )
+        
+        return result;
     }
 }

@@ -5,7 +5,7 @@ import Layout from './components/Layout/Layout';
 import CardsContainer from './components/CardsContainer/CardsContainer';
 import Login from './components/Login/Login';
 import Register from './components/Register/Register';
-import isAuthenticated from './components/Auth';
+import isAuthenticated from './components/Auth/Auth';
 
 export const routes = 
 <OuterLayout>

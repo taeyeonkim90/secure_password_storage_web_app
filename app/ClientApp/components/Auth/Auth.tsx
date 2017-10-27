@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { ApplicationState }  from '../store';
+import { ApplicationState }  from '../../store';
 import { Redirect } from 'react-router-dom';
-import * as AuthStore from '../store/Authenticate';
-import * as DataStore from '../store/Data';
+import * as AuthStore from '../../store/Authenticate';
+import * as DataStore from '../../store/Data';
 import axios from 'axios';
 import { fetch, addTask } from 'domain-task';
 import * as JWT from 'jwt-decode';
+import * as css from './Auth.css';
 
 interface AuthStates {
     timer: any
@@ -87,7 +88,7 @@ export default function(ComposedClass){
 
         public render() {
             if (this.props.authenticated){
-                return <div onClick={this.resetTimeOut}>
+                return <div className={css.container} onClick={this.resetTimeOut}>
                             <ComposedClass {... this.props}/>
                        </div>;
             } else {

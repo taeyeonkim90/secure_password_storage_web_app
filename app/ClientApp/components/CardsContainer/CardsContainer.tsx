@@ -9,6 +9,7 @@ import NewCard from '../NewCard/NewCard';
 import * as DataStore from '../../store/Data';
 import * as AuthStore from '../../store/Authenticate';
 import * as css from './CardsContainer.css'
+import Loading from '../Loading/Loading';
 
 // At runtime, Redux will merge together...
 type CardContainerProps =
@@ -62,26 +63,24 @@ export default class CardContainer extends React.Component<CardContainerProps, C
     }
 
     renderCards = () => {
-        if (!this.props.dataFetching){
-            if (this.props.cards.length == 0){
-                return <p>You have no password information. Press above button to add new information.</p>
+        if ((this.props.cards.length == 0) && (!this.props.dataFetching)){
+            return <p>You have no password information. Press above button to add new information.</p>
+        }
+        else if (this.props.cards.length != 0 ){
+            let searchVal = this.state.searchVal.toLowerCase()
+            let cards = this.props.cards.filter((card) => {
+                let cardName = card.accountName.toLowerCase()
+                return cardName.includes(searchVal)
+            })
+            if (cards.length != 0){
+                return cards.map((card, key) => 
+                    <Card key={key} index={key} {...card} updateCard={this.updateCard} deleteCard={this.deleteCard}/>
+                )
             }
             else {
-                let searchVal = this.state.searchVal.toLowerCase()
-                let cards = this.props.cards.filter((card) => {
-                    let cardName = card.accountName.toLowerCase()
-                    return cardName.includes(searchVal)
-                })
-                if (cards.length != 0){
-                    return cards.map((card, key) => 
-                        <Card key={key} index={key} {...card} updateCard={this.updateCard} deleteCard={this.deleteCard}/>
-                    )
-                }
-                else {
-                    return <p>No matching results were found </p>
-                }
+                return <p>No matching results were found </p>
             }
-        } 
+        }
         else {
             return <p/>
         }
@@ -89,18 +88,18 @@ export default class CardContainer extends React.Component<CardContainerProps, C
 
     renderLoadingBar = () => {
         if (this.props.dataFetching){
-            return (
-                <img className={css.loading} src="img/loading.gif"></img> 
-            );
+            return <Loading/>
         }
     }
 
     public render() {
-        return  <div className={css.container}> 
-                    <input type="text" name="search" placeholder="Search.." value={this.state.searchVal} onChange={this.handleSearch}></input>
-                    <NewCard addCard={this.addCard}/>
-                    {this.renderCards()}
-                    {this.renderLoadingBar()}
-                </div >;
+        return  <div className={css.container}>
+                    <div className={css.items}> 
+                        <input type="text" name="search" placeholder="Search.." value={this.state.searchVal} onChange={this.handleSearch}></input>
+                        <NewCard addCard={this.addCard}/>
+                        {this.renderCards()}
+                        {this.renderLoadingBar()}
+                    </div >
+                </div>
     }
 }

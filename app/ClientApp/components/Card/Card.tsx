@@ -131,7 +131,7 @@ export default class Card extends React.Component<CardProps, CardState> {
         let {accountName, userName, pw, description} = this.state
 
         return <div>
-            <button className={css.foldButton} onClick={this.toggleIsExpand}>-</button>
+            <button className={css.foldButton} onClick={this.toggleIsExpand}><i className="material-icons">keyboard_arrow_up</i></button>
             <FieldDetail display={accountName} data={accountName} /> 
             <FieldDetail display={userName} data={userName} /> 
             <FieldDetail display={pw} data={pw} /> 
@@ -142,7 +142,7 @@ export default class Card extends React.Component<CardProps, CardState> {
 
     renderIsNotExpandedHTML = () => {
         return <div>
-            <button className={css.foldButton} onClick={this.toggleIsExpand}>+</button>
+            <button className={css.foldButton} onClick={this.toggleIsExpand}><i className="material-icons">keyboard_arrow_down</i></button>
             <FieldDetail display={this.state.accountName} data={this.state.pw} />
         </div>
     }

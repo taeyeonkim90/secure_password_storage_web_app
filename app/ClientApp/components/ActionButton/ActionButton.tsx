@@ -61,7 +61,7 @@ class ActionButton extends React.Component<any, ActionButtonState> {
         return (
             <div className={css.actionButtonContainer} onBlur={this.collapse}>
                 <button className={css.circle} onClick={this.expand}>
-                    {displayLetter}
+                    <i className="material-icons blue em-35">menu</i>
                 </button>
                 { this.renderDropdown() }
             </div>
