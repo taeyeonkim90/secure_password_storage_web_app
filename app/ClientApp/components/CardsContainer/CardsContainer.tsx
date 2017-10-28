@@ -95,7 +95,7 @@ export default class CardContainer extends React.Component<CardContainerProps, C
 
     public render() {
         return  <div className={css.container}> 
-                    <SearchBox onChange={this.handleSearch}/>
+                    <SearchBox handleSearch={this.handleSearch}/>
                     <NewCard addCard={this.addCard}/>
                     {this.renderCards()}
                     {this.renderLoadingBar()}
