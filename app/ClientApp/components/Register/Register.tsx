@@ -61,7 +61,7 @@ class Register extends React.Component<AuthProps, AuthState> {
     renderAppLogo = () => {
         return (
             <NavLink to={ '/login' } onClick={()=>this.props.errorMessage("")} activeClassName='active'>
-                <img className={css.appLogo} src="img/GMK_logo.png"></img>
+                <img className={css.appLogo} src="img/temp_logo.png"></img>
             </NavLink>
         )
     }
@@ -101,7 +101,7 @@ class Register extends React.Component<AuthProps, AuthState> {
                                 onChange={this.handlePasswordMatchChange}
                                 placeholder="Confirm the Password" />
                             <button className={css.loginIcon}>
-                                <i className="material-icons blue">vpn_key</i>
+                                <i className="material-icons green">vpn_key</i>
                             </button>
                         </div>
                         {this.renderErrors()}

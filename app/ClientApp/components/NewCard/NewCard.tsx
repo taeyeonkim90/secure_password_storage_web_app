@@ -81,7 +81,7 @@ export default class Card extends React.Component<NewCardProps, NewCardState> {
     public render() {
         var result = this.state.isExpand
                 ?this.renderIsEditHTML()
-                :<img className={css.newCard} src="img/add.svg" onClick={this.showTempCard}></img>
+                :<i className={`material-icons green em-35 ${css.newCard}`} onClick={this.showTempCard}>add_circle_outline</i>
         
         return result;
     }

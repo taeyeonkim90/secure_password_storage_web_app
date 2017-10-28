@@ -33,6 +33,6 @@ input[type=submit]:hover {
     word-wrap: break-word;
 }
 
-.fieldDetail:hover {
+.fieldDetail:hover .fieldDetail:active{
     background-color: rgba(130, 167, 248, 0.671);
 }

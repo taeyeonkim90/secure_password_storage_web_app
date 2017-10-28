@@ -42,12 +42,6 @@ class ActionButton extends React.Component<any, ActionButtonState> {
                 <div  className={css.dropDown}>
                     <ul>
                         <li>
-                            <input className="dropdownButton" type="button" value="Hello"/>
-                        </li>
-                        <li>
-                            <input className="dropdownButton" type="button" value="World"/>
-                        </li>
-                        <li>
                             <input className="dropdownButton" type="button" value="Sign Out" onClick={this.signOut}/>
                         </li>
                     </ul>  
@@ -61,7 +55,7 @@ class ActionButton extends React.Component<any, ActionButtonState> {
         return (
             <div className={css.actionButtonContainer} onBlur={this.collapse}>
                 <button className={css.circle} onClick={this.expand}>
-                    <i className="material-icons blue em-35">menu</i>
+                    <i className="material-icons green em-30">menu</i>
                 </button>
                 { this.renderDropdown() }
             </div>

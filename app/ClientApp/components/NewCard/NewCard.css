@@ -1,5 +1,6 @@
 .newCardContainer {
     border: 3px solid #143e60;
+    border-radius: 20px;
     padding: 10px;
     margin: 10px;
     text-align: center;
@@ -10,9 +11,7 @@
 
 .newCard {
     display: block;
-    height: 6vh;
-    margin-left: auto;
-    margin-right: auto;
+    margin: 10px;
 }
 
 .button {

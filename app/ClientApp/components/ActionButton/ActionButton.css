@@ -10,6 +10,7 @@
     cursor:pointer;
     overflow: hidden;
     outline:none;
+    transform: translate(-1vw, 3.5vh);
 }
 
 .circle:focus {
@@ -18,8 +19,8 @@
 
 .dropDown {
     position: absolute;
-    top: 3.3em;
-    right: 0.5em;
+    top: 9vh;
+    right: 3vw;
     background-color: #f9f9f9;
     border: 1px solid #143e60;
     border-radius: 0.2em;

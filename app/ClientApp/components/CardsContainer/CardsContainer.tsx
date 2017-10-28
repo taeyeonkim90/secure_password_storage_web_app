@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { Link, NavLink, RouteComponentProps } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { toast } from 'react-toastify';
 
@@ -10,6 +10,7 @@ import * as DataStore from '../../store/Data';
 import * as AuthStore from '../../store/Authenticate';
 import * as css from './CardsContainer.css'
 import Loading from '../Loading/Loading';
+import SearchBox from '../SearchBox/SearchBox';
 
 // At runtime, Redux will merge together...
 type CardContainerProps =
@@ -93,13 +94,11 @@ export default class CardContainer extends React.Component<CardContainerProps, C
     }
 
     public render() {
-        return  <div className={css.container}>
-                    <div className={css.items}> 
-                        <input type="text" name="search" placeholder="Search.." value={this.state.searchVal} onChange={this.handleSearch}></input>
-                        <NewCard addCard={this.addCard}/>
-                        {this.renderCards()}
-                        {this.renderLoadingBar()}
-                    </div >
-                </div>
+        return  <div className={css.container}> 
+                    <SearchBox onChange={this.handleSearch}/>
+                    <NewCard addCard={this.addCard}/>
+                    {this.renderCards()}
+                    {this.renderLoadingBar()}
+                </div >
     }
 }

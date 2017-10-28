@@ -29,8 +29,9 @@ input[type=submit]:hover {
     padding: 12px 20px;
     margin: 8px 0;
     display: inline-block;
+    transition: border 0.5 ease-in-out;
 }
 
-.fieldInput:hover {
-    background-color: rgba(130, 167, 248, 0.671); 
+.fieldInput:focus{
+    border: 1px rgba(130, 167, 248, 0.671);
 }

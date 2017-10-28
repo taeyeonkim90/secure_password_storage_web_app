@@ -40,7 +40,7 @@ class Login extends React.Component<AuthProps, AuthState> {
     renderAppLogo = () => {
         return (
             <NavLink to={ '/login' } onClick={()=>this.props.errorMessage("")} activeClassName='active'>
-                <img className={s.appLogo} src="img/GMK_logo.png"></img>
+                <img className={s.appLogo} src="img/temp_logo.png"></img>
             </NavLink>
         )
     }
@@ -93,7 +93,7 @@ class Login extends React.Component<AuthProps, AuthState> {
                                         onChange={this.handleChange}
                                         placeholder="Password" />
                                     <button className={s.loginIcon} >
-                                        <i className="material-icons blue">vpn_key</i>
+                                        <i className="material-icons green">vpn_key</i>
                                     </button>
                                 </div>
                             {this.renderRegisterLink()}

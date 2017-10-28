@@ -1,13 +1,9 @@
 .container {
-    height: 100%;
-    min-height: 100%;
     background-color: #e5e5e5;
-}
-
-.items {
     display: flex;
     flex-direction: column;
     align-items: center;
+    min-height: 88vh;
 }
 
 /* 

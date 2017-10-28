@@ -1,1 +1,1 @@
-export const blue: string;
+export const green: string;

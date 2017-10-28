@@ -8,7 +8,6 @@ import * as DataStore from '../../store/Data';
 import axios from 'axios';
 import { fetch, addTask } from 'domain-task';
 import * as JWT from 'jwt-decode';
-import * as css from './Auth.css';
 
 interface AuthStates {
     timer: any
@@ -88,7 +87,7 @@ export default function(ComposedClass){
 
         public render() {
             if (this.props.authenticated){
-                return <div className={css.container} onClick={this.resetTimeOut}>
+                return <div onClick={this.resetTimeOut}>
                             <ComposedClass {... this.props}/>
                        </div>;
             } else {
