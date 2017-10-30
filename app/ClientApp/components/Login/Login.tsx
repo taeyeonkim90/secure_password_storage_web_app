@@ -96,8 +96,8 @@ class Login extends React.Component<AuthProps, AuthState> {
                                         <i className="material-icons green">vpn_key</i>
                                     </button>
                                 </div>
-                            {this.renderRegisterLink()}
                             {this.renderErrors()}
+                            {this.renderRegisterLink()}
                             {this.renderLoadingBar()}
                         </form>
                     </div>;
