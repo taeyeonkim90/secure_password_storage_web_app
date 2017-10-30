@@ -1,7 +1,7 @@
 .elementContainer{
     background-color: #ffffff;
-    border: 2px solid #143e60;
-    border-radius: 20px;
+    border: 2px solid rgba(20, 62, 96, 0.47);
+    border-radius: 10px;
     padding: 1px;
     position: relative;
     display: flex;

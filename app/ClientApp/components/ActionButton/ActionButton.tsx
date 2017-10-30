@@ -52,8 +52,10 @@ class ActionButton extends React.Component<any, ActionButtonState> {
 
     public render() {
         let displayLetter = this.props.email? this.props.email.charAt(0).toUpperCase() : "";
+        let visibility = this.props.pseudo ? css.invisible : css.actionButtonContainer;
+
         return (
-            <div className={css.actionButtonContainer} onBlur={this.collapse}>
+            <div className={visibility} onBlur={this.collapse}>
                 <button className={css.circle} onClick={this.expand}>
                     <i className="material-icons green em-30">menu</i>
                 </button>

@@ -116,7 +116,7 @@ export default class Card extends React.Component<CardProps, CardState> {
      */
     renderIsEditHTML = () => {
         return <div>
-            <button className={css.foldButton} onClick={this.cancel}>-</button>
+            <button className={css.foldButton} onClick={this.cancel}><i className="material-icons">keyboard_arrow_up</i></button>
             <FieldInput name="accountName" type="text" data={this.state.accountName} updateState={this.handleChange}/>
             <FieldInput name="userName" type="text" data={this.state.userName} updateState={this.handleChange}/>
             <FieldInput name="pw" type="password" data={this.state.pw} updateState={this.handleChange}/>
