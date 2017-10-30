@@ -121,9 +121,11 @@ export default class Card extends React.Component<CardProps, CardState> {
             <FieldInput name="userName" type="text" data={this.state.userName} updateState={this.handleChange}/>
             <FieldInput name="pw" type="password" data={this.state.pw} updateState={this.handleChange}/>
             <FieldInput name="description" type="text" data={this.state.description} updateState={this.handleChange}/>
-            <button className={css.button} onClick={this.delete}>Delete</button>
-            <button className={css.button} onClick={this.save}>Update</button>
-            <button className={css.button} onClick={this.cancel}>Cancel</button>
+            <div className={css.buttonContainer}>
+                <button className={css.button} onClick={this.delete}>Delete</button>
+                <button className={css.button} onClick={this.cancel}>Cancel</button>
+                <button className={css.button} onClick={this.save}>Update</button>
+            </div>
         </div>
     }
 
@@ -136,7 +138,11 @@ export default class Card extends React.Component<CardProps, CardState> {
             <FieldDetail display={userName} data={userName} /> 
             <FieldDetail display={pw} data={pw} /> 
             <FieldDetail display={description} data={description} />
-            <button className={css.button} onClick={this.toggleIsEdit}>Edit</button>
+            <div className={css.buttonContainer}>
+                <div/>
+                <button className={css.button} onClick={this.toggleIsEdit}>Edit</button>
+                <div/>
+            </div>
         </div>
     }
 

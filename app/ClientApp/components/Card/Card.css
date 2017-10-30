@@ -28,9 +28,18 @@
     outline:none;
 }
 
+.buttonContainer{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-right: 40px;
+    margin-left: 40px;
+}
+
 .button {
-    display: inline-block;
-    margin-left: auto;
-    margin-right: auto;
     border-radius: 25px;
+    outline: none;
+    width: 60px;
 }
