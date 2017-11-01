@@ -61,7 +61,7 @@ class Register extends React.Component<AuthProps, AuthState> {
     renderAppLogo = () => {
         return (
             <NavLink to={ '/login' } onClick={()=>this.props.errorMessage("")} activeClassName='active'>
-                <img className={css.appLogo} src="img/logovertical.png"></img>
+                <img className={css.appLogo} src="/img/logovertical.png"></img>
             </NavLink>
         )
     }

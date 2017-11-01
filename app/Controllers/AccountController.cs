@@ -65,23 +65,14 @@ namespace app.Controllers
         }
 
         [HttpGet("[action]")]
-        public IActionResult VerifyEmail(string userid, string token)
+        public RedirectResult VerifyEmail(string userid, string token)
         {
             bool result = _authService.VerifyEmail(userid, token);
-
             if (result) {
-                return Ok(new
-                    {
-                        status = true,
-                        messages = new List<string>() { "Email has been verified." }
-                    });
+                return Redirect("http://localhost:8080/email/success");
             }
             else {
-                return BadRequest(new
-                    {
-                        status = false,
-                        messages = new List<string>() { "Email address verification failed." }
-                    });
+                return Redirect("http://localhost:8080/email/failure");
             }
         }
 

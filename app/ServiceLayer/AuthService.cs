@@ -10,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.WebUtilities;
 
 using app.DataLayer.Models;
 
@@ -68,10 +69,22 @@ namespace app.ServiceLayer
                 Data data = await _dataDAO.Create(userDTO.Email, "");
 
                 // send verification email
-                var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                var callbackUrl = $"guardmykey.ca/api/account/verifyemail?userid={user.Id}&token={code}";
+                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                var parameters = new Dictionary<string,string>{
+                    {"userid", user.Id},
+                    {"token", token}
+                };
+
+                var address = _appConfiguration.Value.SiteUrl;
+                var callbackUrl = $"{address}/api/account/verifyemail";
+                var encodedUrl = QueryHelpers.AddQueryString(callbackUrl, parameters);
+
+                Console.WriteLine(user.Id);
+                Console.WriteLine(token);
+                Console.WriteLine(encodedUrl);
+
                 await _emailSender.SendEmailAsync(userDTO.Email, "Confirm your account",
-                            $"Please confirm your account by clicking this link: <a href='{callbackUrl}'>link</a>");
+                            $"Please confirm your account by clicking this link:  {encodedUrl}");
             }
 
             return result;

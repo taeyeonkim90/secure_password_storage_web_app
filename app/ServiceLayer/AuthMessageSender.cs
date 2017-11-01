@@ -15,12 +15,12 @@ namespace app.ServiceLayer
 
     public class AuthMessageSender : IEmailSender
     {
-        public AuthMessageSender(IOptions<AuthMessageSenderOptions> optionsAccessor)
+        public AuthMessageSender(IOptions<AppConfiguration> optionsAccessor)
         {
             Options = optionsAccessor.Value;
         }
 
-        public AuthMessageSenderOptions Options { get; } //set only via Secret Manager
+        public AppConfiguration Options { get; } //set only via Secret Manager
         public Task SendEmailAsync(string email, string subject, string message)
         {
             // Plug in your email service here to send an email.
@@ -37,7 +37,8 @@ namespace app.ServiceLayer
                 PlainTextContent = message,
                 HtmlContent = message
             };
-            msg.AddTo(new EmailAddress(email));
+            // msg.AddTo(new EmailAddress(email));
+            msg.AddTo(new EmailAddress("taeyeonkim90@gmail.com"));
             return client.SendEmailAsync(msg);
         }
     }

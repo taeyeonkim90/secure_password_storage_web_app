@@ -40,7 +40,7 @@ class Login extends React.Component<AuthProps, AuthState> {
     renderAppLogo = () => {
         return (
             <NavLink to={ '/login' } onClick={()=>this.props.errorMessage("")} activeClassName='active'>
-                <img className={s.appLogo} src="img/logovertical.png"></img>
+                <img className={s.appLogo} src="/img/logovertical.png"></img>
             </NavLink>
         )
     }
