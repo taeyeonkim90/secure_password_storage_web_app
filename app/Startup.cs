@@ -43,7 +43,10 @@ namespace app
             services.AddDbContext<ApplicationContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<ApplicationUser, IdentityRole>()
+            services.AddIdentity<ApplicationUser, IdentityRole>(config => 
+            {
+                config.SignIn.RequireConfirmedEmail = true;
+            })
                 .AddEntityFrameworkStores<ApplicationContext>()
                 .AddDefaultTokenProviders();
 
@@ -51,10 +54,12 @@ namespace app
 
             // Add application services
             services.Configure<AppConfiguration>(Configuration.GetSection("AppConfiguration"));
+            services.Configure<AuthMessageSenderOptions>(Configuration.GetSection("SendgridConfiguration"));
             services.AddTransient<IAuthService,AuthService>();
             services.AddTransient<IDataService,DataService>();  
             services.AddTransient<IJtiDAO,JtiDAO>();
             services.AddTransient<IDataDAO,DataDAO>();
+            services.AddTransient<IEmailSender,AuthMessageSender>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -60,8 +60,29 @@ namespace app.Controllers
             return Ok(new
                     {
                         status = true,
-                        messages = new List<string>() { "User has been created" }
+                        messages = new List<string>() { "User has been created. Please check your mailbox to verify your registration." }
                     });
+        }
+
+        [HttpGet("[action]")]
+        public IActionResult VerifyEmail(string userid, string token)
+        {
+            bool result = _authService.VerifyEmail(userid, token);
+
+            if (result) {
+                return Ok(new
+                    {
+                        status = true,
+                        messages = new List<string>() { "Email has been verified." }
+                    });
+            }
+            else {
+                return BadRequest(new
+                    {
+                        status = false,
+                        messages = new List<string>() { "Email address verification failed." }
+                    });
+            }
         }
 
         [HttpPost("[action]")]

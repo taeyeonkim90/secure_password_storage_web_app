@@ -8,4 +8,9 @@ namespace app.DataLayer.Models
         public string SiteUrl { get; set; }
         public string Key { get; set; }
     }
+
+    public class AuthMessageSenderOptions
+    {
+        public string SendGridKey { get; set; }
+    }
 }

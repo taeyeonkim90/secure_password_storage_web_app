@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Security.Claims;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
@@ -18,6 +19,7 @@ namespace app.ServiceLayer
     public interface IAuthService
     {
         Task<IdentityResult> CreateUser(ApplicationUserDTO userDTO);
+        bool VerifyEmail(string userid, string token);
         Task<bool> VerifyUser(ApplicationUserDTO userDTO);
         Task<string> GetToken(ApplicationUserDTO userDTO);
         Task<string> RefreshToken(string token);
@@ -28,6 +30,7 @@ namespace app.ServiceLayer
 	public class AuthService : IAuthService
     {
         private readonly ILogger _logger;
+        private readonly IEmailSender _emailSender;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IPasswordHasher<ApplicationUser> _passwordHasher;
         private readonly IOptions<AppConfiguration> _appConfiguration;
@@ -37,6 +40,7 @@ namespace app.ServiceLayer
 
         public AuthService(
             ILoggerFactory loggerFactory,
+            IEmailSender emailSender,
             UserManager<ApplicationUser> userManager,
             IPasswordHasher<ApplicationUser> passwordHasher,
             IOptions<AppConfiguration> appConfiguration,
@@ -44,6 +48,7 @@ namespace app.ServiceLayer
             IDataDAO dataDAO
             )
         {
+            _emailSender = emailSender;
             _userManager = userManager;
             _passwordHasher = passwordHasher;
             _appConfiguration = appConfiguration;
@@ -61,16 +66,32 @@ namespace app.ServiceLayer
             {
                 // create a default data model for the user
                 Data data = await _dataDAO.Create(userDTO.Email, "");
+
+                // send verification email
+                var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                var callbackUrl = $"guardmykey.ca/api/account/verifyemail?userid={user.Id}&token={code}";
+                await _emailSender.SendEmailAsync(userDTO.Email, "Confirm your account",
+                            $"Please confirm your account by clicking this link: <a href='{callbackUrl}'>link</a>");
             }
 
             return result;
+        }
+
+        public bool VerifyEmail(string userid, string token)
+        {
+            var user = _userManager.FindByIdAsync(userid).Result;
+            IdentityResult result = _userManager.ConfirmEmailAsync(user,token).Result;
+
+            return result.Succeeded;
         }
 
         public async Task<bool> VerifyUser(ApplicationUserDTO userDTO)
         {
             var user = await _userManager.FindByNameAsync(userDTO.Email);
 
-            return (user != null && _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, userDTO.Password) == PasswordVerificationResult.Success);
+            return (user != null && 
+            (_passwordHasher.VerifyHashedPassword(user, user.PasswordHash, userDTO.Password) == PasswordVerificationResult.Success) &&
+            await _userManager.IsEmailConfirmedAsync(user));
         }
 
         public async Task<string> GetToken(ApplicationUserDTO userDTO)
