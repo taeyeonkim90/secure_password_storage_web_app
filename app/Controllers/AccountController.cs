@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 using app.DataLayer.Models;
 using app.ServiceLayer;
@@ -18,12 +19,15 @@ namespace app.Controllers
     {
         private readonly ILogger _logger;
         private readonly IAuthService _authService;
+        private readonly IOptions<AppConfiguration> _appConfiguration;
 
         public AccountController(
             ILoggerFactory loggerFactory,
+            IOptions<AppConfiguration> appConfiguration,
             IAuthService authService)
         {
             _logger = loggerFactory.CreateLogger<AccountController>();
+            _appConfiguration = appConfiguration;
             _authService = authService;
         }
 
@@ -68,12 +72,26 @@ namespace app.Controllers
         public RedirectResult VerifyEmail(string userid, string token)
         {
             bool result = _authService.VerifyEmail(userid, token);
+            var siteUrl = _appConfiguration.Value.SiteUrl;
+
             if (result) {
-                return Redirect("http://localhost:8080/email/success");
+                return Redirect($"{siteUrl}/email/success");
             }
             else {
-                return Redirect("http://localhost:8080/email/failure");
+                return Redirect($"{siteUrl}/email/failure");
             }
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ResendEmail([FromBody] ApplicationUserDTO userDTO)
+        {
+            await _authService.ResendVerificationEmail(userDTO);
+
+            return Ok(new
+                {
+                    status = true,
+                    messages = new List<string>() { "Verification email has been resent." }
+                });
         }
 
         [HttpPost("[action]")]

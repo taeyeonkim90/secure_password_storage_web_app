@@ -1,22 +1,4 @@
-::-webkit-input-placeholder { /* Chrome */
-    color: #456990;
-}
-
-:-ms-input-placeholder { /* IE 10+ */
-    color: #456990;
-}
-
-::-moz-placeholder { /* Firefox 19+ */
-    color: #456990;
-    opacity: 1;
-}
-
-:-moz-placeholder { /* Firefox 4 - 18 */
-    color: #456990;
-    opacity: 1;
-}
-
-.registerContainer {
+.loginContainer {
     background-color: #e5e5e5;
 }
 
@@ -25,7 +7,7 @@
     margin: 1.5em;
 }
 
-.registerForm {
+.loginForm {
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
@@ -34,7 +16,7 @@
     min-height: 100vh;
 }
 
-.registerForm input[type="text"], .registerForm input[type="password"]{
+.loginForm input[type="text"], .loginForm input[type="password"]{
     font-size: 1.3em;
     font-weight: 500;
     max-width: 400px;
@@ -45,30 +27,35 @@
 }
 
 @media (max-width: 480px) {
-    .registerForm input[type="text"], .registerForm input[type="password"]{
-        /* max-width: 70%; */
+    .loginForm input[type="text"], .loginForm input[type="password"]{
         width: 93vw;
         margin: 0.3em;
     }
 }
 
-.registerElementContainer{
+.loginElementContainer{
     position: relative;
     display: flex;
     flex-direction: row;
 }
 
-.registerElement {
+.loginElement {
     padding: 0.7em;
     border: none;
     transition: box-shadow 0.3s;
     outline: none;
+    display: inline-block;
 }
 
-.registerElement:focus, .registerElement.focus {
+.loginElement:focus, .loginElement.focus {
     border: none;
-    box-shadow: 0 0 5px 1px #114B5F;
+    box-shadow: 0 0 5px 1px #58595b;
 }
+
+/* .loginElement:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 30px white inset;
+    box-shadow: 0 0 0 30px white inset;
+} */
 
 .loginIcon {
     position: absolute;
@@ -82,7 +69,7 @@
     left: 88%;
 }
 
-.resendEmail {
+.register {
     font-size: 1.2em;
     padding: 0.7em;
     color: #58595b;
@@ -93,6 +80,7 @@
     padding: 0.3em;
     list-style-type: none;
     font-size: 1.2em;
+    border-radius: 0.2em;
     background-color: rgba(25, 92, 90, 0.2);
     color: #58595b;
 }

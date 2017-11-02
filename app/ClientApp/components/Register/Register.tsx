@@ -72,6 +72,12 @@ class Register extends React.Component<AuthProps, AuthState> {
         }
     }
     
+    renderResendEmailLink = () => {
+        return <NavLink to={ '/resendemail' } activeClassName='active'>
+                <p className={css.resendEmail} onClick={()=>this.props.errorMessage("")}>Click here to re-send verification email to your email account.</p>
+            </NavLink>
+    }
+
     public render() {
         if (!this.props.authenticated) {
             // following image is from https://unsplash.com/photos/mgYAR7BzBk4
@@ -85,7 +91,7 @@ class Register extends React.Component<AuthProps, AuthState> {
                                 type="text"
                                 value={this.state.email}
                                 onChange={this.handleEmailChange}
-                                placeholder="E-mail" />
+                                placeholder="New E-mail" />
                         </div>
                         <div className={css.registerElementContainer}>
                             <input name="password" className={css.registerElement}
@@ -105,6 +111,7 @@ class Register extends React.Component<AuthProps, AuthState> {
                             </button>
                         </div>
                         {this.renderErrors()}
+                        {this.renderResendEmailLink()}
                         {this.renderLoadingBar()}
                     </form>
                 </div>;

@@ -32,13 +32,12 @@ namespace app.ServiceLayer
             var client = new SendGridClient(apiKey);
             var msg = new SendGridMessage()
             {
-                From = new EmailAddress("guardmykey@gmail.com", "Andrew Kim"),
+                From = new EmailAddress("guardmykey@gmail.com", "Guardmykey - Andrew Kim"),
                 Subject = subject,
                 PlainTextContent = message,
                 HtmlContent = message
             };
-            // msg.AddTo(new EmailAddress(email));
-            msg.AddTo(new EmailAddress("taeyeonkim90@gmail.com"));
+            msg.AddTo(new EmailAddress(email));
             return client.SendEmailAsync(msg);
         }
     }

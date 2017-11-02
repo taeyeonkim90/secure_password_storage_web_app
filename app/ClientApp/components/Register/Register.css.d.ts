@@ -5,4 +5,5 @@ export const registerElementContainer: string;
 export const registerElement: string;
 export const focus: string;
 export const loginIcon: string;
+export const resendEmail: string;
 export const errorMessageContainer: string;
