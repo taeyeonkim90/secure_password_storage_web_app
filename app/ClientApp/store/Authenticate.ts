@@ -30,6 +30,17 @@ interface ReceiveRegistrationAction{
     authMessages: string[]
 }
 
+interface RequestVerifyEmailAction{
+    type: "REQUEST_VERIFY_EMAIL"
+    authFetching: boolean
+}
+
+interface ReceiveVerifyEmailAction{
+    type: "RECEIVE_VERIFY_EMAIL"
+    authFetching: boolean
+    authMessages: string[]
+}
+
 interface RequestJWTAction {
     type: 'REQUEST_JWT'
     authFetching: boolean
@@ -87,6 +98,7 @@ function parseErrorMessages(error) {
 // Declare a 'discriminated union' type. This guarantees that all references to 'type' properties contain one of the
 // declared type strings (and not any other arbitrary string).
 type KnownAction = RequestRegistrationAction | ReceiveRegistrationAction | 
+                    RequestVerifyEmailAction | ReceiveVerifyEmailAction |
                     RequestJWTAction | ReceiveJWTAction | 
                     RequestRefreshJWTAction | ReceiveRefreshJWTAction|
                     LogoutAction | ErrorMessageAction
@@ -109,6 +121,21 @@ export const actionCreators = {
             dispatch({type: 'REQUEST_REGISTRATION', authFetching: true})
         }
     },
+
+    requestVerifyEmail: (email:string): AppThunkAction<KnownAction> => (dispatch, getState) => {
+        if (!getState().auth.authFetching) {
+            let fetchTask = axios.post('/api/Account/ResendEmail', {Email: email})
+                .then(response => {
+                    dispatch({ type: 'RECEIVE_VERIFY_EMAIL', authMessages: parseSuccessMessages(response), authFetching: false })
+                })
+                .catch(error => {
+                    dispatch({ type: 'RECEIVE_VERIFY_EMAIL', authMessages: parseErrorMessages(error), authFetching: false })
+                })
+            addTask(fetchTask) // Ensure server-side prerendering waits for this to complete
+            dispatch({type: 'REQUEST_VERIFY_EMAIL', authFetching: true})
+        }
+    },
+
     // login
     loginUser: (email:string, password:string): AppThunkAction<KnownAction> => (dispatch, getState) => {
         if (!getState().auth.authFetching) {
@@ -162,6 +189,10 @@ export const reducer: Reducer<AuthState> = (state: AuthState, incomingAction: Ac
             return {... state, authFetching: action.authFetching}
         case 'RECEIVE_REGISTRATION':
             return {... state, authFetching: action.authFetching, authenticated: action.authenticated, authMessages: action.authMessages}
+        case 'REQUEST_VERIFY_EMAIL':
+            return {... state, authFetching: action.authFetching}
+        case 'RECEIVE_VERIFY_EMAIL':
+            return {... state, authFetching: action.authFetching, authMessages: action.authMessages}
         case 'REQUEST_JWT':
             return {... state, authFetching: action.authFetching}
         case 'RECEIVE_JWT':

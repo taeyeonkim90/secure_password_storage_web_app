@@ -77,6 +77,18 @@ namespace app.Controllers
         }
 
         [HttpPost("[action]")]
+        public async Task<IActionResult> ResendEmail([FromBody] ApplicationUserDTO userDTO)
+        {
+            await _authService.ResendVerificationEmail(userDTO);
+
+            return Ok(new
+                {
+                    status = true,
+                    messages = new List<string>() { "Verification email has been resent." }
+                });
+        }
+
+        [HttpPost("[action]")]
         public async Task<IActionResult> Token([FromBody] ApplicationUserDTO userDTO)
         {
             if (!ModelState.IsValid){

@@ -20,6 +20,7 @@ namespace app.ServiceLayer
     public interface IAuthService
     {
         Task<IdentityResult> CreateUser(ApplicationUserDTO userDTO);
+        Task ResendVerificationEmail(ApplicationUserDTO userDTO);
         bool VerifyEmail(string userid, string token);
         Task<bool> VerifyUser(ApplicationUserDTO userDTO);
         Task<string> GetToken(ApplicationUserDTO userDTO);
@@ -69,25 +70,31 @@ namespace app.ServiceLayer
                 Data data = await _dataDAO.Create(userDTO.Email, "");
 
                 // send verification email
-                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                var parameters = new Dictionary<string,string>{
-                    {"userid", user.Id},
-                    {"token", token}
-                };
-
-                var address = _appConfiguration.Value.SiteUrl;
-                var callbackUrl = $"{address}/api/account/verifyemail";
-                var encodedUrl = QueryHelpers.AddQueryString(callbackUrl, parameters);
-
-                Console.WriteLine(user.Id);
-                Console.WriteLine(token);
-                Console.WriteLine(encodedUrl);
-
-                await _emailSender.SendEmailAsync(userDTO.Email, "Confirm your account",
-                            $"Please confirm your account by clicking this link:  {encodedUrl}");
+                await SendVerificationEmail(user);
             }
 
             return result;
+        }
+
+        public async Task ResendVerificationEmail(ApplicationUserDTO userDTO)
+        {
+            var user = await _userManager.FindByEmailAsync(userDTO.Email);
+            await SendVerificationEmail(user);
+        }
+
+        private async Task SendVerificationEmail(ApplicationUser user)
+        {
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var parameters = new Dictionary<string,string>{
+                {"userid", user.Id},
+                {"token", token}
+            };
+
+            var address = _appConfiguration.Value.SiteUrl;
+            var callbackUrl = $"{address}/api/account/verifyemail";
+            var encodedUrl = QueryHelpers.AddQueryString(callbackUrl, parameters);
+            await _emailSender.SendEmailAsync(user.Email, "Confirm your account",
+                        $"Please confirm your account by clicking this link:  {encodedUrl}");
         }
 
         public bool VerifyEmail(string userid, string token)
