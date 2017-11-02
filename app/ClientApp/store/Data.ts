@@ -123,24 +123,36 @@ const parseCardsData = (data, key) => {
     }
 }
 
+function getAxiosConfig(token){
+    return { headers: {'Authorization':`Bearer ${ token }`},
+             timeout: 10000 }
+}
+
+function alertServerError(message){
+    toast.error(`${message}. Please contact guardmykey@gmail.com to resolve this issue.`)
+}
+
 export const actionCreators = {
     requestCardsAction: (token, key): AppThunkAction<KnownAction> => (dispatch, getState) => {
         if (!getState().data.dataFetching){
+            let currentCards = getState().data.cards
             dispatch({ type: 'REQUEST_CARDS' })
-            let config = { headers: {'Authorization':`Bearer ${ token }`}}
+            let config = getAxiosConfig(token)
             let fetchTask = axios.get('/api/Data/Card', config)
                 .then(response => {
                     dispatch({ type: 'RECEIVE_CARDS', cards: parseCardsData(response.data, key)})
                 })
                 .catch(error => {
-                    toast("Failed to retrieve user information.")
+                    alertServerError("Failed to retrieve user information")
+                    dispatch({ type: 'RECEIVE_CARDS', cards: currentCards})
                 })
         }
     },
     addNewCardAction: (accountName, userName, pw, description, token, key): AppThunkAction<KnownAction> => (dispatch, getState) => {
         if (!getState().data.dataFetching){
+            let currentCards = getState().data.cards
             dispatch({type:'CREATE_CARD', accountName: accountName, userName: userName, pw: pw, description:description})
-            let config = { headers: {'Authorization':`Bearer ${ token }`}}
+            let config = getAxiosConfig(token)
             let encryptedData = encryptCardsData(getState().data.cards, key)
             let fetchTask = axios.put('/api/Data/Card', {userData:encryptedData}, config)
                 .then(response => {
@@ -148,14 +160,16 @@ export const actionCreators = {
                     toast("New password information has been added")
                 })
                 .catch(error => {
-                    toast("Failed to add new information. Please try again.")
+                    alertServerError("Failed to add new information.")
+                    dispatch({ type: 'RECEIVE_CARDS', cards: currentCards})
                 })
         }
     },
     updateCardAction: (accountName, index, userName, pw, description, token, key): AppThunkAction<KnownAction> => (dispatch, getState) => {
         if (!getState().data.dataFetching){
+            let currentCards = getState().data.cards
             dispatch({type:'UPDATE_CARD', accountName: accountName, index: index, userName: userName, pw: pw, description:description})
-            let config = { headers: {'Authorization':`Bearer ${ token }`}}
+            let config = getAxiosConfig(token)
             let encryptedData = encryptCardsData(getState().data.cards, key)
             let fetchTask = axios.put('/api/Data/Card', {userData:encryptedData}, config)
                 .then(response => {
@@ -163,7 +177,8 @@ export const actionCreators = {
                     toast("A password information has been updated.")
                 })
                 .catch(error => {
-                    toast("Failed to update existing information. Please try again.")
+                    alertServerError("Failed to update existing information")
+                    dispatch({ type: 'RECEIVE_CARDS', cards: currentCards})
                 })
         }
     },
@@ -172,8 +187,9 @@ export const actionCreators = {
     },
     deleteCardAction: (index, token, key): AppThunkAction<KnownAction> => (dispatch, getState) => {
         if(!getState().data.dataFetching){
+            let currentCards = getState().data.cards
             dispatch({type: 'DELETE_CARD', index: index})
-            let config = { headers: {'Authorization':`Bearer ${ token }`}}
+            let config = getAxiosConfig(token)
             let encryptedData = encryptCardsData(getState().data.cards, key)
             let fetchTask = axios.put('/api/Data/Card', {userData:encryptedData}, config)
                 .then(response => {
@@ -181,7 +197,8 @@ export const actionCreators = {
                     toast("A password information has been deleted.")
                 })
                 .catch(error => {
-                    toast("Failed to delete existing information. Please try again.")
+                    alertServerError("Failed to delete existing information")
+                    dispatch({ type: 'RECEIVE_CARDS', cards: currentCards})
                 })
         }
     }
