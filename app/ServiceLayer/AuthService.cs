@@ -22,7 +22,9 @@ namespace app.ServiceLayer
         Task<IdentityResult> CreateUser(ApplicationUserDTO userDTO);
         Task ResendVerificationEmail(ApplicationUserDTO userDTO);
         bool VerifyEmail(string userid, string token);
-        Task<bool> VerifyUser(ApplicationUserDTO userDTO);
+
+        // Task<bool> VerifyUser(ApplicationUserDTO userDTO);
+        Task VerifyUser(ApplicationUserDTO userDTO);
         Task<string> GetToken(ApplicationUserDTO userDTO);
         Task<string> RefreshToken(string token);
         bool IsTokenBlacklisted(string token);
@@ -78,7 +80,13 @@ namespace app.ServiceLayer
 
         public async Task ResendVerificationEmail(ApplicationUserDTO userDTO)
         {
+            if(userDTO == null)
+                throw new ArgumentNullException();
             var user = await _userManager.FindByEmailAsync(userDTO.Email);
+            if(user == null)
+                throw new ASUserNotFoundException("User not found");
+            if(await _userManager.IsEmailConfirmedAsync(user))
+                throw new ASEmailAlreadyVerifiedException("The email has already been verified.");
             await SendVerificationEmail(user);
         }
 
@@ -105,18 +113,36 @@ namespace app.ServiceLayer
             return result.Succeeded;
         }
 
-        public async Task<bool> VerifyUser(ApplicationUserDTO userDTO)
+        // public async Task<bool> VerifyUser(ApplicationUserDTO userDTO)
+        // {
+        //     if(userDTO == null)
+        //         throw new ArgumentNullException("userDTO");
+        //     var user = await _userManager.FindByNameAsync(userDTO.Email);
+        //     if(user == null)
+        //         throw new ASUserNotFoundException("User cannot be found");
+
+        //     // if()
+        //     return (user != null && _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, userDTO.Password) == PasswordVerificationResult.Success);
+        // }
+        public async Task VerifyUser(ApplicationUserDTO userDTO)
         {
+            if(userDTO == null)
+                throw new ArgumentNullException("userDTO");
             var user = await _userManager.FindByNameAsync(userDTO.Email);
-
-            return (user != null && 
-            (_passwordHasher.VerifyHashedPassword(user, user.PasswordHash, userDTO.Password) == PasswordVerificationResult.Success) &&
-            await _userManager.IsEmailConfirmedAsync(user));
+            if(user == null)
+                throw new ASUserNotFoundException("User cannot be found");
+            if(_passwordHasher.VerifyHashedPassword(user, user.PasswordHash, userDTO.Password) != PasswordVerificationResult.Success)
+                throw new ASPasswordNotCorrectException($"User ID: {userDTO.Email} - PasswordHash does not match with verification result");
+            if(!await _userManager.IsEmailConfirmedAsync(user))
+                throw new ASEmailVerificationFailureException("Email verification has not done yet.");
         }
-
         public async Task<string> GetToken(ApplicationUserDTO userDTO)
         {
+            if(userDTO == null)
+                throw new ArgumentNullException("userDTO");
             var user = await _userManager.FindByNameAsync(userDTO.Email);
+            if(user == null)
+                throw new ASUserNotFoundException("User cannot be found");
             var token = await GetJwtSecurityToken(user);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
