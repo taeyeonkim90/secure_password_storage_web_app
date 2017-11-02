@@ -85,19 +85,27 @@ namespace app.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> ResendEmail([FromBody] ApplicationUserDTO userDTO)
         {
-            await _authService.ResendVerificationEmail(userDTO);
-
-            return Ok(new
-                {
-                    status = true,
-                    messages = new List<string>() { "Verification email has been resent." }
-                });
+            try{
+                await _authService.ResendVerificationEmail(userDTO);
+            }
+            catch(ASUserNotFoundException ex)
+            {
+                _logger.LogDebug("User was not found while calling resendverificationEmail method. " + ex.Message);
+                return badRequestHelper("Email account does not exist.");
+            }
+            catch(ASEmailAlreadyVerifiedException ex)
+            {
+                _logger.LogDebug("User has already verified the account. There is no need to resend the verification email. " + ex.Message);
+                return badRequestHelper("Email already has been verified.");
+            }
+            return okRequestHelper("Verification email has been resent.");
         }
 
         [HttpPost("[action]")]
         public async Task<IActionResult> Token([FromBody] ApplicationUserDTO userDTO)
         {
-            if (!ModelState.IsValid){
+            if (!ModelState.IsValid)
+            {
                 var messages = ModelState.Values.SelectMany(v => v.Errors)
                             .Select(modelError => modelError.ErrorMessage)
                             .ToList();
@@ -109,23 +117,33 @@ namespace app.Controllers
                         });
             }
 
-            bool result = await _authService.VerifyUser(userDTO);
-            if (result)
+            string encodedToken = "";
+            try
             {
-                var encodedToken = await _authService.GetToken(userDTO);
-                return Ok(new
-                {
-                    status = true,
-                    messages = new List<string>() { "Token has been generated" },
-                    token = encodedToken
-                });
+                await _authService.VerifyUser(userDTO);
+                encodedToken = await _authService.GetToken(userDTO);
+            }
+            catch (ASEmailVerificationFailureException ex)
+            {
+                _logger.LogDebug(ex.Message);
+                return badRequestHelper("Login failed. Your account has not been verified. Please check your email account to verify your registration.");
+            }
+            catch(ASPasswordNotCorrectException ex) 
+            {
+                _logger.LogDebug(ex.Message);
+                return badRequestHelper("Login failed. Password does not match.");
+            }
+            catch(ASUserNotFoundException ex)
+            {
+                _logger.LogDebug(ex.Message);
+                return badRequestHelper("Login failed. Your account was not found.");
+            }
+            catch (Exception ex) 
+            { 
+                _logger.LogDebug(ex.Message);
             }
 
-            return BadRequest(new
-                {
-                    status = false,
-                    messages = new List<string>() { "Log in failed" }
-                });
+            return okRequestHelper("Token has been generated", encodedToken);
         }
 
         [Authorize]
@@ -148,21 +166,50 @@ namespace app.Controllers
 
             if (_authService.IsTokenBlacklisted(encodedToken))
             {
-                return BadRequest(new
-                {
-                    status = false,
-                    messages = new List<string>() { "This token cannot be used to obtain a new JWT" },
-                    token = encodedToken
-                });
+                return badRequestHelper("This token cannot be used to obtain a new JWT", encodedToken);
             }
 
             string newToken = await _authService.RefreshToken(encodedToken);
+            return okRequestHelper("New token has been generated.", newToken);
+        }
+
+        private IActionResult badRequestHelper(List<string> messages, string token="")
+        {
+            return BadRequest(new
+                {
+                    status = false,
+                    messages = messages,
+                    token  = token
+                });
+        }
+
+        private IActionResult badRequestHelper(string message, string token="")
+        {
+            return BadRequest(new
+                {
+                    status = false,
+                    messages = new List<string>() { message },
+                    token = token
+                });
+        }
+        private IActionResult okRequestHelper(List<string> messages, string token="")
+        {
             return Ok(new
-            {
-                status = true,
-                messages = new List<string>() { "New token has been generated" },
-                token = newToken
-            });
+                {
+                    status = true,
+                    messages = messages,
+                    token = token
+                });
+        }
+
+        private IActionResult okRequestHelper(string message, string token="")
+        {
+            return Ok(new
+                {
+                    status = true,
+                    messages = new List<string>() { message },
+                    token = token
+                });
         }
     }
 }
