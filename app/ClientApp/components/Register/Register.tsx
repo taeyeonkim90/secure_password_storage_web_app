@@ -73,15 +73,14 @@ class Register extends React.Component<AuthProps, AuthState> {
     }
     
     renderResendEmailLink = () => {
-        return <NavLink to={ '/resendemail' } activeClassName='active'>
-                <p className={css.resendEmail} onClick={()=>this.props.errorMessage("")}>Click here to re-send verification email to your email account.</p>
-            </NavLink>
+        return <p className={css.resendEmail}>Haven't received the verification email? Click{' '}
+                    <NavLink to={'/resendemail'} activeClassName='active'>here</NavLink>
+                    {' '}to re-send the verification email
+                </p>
     }
 
     public render() {
-        if (!this.props.authenticated) {
-            // following image is from https://unsplash.com/photos/mgYAR7BzBk4
-            // TODO: make sure to include this link on LICENSE
+        if (!this.props.registered) {
             const registerBox =
                 <div className={css.registerContainer}>
                     <form className={css.registerForm} onSubmit={this.handleRegisterSubmit}>
@@ -117,7 +116,7 @@ class Register extends React.Component<AuthProps, AuthState> {
                 </div>;
             return registerBox;
         } else {
-            return <Redirect to="/" push />;
+            return <Redirect to="/login" push />;
         }
     }
 }

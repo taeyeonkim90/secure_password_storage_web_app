@@ -66,15 +66,14 @@ class Login extends React.Component<AuthProps, AuthState> {
     }
 
     renderRegisterLink = () => {
-        return <NavLink to={ '/register' } activeClassName='active'>
-                <p className={s.register} onClick={()=>this.props.errorMessage("")}>Don't have an account? Click here to register</p>
-            </NavLink>
+        return  <p className={s.register}>Don't have an account? Click{' '} 
+                    <NavLink onClick={()=>this.props.logoutUser("")} to={'/register'} activeClassName='active'>here</NavLink>
+                    {' '}to register
+                </p>
     }
 
     public render() {
         if (!this.props.authenticated) {
-            // following image is from https://unsplash.com/photos/PjABCLdM6DY
-            // TODO: make sure to include this link on LICENSE
             const loginBox =
                     <div className={s.loginContainer}>
                         <form className={s.loginForm} onSubmit={this.handleLoginSubmit}>

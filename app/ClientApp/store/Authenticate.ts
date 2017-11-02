@@ -9,6 +9,7 @@ import axios from 'axios'
 export interface AuthState {
     authFetching: boolean
     authenticated: boolean
+    registered: boolean
     authMessages: string[]
     token?: string
     email?: string
@@ -27,6 +28,7 @@ interface ReceiveRegistrationAction{
     type: "RECEIVE_REGISTRATION"
     authFetching: boolean
     authenticated: boolean
+    registered: boolean
     authMessages: string[]
 }
 
@@ -112,10 +114,10 @@ export const actionCreators = {
         if (!getState().auth.authFetching) {
             let fetchTask = axios.post('/api/Account/Create', {Email: email, Password: password})
                 .then(response => {
-                    dispatch({ type: 'RECEIVE_REGISTRATION', authenticated: false, authMessages: parseSuccessMessages(response), authFetching: false })
+                    dispatch({ type: 'RECEIVE_REGISTRATION', authenticated: false, registered: true, authMessages: parseSuccessMessages(response), authFetching: false })
                 })
                 .catch(error => {
-                    dispatch({ type: 'RECEIVE_REGISTRATION', authenticated: false, authMessages: parseErrorMessages(error), authFetching: false })
+                    dispatch({ type: 'RECEIVE_REGISTRATION', authenticated: false, registered: false, authMessages: parseErrorMessages(error), authFetching: false })
                 })
             addTask(fetchTask) // Ensure server-side prerendering waits for this to complete
             dispatch({type: 'REQUEST_REGISTRATION', authFetching: true})
@@ -180,7 +182,7 @@ export const actionCreators = {
 // ----------------
 // REDUCER - For a given state and action, returns the new state. To support time travel, this must not mutate the old state.
 
-const unloadedState: AuthState = { authFetching: false, authenticated: false, authMessages: []}
+const unloadedState: AuthState = { authFetching: false, authenticated: false, registered: false, authMessages: []}
 
 export const reducer: Reducer<AuthState> = (state: AuthState, incomingAction: Action) => {
     const action = incomingAction as KnownAction
@@ -188,7 +190,7 @@ export const reducer: Reducer<AuthState> = (state: AuthState, incomingAction: Ac
         case 'REQUEST_REGISTRATION':
             return {... state, authFetching: action.authFetching}
         case 'RECEIVE_REGISTRATION':
-            return {... state, authFetching: action.authFetching, authenticated: action.authenticated, authMessages: action.authMessages}
+            return {... state, authFetching: action.authFetching, authenticated: action.authenticated, registered: action.registered, authMessages: action.authMessages}
         case 'REQUEST_VERIFY_EMAIL':
             return {... state, authFetching: action.authFetching}
         case 'RECEIVE_VERIFY_EMAIL':
@@ -202,7 +204,7 @@ export const reducer: Reducer<AuthState> = (state: AuthState, incomingAction: Ac
         case 'RECEIVE_REFRESH':
             return {... state, authFetching: action.authFetching, token: action.token}
         case 'LOGOUT':
-            return {... state, authenticated: false, authMessages: action.authMessages, token:'', email:'', masterKey:''}
+            return {... state, authenticated: false, registered: false, authMessages: action.authMessages, token:'', email:'', masterKey:''}
         case 'ERROR_MESSAGE' :
             return {... state, authMessages: action.authMessages}
     }
