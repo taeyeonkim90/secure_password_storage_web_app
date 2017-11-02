@@ -9,6 +9,8 @@ import axios from 'axios';
 import { fetch, addTask } from 'domain-task';
 import * as JWT from 'jwt-decode';
 
+import Layout from '../Layout/Layout';
+
 interface AuthStates {
     timer: any
     count: number
@@ -87,9 +89,11 @@ export default function(ComposedClass){
 
         public render() {
             if (this.props.authenticated){
-                return <div onClick={this.resetTimeOut}>
-                            <ComposedClass {... this.props}/>
-                       </div>;
+                return <Layout>
+                            <div onClick={this.resetTimeOut}>
+                                <ComposedClass {... this.props}/>
+                            </div>
+                       </Layout>
             } else {
                 return <Redirect to="/login" push/>;
             }

@@ -12,7 +12,7 @@ type AuthProps =
 
 class NoMatch extends React.Component<AuthProps, {}> {
     componentWillMount() {
-        this.props.errorMessage("No pages were found for this routing information.")
+        this.props.errorMessage("No pages were found for this routing information. Please sign in to use the application.")
     }
 
     public render() {

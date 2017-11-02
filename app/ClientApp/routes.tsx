@@ -19,9 +19,7 @@ export const routes =
         <Route path='/email/success' component={ EmailSuccess } />
         <Route path='/email/failure' component={ EmailFailure } />
         <Route path='/resendemail' component={ ResendEmail } />
-        {/* <Route component={ NoMatch }/> */}
-        <Layout>
-            <Route exact path='/' component={ isAuthenticated(CardsContainer) } />
-        </Layout>
+        <Route exact path='/' component={ isAuthenticated(CardsContainer) } />
+        <Route component={ NoMatch }/>
     </Switch>
 </OuterLayout>
