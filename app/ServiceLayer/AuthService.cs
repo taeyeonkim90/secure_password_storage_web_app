@@ -11,7 +11,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
 
+using app.DataLayer;
 using app.DataLayer.Models;
 
 
@@ -21,7 +23,7 @@ namespace app.ServiceLayer
     {
         Task<IdentityResult> CreateUser(ApplicationUserDTO userDTO);
         Task ResendVerificationEmail(ApplicationUserDTO userDTO);
-        bool VerifyEmail(string userid, string token);
+        bool VerifyEmailToken(string userid, string token);
 
         // Task<bool> VerifyUser(ApplicationUserDTO userDTO);
         Task VerifyUser(ApplicationUserDTO userDTO);
@@ -64,15 +66,32 @@ namespace app.ServiceLayer
         public async Task<IdentityResult> CreateUser(ApplicationUserDTO userDTO)
         {
             var user = new ApplicationUser(){ UserName = userDTO.Email, Email = userDTO.Email };
-            var result = await _userManager.CreateAsync(user, userDTO.Password);
-
-            if (result.Succeeded)
+            
+            IdentityResult result = null;
+            try
             {
-                // create a default data model for the user
-                Data data = await _dataDAO.Create(userDTO.Email, "");
+                result = await _userManager.CreateAsync(user, userDTO.Password);
 
-                // send verification email
-                await SendVerificationEmail(user);
+                if (result.Succeeded)
+                {
+                    // create a default data model for the user
+                    Data data = await _dataDAO.Create(userDTO.Email, "");
+
+                    // send verification email
+                    await SendVerificationEmail(user);
+                }
+            }
+
+            catch (DataDaoException ex)
+            {
+                if (ex.InnerException == null)
+                    _logger.LogDebug("Data model has not been created for the user." + ex.Message);
+                throw new AuthServiceException("Data model has not been created for the user.", ex);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogDebug("Unknown exception occurred." + ex.Message);
+                throw ex;
             }
 
             return result;
@@ -80,8 +99,6 @@ namespace app.ServiceLayer
 
         public async Task ResendVerificationEmail(ApplicationUserDTO userDTO)
         {
-            if(userDTO == null)
-                throw new ArgumentNullException();
             var user = await _userManager.FindByEmailAsync(userDTO.Email);
             if(user == null)
                 throw new ASUserNotFoundException("User not found");
@@ -105,25 +122,13 @@ namespace app.ServiceLayer
                         $"Please confirm your account by clicking this link:  {encodedUrl}");
         }
 
-        public bool VerifyEmail(string userid, string token)
+        public bool VerifyEmailToken(string userid, string token)
         {
             var user = _userManager.FindByIdAsync(userid).Result;
             IdentityResult result = _userManager.ConfirmEmailAsync(user,token).Result;
 
             return result.Succeeded;
         }
-
-        // public async Task<bool> VerifyUser(ApplicationUserDTO userDTO)
-        // {
-        //     if(userDTO == null)
-        //         throw new ArgumentNullException("userDTO");
-        //     var user = await _userManager.FindByNameAsync(userDTO.Email);
-        //     if(user == null)
-        //         throw new ASUserNotFoundException("User cannot be found");
-
-        //     // if()
-        //     return (user != null && _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, userDTO.Password) == PasswordVerificationResult.Success);
-        // }
         public async Task VerifyUser(ApplicationUserDTO userDTO)
         {
             if(userDTO == null)
@@ -165,7 +170,9 @@ namespace app.ServiceLayer
         public bool IsTokenBlacklisted(string encodedToken)
         {
             string uuid = GetClaimValueFromToken(encodedToken, "jti");
-            return _jtiDAO.IsTokenBlacklisted(uuid);
+            Jti jtiEntity = _jtiDAO.Read(uuid);
+
+            return jtiEntity != null;
         }
 
         public string ExtractUserEmail(string token)

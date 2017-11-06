@@ -141,6 +141,7 @@ namespace app.Controllers
             catch (Exception ex) 
             { 
                 _logger.LogDebug(ex.Message);
+                throw ex;
             }
 
             return okRequestHelper("Token has been generated", encodedToken);
