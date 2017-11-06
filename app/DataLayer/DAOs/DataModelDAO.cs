@@ -28,12 +28,15 @@ namespace app.DataLayer.Models
 
         public async Task<Data> Create(string userEmail, string userData)
         {
-            // Data newData = null;
-            // try{
+            Data newData = null;
+            try{
                 ApplicationUser user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Email == userEmail);
 
+                if (user == null)
+                    throw new DataDaoException($"User with email address({userEmail} was not found.)"); 
+
                 DateTime currentTime = DateTime.Now;
-                Data newData = new Data(){
+                newData = new Data(){
                                 UserData = userData,
                                 Created = currentTime,
                                 LastModified = currentTime,
@@ -41,17 +44,24 @@ namespace app.DataLayer.Models
                                 };
                 await _dbContext.Datas.AddAsync(newData);
                 await _dbContext.SaveChangesAsync();
-            // }
-            // catch (TimeoutException ex) 
-            // { 
-            //     _logger.LogDebug("The operation failed to complete within the default timeout." + ex.Message);
-            //     throw new DAOTimeoutException("The operation failed to complete within the default timeout.", ex);
-            // } // TODO: try to find an exception for connection failure exception.          
-            // catch (Exception ex) 
-            // { 
-            //     _logger.LogDebug("Unknown exception happened while accessing dbcontext from DAO Create method" + ex);
-            //     throw ex;
-            // }            
+            }
+
+            catch (TimeoutException ex)
+            {
+                _logger.LogDebug("Database operation was timed out." + ex.Message);
+                throw new DataDaoException("Database operation was timed out.", ex);
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogDebug("Database was not updated while creating a Data entity." + ex.Message);
+                throw new DataDaoException("Database was not updated while creating a Data entity.", ex);
+            }
+            catch (Exception ex) 
+            {
+                _logger.LogDebug("Unknown exception happened while accessing dbcontext from DAO Create method" + ex.Message);
+                throw new DataDaoException("Unknown exception happened while accessing dbcontext from DAO Create method", ex);
+            }
+
             return newData;
         }
 
@@ -62,11 +72,23 @@ namespace app.DataLayer.Models
             {
                 data = await _dbContext.Datas.Include(d => d.User).FirstOrDefaultAsync(d => d.User.Email == userEmail);
             }
-            catch (Exception ex) 
-            {   
-                _logger.LogDebug("Unknown exception happened while accessing dbcontext from DAO Create method" + ex);
-                throw ex;
+            
+            catch (TimeoutException ex)
+            {
+                _logger.LogDebug("Database operation was timed out." + ex.Message);
+                throw new DataDaoException("Database operation was timed out.", ex);
             }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogDebug("Database was not updated while reading a Data entity." + ex.Message);
+                throw new DataDaoException("Database was not updated while reading a Data entity.", ex);
+            }
+            catch (Exception ex) 
+            { 
+                _logger.LogDebug("Unknown exception happened while accessing dbcontext from DAO Read method" + ex.Message);
+                throw new DataDaoException("Unknown exception happened while accessing dbcontext from DAO Read method", ex);
+            }
+
             return data;
         }
 
@@ -82,52 +104,24 @@ namespace app.DataLayer.Models
                 _dbContext.Entry(data).State = EntityState.Modified;
                 await _dbContext.SaveChangesAsync();
             }
-            catch (TimeoutException ex) 
-            { 
-                _logger.LogDebug("The operation failed to complete within the default timeout." + ex.Message);
-                throw new DAOTimeoutException("The operation failed to complete within the default timeout.", ex);
-            } // TODO: try to find an exception for connection failure exception.          
+
+            catch (TimeoutException ex)
+            {
+                _logger.LogDebug("Database operation was timed out." + ex.Message);
+                throw new DataDaoException("Database operation was timed out.", ex);
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogDebug("Database was not updated while updating a Data entity." + ex.Message);
+                throw new DataDaoException("Database was not updated while updating a Data entity.", ex);
+            }
             catch (Exception ex) 
             { 
-                _logger.LogDebug("Unknown exception happened while accessing dbcontext from DAO Create method" + ex);
-                throw ex;
-            }         
+                _logger.LogDebug("Unknown exception happened while accessing dbcontext from DAO Update method" + ex.Message);
+                throw new DataDaoException("Unknown exception happened while accessing dbcontext from DAO Update method", ex);
+            }
+
             return data;
-        }
-    }
-
-    //Exceptions
-    public class DAOTimeoutException: DAOException
-    {
-        public DAOTimeoutException()
-        {
-        }
-
-        public DAOTimeoutException(string message)
-            : base(message)
-        {
-        }
-
-        public DAOTimeoutException(string message, Exception inner)
-            : base(message, inner)
-        {
-        }
-    }
-
-    public class DAOException: Exception
-    {
-        public DAOException()
-        {
-        }
-
-        public DAOException(string message)
-            : base(message)
-        {
-        }
-
-        public DAOException(string message, Exception inner)
-            : base(message, inner)
-        {
         }
     }
 }
