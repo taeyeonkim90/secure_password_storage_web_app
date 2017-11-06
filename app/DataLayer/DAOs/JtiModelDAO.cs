@@ -3,40 +3,87 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 
 namespace app.DataLayer.Models
 {
     public interface IJtiDAO
     {
-        Task Create(string uuid, string sub, DateTime exp);
-        bool IsTokenBlacklisted(string uuid);
+        Task<Jti> Create(string uuid, string sub, DateTime exp);
+        Jti Read(string uuid);
     }
     public class JtiDAO : IJtiDAO
     {
         private readonly ApplicationContext _dbContext;
+        private readonly ILogger _logger;
 
-        public JtiDAO(ApplicationContext dbContext)
+        public JtiDAO(ApplicationContext dbContext, ILoggerFactory loggerFactory)
         {
             _dbContext = dbContext;
+            _logger = loggerFactory.CreateLogger<JtiDAO>();
         }
 
-        public async Task Create(string uuid, string sub, DateTime exp)
-        {
-            Jti jtiModel = new Jti()
-                            {
-                                Uuid = uuid,
-                                Sub = sub,
-                                ExpiryTime = exp
-                            };
-            await _dbContext.Jtis.AddAsync(jtiModel);
-            await _dbContext.SaveChangesAsync();
+        public async Task<Jti> Create(string uuid, string sub, DateTime exp)
+        {   
+            Jti jtiEntity = null;
+            try 
+            {
+                jtiEntity = new Jti()
+                                {
+                                    Uuid = uuid,
+                                    Sub = sub,
+                                    ExpiryTime = exp
+                                };
+                await _dbContext.Jtis.AddAsync(jtiEntity);
+                await _dbContext.SaveChangesAsync();
+            }
+
+            catch (TimeoutException ex)
+            {
+                _logger.LogDebug("Database operation was timed out while creating a JTI entity." + ex.Message);
+                throw new JtiDaoException("Database operation was timed out while creating a JTI entity.", ex);
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogDebug("Database was not updated while creating a JTI entity." + ex.Message);
+                throw new JtiDaoException("Database was not updated while creating a JTI entity.", ex);
+            }
+            catch (Exception ex) 
+            { 
+                _logger.LogDebug("Unknown exception happened while accessing dbcontext from DAO Create method." + ex.Message);
+                throw new JtiDaoException("Unknown exception happened while accessing dbcontext from DAO Create method.", ex);
+            }
+
+            return jtiEntity;
         }
 
-        public bool IsTokenBlacklisted(string uuid)
-        {
-            var jtiEntity = _dbContext.Jtis.FirstOrDefault(x => x.Uuid == uuid);
-            return jtiEntity != null;
+        public Jti Read(string uuid)
+        {   
+            Jti jtiEntity = null;
+
+            try
+            {
+                jtiEntity = _dbContext.Jtis.FirstOrDefault(x => x.Uuid == uuid);
+            }
+
+            catch (TimeoutException ex)
+            {
+                _logger.LogDebug("Database operation was timed out while reading a JTI entity." + ex.Message);
+                throw new JtiDaoException("Database operation was timed out while reading a JTI entity.", ex);
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogDebug("Database was not updated while reading a JTI entity." + ex.Message);
+                throw new JtiDaoException("Database was not updated while reading a JTI entity.", ex);
+            }
+            catch (Exception ex) 
+            { 
+                _logger.LogDebug("Unknown exception happened while accessing dbcontext from DAO Read method." + ex.Message);
+                throw new JtiDaoException("Unknown exception happened while accessing dbcontext from DAO Read method.", ex);
+            }
+
+            return jtiEntity;
         }
     }
 }
