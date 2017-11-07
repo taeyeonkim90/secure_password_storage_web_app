@@ -35,16 +35,24 @@ namespace app.Controllers
         [HttpGet("[action]")]
         public async Task<IActionResult> Card()
         {
-            string userEmail = await GetEmailFromToken();
-            DataDTO data = await _dataService.ReadUserData(userEmail);
-
-            return Ok(new
+            try
             {
-                status = true,
-                messages = new List<string>() { "Data retrieved" },
-                data = data
-            });
+                string userEmail = await GetEmailFromToken();
+                DataDTO data = await _dataService.ReadUserData(userEmail);
+                return okRequestHelper("Data retrieved", data);
+            }
 
+            catch (DataServiceException ex)
+            {
+                if (ex.InnerException == null)
+                    _logger.LogDebug(ex.Message);
+                return badRequestHelper("Could not access the user data from the database.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogDebug("Unknown exception occurred." + ex.Message);
+                throw;
+            }
         } 
 
         // Update
@@ -52,15 +60,25 @@ namespace app.Controllers
         [HttpPut("[action]")]
         public async Task<IActionResult> Card([FromBody] DataDTO newData)
         {
-            string userEmail = await GetEmailFromToken();
-            DataDTO updatedData = await _dataService.UpdateUserData(userEmail, newData.UserData);
-
-            return Ok(new
+            try
             {
-                status = true,
-                messages = new List<string>() { "Data updated" },
-                data = updatedData
-            });
+                string userEmail = await GetEmailFromToken();
+                DataDTO updatedData = await _dataService.UpdateUserData(userEmail, newData.UserData);
+
+                return okRequestHelper("Data updated", updatedData);
+            }
+
+            catch (DataServiceException ex)
+            {
+                if (ex.InnerException == null)
+                    _logger.LogDebug(ex.Message);
+                return badRequestHelper("Could not update the user data from the database.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogDebug("Unknown exception occurred." + ex.Message);
+                throw;
+            }
         } 
 
         private async Task<string> GetEmailFromToken()
@@ -69,6 +87,45 @@ namespace app.Controllers
             string encodedToken = authenticateInfo.Properties.Items[".Token.access_token"];
 
             return _authService.ExtractUserEmail(encodedToken);
+        }
+
+        private IActionResult badRequestHelper(List<string> messages, DataDTO data=null)
+        {
+            return BadRequest(new
+                {
+                    status = false,
+                    messages = messages,
+                    data  = data
+                });
+        }
+
+        private IActionResult badRequestHelper(string message, DataDTO data=null)
+        {
+            return BadRequest(new
+                {
+                    status = false,
+                    messages = new List<string>() { message },
+                    data = data
+                });
+        }
+        private IActionResult okRequestHelper(List<string> messages, DataDTO data=null)
+        {
+            return Ok(new
+                {
+                    status = true,
+                    messages = messages,
+                    data = data
+                });
+        }
+
+        private IActionResult okRequestHelper(string message, DataDTO data=null)
+        {
+            return Ok(new
+                {
+                    status = true,
+                    messages = new List<string>() { message },
+                    data = data
+                });
         }
     }
 }

@@ -113,7 +113,7 @@ const encryptCardsData = (cards, key) => {
 }
 
 const parseCardsData = (data, key) => {
-    if (data.data.userData == ""){
+    if (data.data == null || data.data.userData == ""){
         return []
     }
     else {

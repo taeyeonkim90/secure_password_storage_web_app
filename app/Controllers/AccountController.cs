@@ -91,9 +91,9 @@ namespace app.Controllers
             try
             {
                 if (!await _authService.isAccountPresent(userDTO))
-                    badRequestHelper("Email account does not exist.");
+                    return badRequestHelper("Email account does not exist.");
                 if (await _authService.isEmailVerified(userDTO))
-                    badRequestHelper("Email account already has been verified.");
+                    return badRequestHelper("Email account already has been verified.");
                 await _authService.SendVerificationEmail(userDTO);
             }
             
