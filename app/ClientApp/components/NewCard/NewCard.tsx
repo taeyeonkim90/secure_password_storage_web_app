@@ -83,7 +83,7 @@ export default class Card extends React.Component<NewCardProps, NewCardState> {
     public render() {
         var result = this.state.isExpand
                 ?this.renderIsEditHTML()
-                :<button className={css.newCardButton}><i className="material-icons green em-35" onClick={this.showTempCard}>add_circle_outline</i></button>
+                :<button onClick={this.showTempCard} className={css.newCardButton}><i className="material-icons green em-35">add_circle_outline</i></button>
         
         return result;
     }

@@ -24,7 +24,7 @@ input[type=submit]:hover {
 } */
 
 .fieldInput {
-    height: 3em;
+    min-height: 3.6em;
     width: 100%;
     padding: 12px 20px;
     margin: 8px 0;
@@ -33,5 +33,6 @@ input[type=submit]:hover {
 }
 
 .fieldInput:focus{
-    border: 1px rgba(130, 167, 248, 0.671);
+    border: none;
+    box-shadow: 0 0 5px 1px #58595b;
 }

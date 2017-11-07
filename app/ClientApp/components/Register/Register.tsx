@@ -74,7 +74,7 @@ class Register extends React.Component<AuthProps, AuthState> {
     
     renderResendEmailLink = () => {
         return <p className={css.resendEmail}>Haven't received the verification email? Click{' '}
-                    <NavLink to={'/resendemail'} activeClassName='active'>here</NavLink>
+                    <NavLink onClick={()=>this.props.logoutUser("")} to={'/resendemail'} activeClassName='active'>here</NavLink>
                     {' '}to re-send the verification email
                 </p>
     }
