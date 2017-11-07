@@ -39,65 +39,70 @@ namespace app.Controllers
                 var messages = ModelState.Values.SelectMany(v => v.Errors)
                             .Select(modelError => modelError.ErrorMessage)
                             .ToList();
-                return
-                    BadRequest(new
-                        {
-                            status = false,
-                            messages = messages
-                        });
+                return badRequestHelper(messages);
             }
 
-            IdentityResult result = await _authService.CreateUser(userDTO);
-
-            if (!result.Succeeded)
+            try
             {
-                var messages = result.Errors.Select(x => x.Description).ToList();
-                return
-                    BadRequest(new
-                        {
-                            status = false,
-                            messages = messages
-                        });
+                IdentityResult result = await _authService.CreateUser(userDTO);
+                if (!result.Succeeded)
+                {
+                    var messages = result.Errors.Select(x => x.Description).ToList();
+                    return badRequestHelper(messages);
+                }
             }
 
+            catch (AuthServiceException ex)
+            {
+                if (ex.InnerException == null)
+                    _logger.LogDebug(ex.Message);
+                return badRequestHelper("There was an error while creating the user account.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogDebug("Unknown exception occured." + ex.Message);
+                throw;
+            }
 
-            return Ok(new
-                    {
-                        status = true,
-                        messages = new List<string>() { "User has been created. Please check your mailbox to verify your registration." }
-                    });
+            return okRequestHelper("User has been created. Please check your mailbox to verify your registration.");
         }
 
         [HttpGet("[action]")]
         public RedirectResult VerifyEmail(string userid, string token)
         {
-            bool result = _authService.VerifyEmail(userid, token);
             var siteUrl = _appConfiguration.Value.SiteUrl;
+            try
+            {
+                if (! _authService.VerifyEmailToken(userid, token))
+                    return Redirect($"{siteUrl}/email/failure");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogDebug("Unknown exception occured." + ex.Message);
+                throw;
+            }
 
-            if (result) {
-                return Redirect($"{siteUrl}/email/success");
-            }
-            else {
-                return Redirect($"{siteUrl}/email/failure");
-            }
+            return Redirect($"{siteUrl}/email/success");
         }
 
         [HttpPost("[action]")]
         public async Task<IActionResult> ResendEmail([FromBody] ApplicationUserDTO userDTO)
         {
-            try{
-                await _authService.ResendVerificationEmail(userDTO);
-            }
-            catch(ASUserNotFoundException ex)
+            try
             {
-                _logger.LogDebug("User was not found while calling resendverificationEmail method. " + ex.Message);
-                return badRequestHelper("Email account does not exist.");
+                if (!await _authService.isAccountPresent(userDTO))
+                    badRequestHelper("Email account does not exist.");
+                if (await _authService.isEmailVerified(userDTO))
+                    badRequestHelper("Email account already has been verified.");
+                await _authService.SendVerificationEmail(userDTO);
             }
-            catch(ASEmailAlreadyVerifiedException ex)
+            
+            catch (Exception ex)
             {
-                _logger.LogDebug("User has already verified the account. There is no need to resend the verification email. " + ex.Message);
-                return badRequestHelper("Email already has been verified.");
+                _logger.LogDebug("Unknown exception occured." + ex.Message);
+                throw;
             }
+
             return okRequestHelper("Verification email has been resent.");
         }
 
@@ -109,39 +114,25 @@ namespace app.Controllers
                 var messages = ModelState.Values.SelectMany(v => v.Errors)
                             .Select(modelError => modelError.ErrorMessage)
                             .ToList();
-                return
-                    BadRequest(new
-                        {
-                            status = false,
-                            messages = messages
-                        });
+                return badRequestHelper(messages);
             }
 
             string encodedToken = "";
             try
             {
-                await _authService.VerifyUser(userDTO);
+                if (!await _authService.isAccountPresent(userDTO))
+                    return badRequestHelper("Email account does not exist.");
+                if (!await _authService.isPasswordCorrect(userDTO))
+                    return badRequestHelper("Provided password was incorrect.");
+                if (!await _authService.isEmailVerified(userDTO))
+                    return badRequestHelper("You have not yet verified your email. Please check your mail box.");
+    
                 encodedToken = await _authService.GetToken(userDTO);
-            }
-            catch (ASEmailVerificationFailureException ex)
-            {
-                _logger.LogDebug(ex.Message);
-                return badRequestHelper("Login failed. Your account has not been verified. Please check your email account to verify your registration.");
-            }
-            catch(ASPasswordNotCorrectException ex) 
-            {
-                _logger.LogDebug(ex.Message);
-                return badRequestHelper("Login failed. Password does not match.");
-            }
-            catch(ASUserNotFoundException ex)
-            {
-                _logger.LogDebug(ex.Message);
-                return badRequestHelper("Login failed. Your account was not found.");
             }
             catch (Exception ex) 
             { 
-                _logger.LogDebug(ex.Message);
-                throw ex;
+                _logger.LogDebug("Unknown exception occured." + ex.Message);
+                throw;
             }
 
             return okRequestHelper("Token has been generated", encodedToken);
@@ -151,11 +142,7 @@ namespace app.Controllers
         [HttpPost("[action]")]
         public IActionResult Validate()
         {   
-            return Ok(new
-            {
-                status = true,
-                messages = new List<string>() { "Token validated" }
-            });
+            return okRequestHelper("Token is validated");
         }
 
         [Authorize]
@@ -163,15 +150,18 @@ namespace app.Controllers
         public async Task<IActionResult> Refresh()
         {   
             var authenticateInfo = await HttpContext.Authentication.GetAuthenticateInfoAsync("Bearer");
-            string encodedToken = authenticateInfo.Properties.Items[".Token.access_token"];
-
-            if (_authService.IsTokenBlacklisted(encodedToken))
+            if (authenticateInfo.Properties.Items.ContainsKey(".Token.access_token"))
             {
-                return badRequestHelper("This token cannot be used to obtain a new JWT", encodedToken);
+                string encodedToken = authenticateInfo.Properties.Items[".Token.access_token"];
+
+                if (_authService.IsTokenBlacklisted(encodedToken))
+                    return badRequestHelper("This token cannot be used to obtain a new JWT", encodedToken);
+
+                string newToken = await _authService.RefreshToken(encodedToken);
+                return okRequestHelper("New token has been generated.", newToken);
             }
 
-            string newToken = await _authService.RefreshToken(encodedToken);
-            return okRequestHelper("New token has been generated.", newToken);
+            return badRequestHelper("Token was not provided.", "");
         }
 
         private IActionResult badRequestHelper(List<string> messages, string token="")

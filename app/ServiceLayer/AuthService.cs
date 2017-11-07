@@ -22,11 +22,11 @@ namespace app.ServiceLayer
     public interface IAuthService
     {
         Task<IdentityResult> CreateUser(ApplicationUserDTO userDTO);
-        Task ResendVerificationEmail(ApplicationUserDTO userDTO);
         bool VerifyEmailToken(string userid, string token);
-
-        // Task<bool> VerifyUser(ApplicationUserDTO userDTO);
-        Task VerifyUser(ApplicationUserDTO userDTO);
+        Task<bool> isAccountPresent(ApplicationUserDTO userDTO);
+        Task<bool> isPasswordCorrect(ApplicationUserDTO userDTO);
+        Task<bool> isEmailVerified(ApplicationUserDTO userDTO);
+        Task SendVerificationEmail(ApplicationUserDTO userDTO);
         Task<string> GetToken(ApplicationUserDTO userDTO);
         Task<string> RefreshToken(string token);
         bool IsTokenBlacklisted(string token);
@@ -78,7 +78,7 @@ namespace app.ServiceLayer
                     Data data = await _dataDAO.Create(userDTO.Email, "");
 
                     // send verification email
-                    await SendVerificationEmail(user);
+                    await SendVerificationEmailHelper(user);
                 }
             }
 
@@ -91,23 +91,39 @@ namespace app.ServiceLayer
             catch (Exception ex)
             {
                 _logger.LogDebug("Unknown exception occurred." + ex.Message);
-                throw ex;
+                throw;
             }
 
             return result;
         }
 
-        public async Task ResendVerificationEmail(ApplicationUserDTO userDTO)
+        public async Task<bool> isAccountPresent(ApplicationUserDTO userDTO)
         {
             var user = await _userManager.FindByEmailAsync(userDTO.Email);
-            if(user == null)
-                throw new ASUserNotFoundException("User not found");
-            if(await _userManager.IsEmailConfirmedAsync(user))
-                throw new ASEmailAlreadyVerifiedException("The email has already been verified.");
-            await SendVerificationEmail(user);
+            return user != null;
         }
 
-        private async Task SendVerificationEmail(ApplicationUser user)
+        public async Task<bool> isPasswordCorrect(ApplicationUserDTO userDTO)
+        {
+            var user = await _userManager.FindByEmailAsync(userDTO.Email);
+            var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, userDTO.Password);
+            return (result == PasswordVerificationResult.Success);
+        }
+
+        public async Task<bool> isEmailVerified(ApplicationUserDTO userDTO)
+        {
+            var user = await _userManager.FindByEmailAsync(userDTO.Email);
+            return await _userManager.IsEmailConfirmedAsync(user);
+        }
+
+
+        public async Task SendVerificationEmail(ApplicationUserDTO userDTO)
+        {
+            var user = await _userManager.FindByEmailAsync(userDTO.Email);
+            await SendVerificationEmailHelper(user);
+        }
+
+        private async Task SendVerificationEmailHelper(ApplicationUser user)
         {
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var parameters = new Dictionary<string,string>{
@@ -129,28 +145,15 @@ namespace app.ServiceLayer
 
             return result.Succeeded;
         }
-        public async Task VerifyUser(ApplicationUserDTO userDTO)
-        {
-            if(userDTO == null)
-                throw new ArgumentNullException("userDTO");
-            var user = await _userManager.FindByNameAsync(userDTO.Email);
-            if(user == null)
-                throw new ASUserNotFoundException("User cannot be found");
-            if(_passwordHasher.VerifyHashedPassword(user, user.PasswordHash, userDTO.Password) != PasswordVerificationResult.Success)
-                throw new ASPasswordNotCorrectException($"User ID: {userDTO.Email} - PasswordHash does not match with verification result");
-            if(!await _userManager.IsEmailConfirmedAsync(user))
-                throw new ASEmailVerificationFailureException("Email verification has not done yet.");
-        }
+
         public async Task<string> GetToken(ApplicationUserDTO userDTO)
         {
-            if(userDTO == null)
-                throw new ArgumentNullException("userDTO");
             var user = await _userManager.FindByNameAsync(userDTO.Email);
             if(user == null)
-                throw new ASUserNotFoundException("User cannot be found");
-            var token = await GetJwtSecurityToken(user);
+                return "";
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            var tokenModel = await GetJwtSecurityToken(user);
+            return new JwtSecurityTokenHandler().WriteToken(tokenModel);
         }
 
         public async Task<string> RefreshToken(string encodedToken)
