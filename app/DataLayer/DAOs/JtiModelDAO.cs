@@ -44,15 +44,15 @@ namespace app.DataLayer.Models
                 _logger.LogDebug("Database operation was timed out while creating a JTI entity." + ex.Message);
                 throw new JtiDaoException("Database operation was timed out while creating a JTI entity.", ex);
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex) when (ex is DbUpdateException || ex is ObjectDisposedException)
             {
                 _logger.LogDebug("Database was not updated while creating a JTI entity." + ex.Message);
                 throw new JtiDaoException("Database was not updated while creating a JTI entity.", ex);
             }
             catch (Exception ex) 
             { 
-                _logger.LogDebug("Unknown exception happened while accessing dbcontext from DAO Create method." + ex.Message);
-                throw new JtiDaoException("Unknown exception happened while accessing dbcontext from DAO Create method.", ex);
+                _logger.LogDebug("Unknown exception happened while accessing dbcontext from JTI DAO Create method." + ex.Message);
+                throw;
             }
 
             return jtiEntity;
@@ -72,15 +72,15 @@ namespace app.DataLayer.Models
                 _logger.LogDebug("Database operation was timed out while reading a JTI entity." + ex.Message);
                 throw new JtiDaoException("Database operation was timed out while reading a JTI entity.", ex);
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex) when (ex is DbUpdateException || ex is ObjectDisposedException)
             {
                 _logger.LogDebug("Database was not updated while reading a JTI entity." + ex.Message);
                 throw new JtiDaoException("Database was not updated while reading a JTI entity.", ex);
             }
             catch (Exception ex) 
             { 
-                _logger.LogDebug("Unknown exception happened while accessing dbcontext from DAO Read method." + ex.Message);
-                throw new JtiDaoException("Unknown exception happened while accessing dbcontext from DAO Read method.", ex);
+                _logger.LogDebug("Unknown exception happened while accessing dbcontext from JTI DAO Read method." + ex.Message);
+                throw;
             }
 
             return jtiEntity;

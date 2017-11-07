@@ -32,9 +32,6 @@ namespace app.DataLayer.Models
             try{
                 ApplicationUser user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Email == userEmail);
 
-                if (user == null)
-                    throw new DataDaoException($"User with email address({userEmail} was not found.)"); 
-
                 DateTime currentTime = DateTime.Now;
                 newData = new Data(){
                                 UserData = userData,
@@ -45,23 +42,21 @@ namespace app.DataLayer.Models
                 await _dbContext.Datas.AddAsync(newData);
                 await _dbContext.SaveChangesAsync();
             }
-
-            catch (TimeoutException ex)
+            catch (TimeoutException ex) 
             {
-                _logger.LogDebug("Database operation was timed out." + ex.Message);
-                throw new DataDaoException("Database operation was timed out.", ex);
+                _logger.LogDebug("Database operation was timed out while creating a Data entity." + ex.Message);
+                throw new DataDaoException("Database operation was timed out while creating a Data entity.", ex);
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex) when (ex is DbUpdateException || ex is ObjectDisposedException)
             {
-                _logger.LogDebug("Database was not updated while creating a Data entity." + ex.Message);
-                throw new DataDaoException("Database was not updated while creating a Data entity.", ex);
-            }
+                _logger.LogDebug("Database was not updated while creating a data entity." + ex.Message);
+                throw new DataDaoException("Database was not updated while creating a data entity.", ex);
+            }                
             catch (Exception ex) 
-            {
-                _logger.LogDebug("Unknown exception happened while accessing dbcontext from DAO Create method" + ex.Message);
-                throw new DataDaoException("Unknown exception happened while accessing dbcontext from DAO Create method", ex);
-            }
-
+            { 
+                _logger.LogDebug("Unknown exception happened while accessing dbcontext from DAO Create method" + ex);
+                throw ex;
+            }            
             return newData;
         }
 
@@ -72,23 +67,21 @@ namespace app.DataLayer.Models
             {
                 data = await _dbContext.Datas.Include(d => d.User).FirstOrDefaultAsync(d => d.User.Email == userEmail);
             }
-            
-            catch (TimeoutException ex)
+            catch (TimeoutException ex) 
             {
-                _logger.LogDebug("Database operation was timed out." + ex.Message);
-                throw new DataDaoException("Database operation was timed out.", ex);
+                _logger.LogDebug("Database operation was timed out while reading a Data entity." + ex.Message);
+                throw new DataDaoException("Database operation was timed out while reading a Data entity.", ex);
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex) when (ex is DbUpdateException || ex is ObjectDisposedException)
             {
-                _logger.LogDebug("Database was not updated while reading a Data entity." + ex.Message);
-                throw new DataDaoException("Database was not updated while reading a Data entity.", ex);
+                _logger.LogDebug("Database connection failure or update failure while reading a data entity." + ex.Message);
+                throw new DataDaoException("Database connection failure or update failure while reading a data entity.", ex);
             }
             catch (Exception ex) 
-            { 
-                _logger.LogDebug("Unknown exception happened while accessing dbcontext from DAO Read method" + ex.Message);
-                throw new DataDaoException("Unknown exception happened while accessing dbcontext from DAO Read method", ex);
+            {   
+                _logger.LogDebug("Unknown exception happened while accessing dbcontext from DAO Create method" + ex);
+                throw;
             }
-
             return data;
         }
 
@@ -104,23 +97,21 @@ namespace app.DataLayer.Models
                 _dbContext.Entry(data).State = EntityState.Modified;
                 await _dbContext.SaveChangesAsync();
             }
-
-            catch (TimeoutException ex)
+            catch (TimeoutException ex) 
             {
-                _logger.LogDebug("Database operation was timed out." + ex.Message);
-                throw new DataDaoException("Database operation was timed out.", ex);
+                _logger.LogDebug("Database operation was timed out while updating a Data entity." + ex.Message);
+                throw new DataDaoException("Database operation was timed out while updating a Data entity.", ex);
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex) when (ex is DbUpdateException || ex is ObjectDisposedException)
             {
-                _logger.LogDebug("Database was not updated while updating a Data entity." + ex.Message);
-                throw new DataDaoException("Database was not updated while updating a Data entity.", ex);
-            }
+                _logger.LogDebug("Database was not updated while updating a data entity." + ex.Message);
+                throw new DataDaoException("Database was not updated while updating a data entity.", ex);
+            }       
             catch (Exception ex) 
             { 
-                _logger.LogDebug("Unknown exception happened while accessing dbcontext from DAO Update method" + ex.Message);
-                throw new DataDaoException("Unknown exception happened while accessing dbcontext from DAO Update method", ex);
-            }
-
+                _logger.LogDebug("Unknown exception happened while accessing dbcontext from DAO Create method" + ex);
+                throw;
+            }         
             return data;
         }
     }

@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 
 using app.DataLayer.Models;
+using app.DataLayer;
 
 
 namespace app.ServiceLayer
@@ -42,23 +43,17 @@ namespace app.ServiceLayer
             {
                 data = await _dataDAO.Read(userEmail);
             }
-
-            catch (TimeoutException ex)
+            catch (DaoException ex) 
             {
-                _logger.LogDebug("Could not receive user's data from the database." + ex.Message);
-                throw new DataDbException("Could not receive user's data from the database.", ex);
-            }
-            catch (DbUpdateException ex)
-            {
-                _logger.LogDebug("Could not receive user's data from the database." + ex.Message);
-                throw new DataDbException("Could not receive user's data from the database.", ex);
+                if(ex.InnerException == null) 
+                    _logger.LogDebug("Could not receive user's data from the database." + ex.Message);
+                throw new DataServiceException("Could not receive user's data from the database.",ex);
             }
             catch (Exception ex)
             {
-                _logger.LogDebug("Unknown exception occurred." + ex.Message);
-                throw ex;
+                _logger.LogDebug("Could not receive user's data from the database." + ex.Message);
+                throw;
             }
-
             return new DataDTO(){ UserData = data.UserData };
         }
 
@@ -69,21 +64,16 @@ namespace app.ServiceLayer
             {
                 data = await _dataDAO.Update(userEmail, userData);
             }
-
-            catch (TimeoutException ex)
+            catch (DaoException ex) 
             {
-                _logger.LogDebug("Could not update user's data from the database." + ex.Message);
-                throw new DataDbException("Could not update user's data from the database.", ex);
-            }
-            catch (DbUpdateException ex)
-            {
-                _logger.LogDebug("Could not update user's data from the database." + ex.Message);
-                throw new DataDbException("Could not update user's data from the database.", ex);
+                if(ex.InnerException == null) 
+                    _logger.LogDebug("Could not receive user's data from the database." + ex.Message);
+                throw new DataServiceException("Could not receive user's data from the database.",ex);
             }
             catch (Exception ex)
             {
-                _logger.LogDebug("Unknown exception occurred." + ex.Message);
-                throw ex;
+                _logger.LogDebug("Could not receive user's data from the database." + ex.Message);
+                throw;
             }
 
             return new DataDTO(){ UserData = data.UserData };

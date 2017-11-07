@@ -31,6 +31,7 @@ namespace app.Controllers
         }
 
         // Read
+        [Authorize]
         [HttpGet("[action]")]
         public async Task<IActionResult> Card()
         {
@@ -47,6 +48,7 @@ namespace app.Controllers
         } 
 
         // Update
+        [Authorize]
         [HttpPut("[action]")]
         public async Task<IActionResult> Card([FromBody] DataDTO newData)
         {
