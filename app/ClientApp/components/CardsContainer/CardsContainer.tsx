@@ -65,7 +65,7 @@ export default class CardContainer extends React.Component<CardContainerProps, C
 
     renderCards = () => {
         if ((this.props.cards.length == 0) && (!this.props.dataFetching)){
-            return <p>You have no password information. Press above button to add new information.</p>
+            return <p className={css.message}>You have no password information. Press above button to add new information.</p>
         }
         else if (this.props.cards.length != 0 ){
             let searchVal = this.state.searchVal.toLowerCase()
@@ -79,7 +79,7 @@ export default class CardContainer extends React.Component<CardContainerProps, C
                 )
             }
             else {
-                return <p>No matching results were found </p>
+                return <p className={css.message}>No matching search results were found </p>
             }
         }
         else {

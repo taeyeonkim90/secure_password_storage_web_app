@@ -6,6 +6,12 @@
     min-height: 100vh;
 }
 
+.message {
+    margin-left: 17px;
+    margin-right: 17px;
+    text-align: center;
+}
+
 /* 
 @media (max-width: 1000px) {
     .container {

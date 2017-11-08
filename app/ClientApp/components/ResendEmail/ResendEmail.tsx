@@ -77,7 +77,7 @@ class ResendEmail extends React.Component<AuthProps, AuthState> {
                                         onChange={this.handleChange}
                                         placeholder="E-mail to resend the verification link" />
                                     <button className={s.loginIcon} >
-                                        <i className="material-icons green">vpn_key</i>
+                                        <i className="material-icons green">keyboard_return</i>
                                     </button>
                                 </div>
                             {this.renderErrors()}
