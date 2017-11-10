@@ -5,14 +5,9 @@ import {CopyToClipboard} from 'react-copy-to-clipboard';
 import { toast } from 'react-toastify';
 
 const FieldDetail = (props) => {
-    var message = `Copied "${props.data}" to the clipboard`
-    if (props.hidePassword){
-        message = `Copied your password for "${props.display}" to the clipboard`
-    }
-
     return (
         <div>
-            <CopyToClipboard text={props.data} onCopy={()=>toast(message)}>
+            <CopyToClipboard text={props.data} onCopy={()=>toast(`Copied ${props.message} to the clipboard`)}>
                 <p className={css.fieldDetail} > {props.display} </p>
             </CopyToClipboard>
         </div>

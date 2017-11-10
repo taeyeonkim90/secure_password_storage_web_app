@@ -134,10 +134,10 @@ export default class Card extends React.Component<CardProps, CardState> {
 
         return <div>
             <button className={css.foldButton} onClick={this.toggleIsExpand}><i className="material-icons">keyboard_arrow_up</i></button>
-            <FieldDetail display={accountName} data={accountName} /> 
-            <FieldDetail display={userName} data={userName} /> 
-            <FieldDetail display={pw} data={pw} /> 
-            <FieldDetail display={description} data={description} />
+            <FieldDetail display={accountName} data={accountName} message={`"${accountName}"`}/> 
+            <FieldDetail display={userName} data={userName} message={`your ID for "${accountName}"`}/> 
+            <FieldDetail display={pw} data={pw} message={`your password for "${accountName}"`}/> 
+            <FieldDetail display={description} data={description} message={`your description for "${accountName}"`}/>
             <div className={css.buttonContainer}>
                 <div/>
                 <button className={css.button} onClick={this.toggleIsEdit}>Edit</button>
@@ -149,7 +149,7 @@ export default class Card extends React.Component<CardProps, CardState> {
     renderIsNotExpandedHTML = () => {
         return <div>
             <button className={css.foldButton} onClick={this.toggleIsExpand}><i className="material-icons">keyboard_arrow_down</i></button>
-            <FieldDetail display={this.state.accountName} data={this.state.pw} hidePassword/>
+            <FieldDetail display={this.state.accountName} data={this.state.pw} message={`your password for "${this.state.accountName}"`}/>
         </div>
     }
 

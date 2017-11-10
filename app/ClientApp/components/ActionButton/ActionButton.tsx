@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as css from './ActionButton.css';
-import Dropdown from '../Dropdown/Dropdown';
 
 interface ActionButtonState {
     isExpand: boolean;
