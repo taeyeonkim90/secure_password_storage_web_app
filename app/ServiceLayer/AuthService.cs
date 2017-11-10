@@ -78,7 +78,7 @@ namespace app.ServiceLayer
                     Data data = await _dataDAO.Create(userDTO.Email, "");
 
                     // send verification email
-                    await SendVerificationEmailHelper(user);
+                    await SendVerificationEmailHelper(user, userDTO.Password);
                 }
             }
 
@@ -123,7 +123,7 @@ namespace app.ServiceLayer
             await SendVerificationEmailHelper(user);
         }
 
-        private async Task SendVerificationEmailHelper(ApplicationUser user)
+        private async Task SendVerificationEmailHelper(ApplicationUser user, string password="")
         {
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var parameters = new Dictionary<string,string>{
@@ -134,8 +134,9 @@ namespace app.ServiceLayer
             var address = _appConfiguration.Value.SiteUrl;
             var callbackUrl = $"{address}/api/account/verifyemail";
             var encodedUrl = QueryHelpers.AddQueryString(callbackUrl, parameters);
-            await _emailSender.SendEmailAsync(user.Email, "Confirm your account",
-                        $"Please confirm your account by clicking this link:  {encodedUrl}");
+            var pwMessage = (password != "") ? $"Your master password is <b>{password}</b><br><br>Please keep this password as a record since it is never stored on our server.<br>This password will be used to encrypt and decrypt your entire data directly on your web browser, which means only you will be able to view your private information.<br><br>" : $"";
+            var emailBody = $"{pwMessage}Please confirm your account by clicking the link below: <br><a href='{encodedUrl}'>verification link</a>";
+            await _emailSender.SendEmailAsync(user.Email, "Confirm your account", emailBody);
         }
 
         public bool VerifyEmailToken(string userid, string token)
