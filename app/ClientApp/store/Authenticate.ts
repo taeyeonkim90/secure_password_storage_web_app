@@ -2,6 +2,7 @@ import { fetch, addTask } from 'domain-task'
 import { Action, Reducer, ActionCreator } from 'redux'
 import { AppThunkAction } from './'
 import axios from 'axios'
+import * as CryptoJS from 'crypto-js';
 
 // -----------------
 // STATE - This defines the type of data maintained in the Redux store.
@@ -140,11 +141,11 @@ export const actionCreators = {
 
     // login
     loginUser: (email:string, password:string): AppThunkAction<KnownAction> => (dispatch, getState) => {
+        var masterKey = CryptoJS.SHA256(password).toString()
         if (!getState().auth.authFetching) {
             let fetchTask = axios.post('/api/Account/Token', {Email: email, Password: password})
                 .then(response => {
-                    // var hash = crypto.createHmac('sha1', 'W"?\3^32UhXq!&y>').update(password).digest('hex')
-                    dispatch({ type: 'RECEIVE_JWT', authFetching: false, authenticated: response.data.status, authMessages: parseSuccessMessages(response), token: response.data.token, email:email, masterKey: password})
+                    dispatch({ type: 'RECEIVE_JWT', authFetching: false, authenticated: response.data.status, authMessages: parseSuccessMessages(response), token: response.data.token, email:email, masterKey: masterKey})
                 })
                 .catch(error => {
                     dispatch({ type: 'RECEIVE_JWT', authFetching: false, authenticated: false, authMessages: parseErrorMessages(error), token:'', email:'', masterKey:''})
