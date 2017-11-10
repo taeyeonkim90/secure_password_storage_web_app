@@ -3,7 +3,7 @@
     width: 100%;
     justify-content: space-between;
     background-color: #e5e5e5;
-    height: 80px;
+    height: 100px;
     display: absolute;
     /* padding: 0.5em; */
 }
@@ -14,5 +14,5 @@
 
 .appLogo {
     height: 55.8px;
-    transform: translate(0,18px);
+    transform: translate(-6px,30px);
 }
