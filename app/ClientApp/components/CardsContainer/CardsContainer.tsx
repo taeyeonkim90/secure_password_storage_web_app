@@ -70,8 +70,11 @@ export default class CardContainer extends React.Component<CardContainerProps, C
         else if (this.props.cards.length != 0 ){
             let searchVal = this.state.searchVal.toLowerCase()
             let cards = this.props.cards.filter((card) => {
-                let cardName = card.accountName.toLowerCase()
-                return cardName.includes(searchVal)
+                let domain = card.accountName.toLowerCase()
+                let id = card.userName.toLocaleLowerCase()
+                let description = card.description.toLocaleLowerCase()
+
+                return (domain.includes(searchVal) || id.includes(searchVal) || description.includes(searchVal))
             })
             if (cards.length != 0){
                 return cards.map((card, key) => 

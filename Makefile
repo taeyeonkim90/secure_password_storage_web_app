@@ -52,7 +52,7 @@ migrate-perform-migration-dev:
 	cd ./app && dotnet restore
 
 	@echo "************ Executing Migrations Scripts ************"
-	cd ./app && dotnet ef database update -d Development
+	cd ./app && dotnet ef database update -e Development
 
 migrate-perform-migration-deploy:
 	@echo "************ Restoring Dotnet Dependencies ************"
