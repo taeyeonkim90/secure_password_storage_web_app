@@ -119,7 +119,7 @@ export default class Card extends React.Component<CardProps, CardState> {
             <button className={css.foldButton} onClick={this.cancel}><i className="material-icons">keyboard_arrow_up</i></button>
             <FieldInput name="accountName" type="text" data={this.state.accountName} updateState={this.handleChange}/>
             <FieldInput name="userName" type="text" data={this.state.userName} updateState={this.handleChange}/>
-            <FieldInput name="pw" type="password" data={this.state.pw} updateState={this.handleChange}/>
+            <FieldInput name="pw" type="text" data={this.state.pw} updateState={this.handleChange}/>
             <FieldInput name="description" type="text" data={this.state.description} updateState={this.handleChange}/>
             <div className={css.buttonContainer}>
                 <button className={css.button} onClick={this.delete}>Delete</button>
@@ -132,11 +132,14 @@ export default class Card extends React.Component<CardProps, CardState> {
     renderIsExpandedHTML = () => {
         let {accountName, userName, pw, description} = this.state
 
+        var pwLength = pw.length
+        var maskedPw = "*".repeat(pwLength);
+
         return <div>
             <button className={css.foldButton} onClick={this.toggleIsExpand}><i className="material-icons">keyboard_arrow_up</i></button>
             <FieldDetail display={accountName} data={accountName} message={`"${accountName}"`}/> 
             <FieldDetail display={userName} data={userName} message={`your ID for "${accountName}"`}/> 
-            <FieldDetail display={pw} data={pw} message={`your password for "${accountName}"`}/> 
+            <FieldDetail display={maskedPw} data={pw} message={`your password for "${accountName}"`}/> 
             <FieldDetail display={description} data={description} message={`your description for "${accountName}"`}/>
             <div className={css.buttonContainer}>
                 <div/>
