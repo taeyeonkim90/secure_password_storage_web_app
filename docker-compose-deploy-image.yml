@@ -1,9 +1,13 @@
 version: "3"
 services:
   secure-password-deploy:
-    image: taeyeonkim90/secure-password:0.0.1 
+    image: taeyeonkim90/secure-password:1.0.0 
     environment:
       ASPNETCORE_URLS: "http://*:5000"
+      ConnectionStrings__DefaultConnection:
+      AppConfiguration__SiteUrl:
+      AppConfiguration__Key:
+      AppConfiguration__SendGridKey:
     restart: always
     ports:
       - "8090:5000"
